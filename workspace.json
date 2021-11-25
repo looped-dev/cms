@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "cms": "apps/cms",
+    "cms-e2e": "apps/cms-e2e"
+  }
 }

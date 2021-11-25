@@ -1,0 +1,88 @@
+{
+  "projectType": "application",
+  "root": "apps/cms",
+  "sourceRoot": "apps/cms/src",
+  "prefix": "looped-cms",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/cms",
+        "index": "apps/cms/src/index.html",
+        "main": "apps/cms/src/main.ts",
+        "polyfills": "apps/cms/src/polyfills.ts",
+        "tsConfig": "apps/cms/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": ["apps/cms/src/favicon.ico", "apps/cms/src/assets"],
+        "styles": ["apps/cms/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/cms/src/environments/environment.ts",
+              "with": "apps/cms/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "cms:build:production"
+        },
+        "development": {
+          "browserTarget": "cms:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "cms:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/cms/src/**/*.ts", "apps/cms/src/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/cms"],
+      "options": {
+        "jestConfig": "apps/cms/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
