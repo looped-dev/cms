@@ -1,0 +1,114 @@
+type PageOrPost {
+  id: String!
+  title: String!
+  slug: String!
+  publishedAt: Time!
+  createdAt: Time!
+  updatedAt: Time!
+  excerpt: String
+  content: String!
+  featuredImage: Image
+  seo: SEO
+}
+
+type Image {
+  slug: String!
+  url: String!
+  alt: String
+  caption: String
+  description: String
+  sizes: Sizes
+}
+
+type Sizes {
+  thumbnail: Size
+  medium: Size
+  medium_large: Size
+  large: Size
+  full: Size
+}
+
+type Size {
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+type TwitterCard {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+type FacebookCard {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+type SEO {
+  title: String
+  description: String
+  image: String
+  twitter: TwitterCard
+  facebook: FacebookCard
+}
+
+type Query {
+  getPosts(page: Int, perPage: Int): [PageOrPost]
+  getPost(slug: String!): PageOrPost
+  getPage(slug: String!): PageOrPost
+  getPostByID(id: String!): PageOrPost
+  getPageByID(id: String!): PageOrPost
+}
+
+enum PostOrPageStatus {
+  PUBLISHED
+  DRAFT
+  PENDING
+  SCHEDULED
+  TRASHED
+}
+
+input UpdatePostStatusInput {
+  id: String!
+  status: PostOrPageStatus!
+}
+
+input UpdatePostInput {
+  title: String
+  content: String
+  excerpt: String
+  featuredImage: String
+  seo: SEOInput
+}
+
+input TwitterCardInput {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+input FacebookCardInput {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+input SEOInput {
+  title: String
+  description: String
+  image: String
+  twitter: TwitterCardInput
+  facebook: FacebookCardInput
+}

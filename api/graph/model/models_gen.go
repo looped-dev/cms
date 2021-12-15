@@ -3,8 +3,36 @@
 package model
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 )
+
+type FacebookCard struct {
+	Type        *string `json:"type"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	Image       *string `json:"image"`
+	URL         *string `json:"url"`
+}
+
+type FacebookCardInput struct {
+	Type        *string `json:"type"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	Image       *string `json:"image"`
+	URL         *string `json:"url"`
+}
+
+type Image struct {
+	Slug        string  `json:"slug"`
+	URL         string  `json:"url"`
+	Alt         *string `json:"alt"`
+	Caption     *string `json:"caption"`
+	Description *string `json:"description"`
+	Sizes       *Sizes  `json:"sizes"`
+}
 
 type LoginInput struct {
 	Email    string `json:"email"`
@@ -17,6 +45,19 @@ type LoginResponse struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+type PageOrPost struct {
+	ID            string    `json:"id"`
+	Title         string    `json:"title"`
+	Slug          string    `json:"slug"`
+	PublishedAt   time.Time `json:"publishedAt"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+	Excerpt       *string   `json:"excerpt"`
+	Content       string    `json:"content"`
+	FeaturedImage *Image    `json:"featuredImage"`
+	Seo           *Seo      `json:"seo"`
+}
+
 type RegisterInput struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
@@ -25,6 +66,67 @@ type RegisterInput struct {
 
 type RegisterResponse struct {
 	User *User `json:"user"`
+}
+
+type Seo struct {
+	Title       *string       `json:"title"`
+	Description *string       `json:"description"`
+	Image       *string       `json:"image"`
+	Twitter     *TwitterCard  `json:"twitter"`
+	Facebook    *FacebookCard `json:"facebook"`
+}
+
+type SEOInput struct {
+	Title       *string            `json:"title"`
+	Description *string            `json:"description"`
+	Image       *string            `json:"image"`
+	Twitter     *TwitterCardInput  `json:"twitter"`
+	Facebook    *FacebookCardInput `json:"facebook"`
+}
+
+type Size struct {
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	URL    string `json:"url"`
+}
+
+type Sizes struct {
+	Thumbnail   *Size `json:"thumbnail"`
+	Medium      *Size `json:"medium"`
+	MediumLarge *Size `json:"medium_large"`
+	Large       *Size `json:"large"`
+	Full        *Size `json:"full"`
+}
+
+type TwitterCard struct {
+	Card        *string `json:"card"`
+	Site        *string `json:"site"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	Image       *string `json:"image"`
+	Creator     *string `json:"creator"`
+}
+
+type TwitterCardInput struct {
+	Card        *string `json:"card"`
+	Site        *string `json:"site"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	Image       *string `json:"image"`
+	Creator     *string `json:"creator"`
+}
+
+type UpdatePostInput struct {
+	Title         *string   `json:"title"`
+	Content       *string   `json:"content"`
+	Excerpt       *string   `json:"excerpt"`
+	FeaturedImage *string   `json:"featuredImage"`
+	Seo           *SEOInput `json:"seo"`
+}
+
+type UpdatePostStatusInput struct {
+	ID     string           `json:"id"`
+	Status PostOrPageStatus `json:"status"`
 }
 
 type User struct {
@@ -43,4 +145,51 @@ type UserRole struct {
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+type PostOrPageStatus string
+
+const (
+	PostOrPageStatusPublished PostOrPageStatus = "PUBLISHED"
+	PostOrPageStatusDraft     PostOrPageStatus = "DRAFT"
+	PostOrPageStatusPending   PostOrPageStatus = "PENDING"
+	PostOrPageStatusScheduled PostOrPageStatus = "SCHEDULED"
+	PostOrPageStatusTrashed   PostOrPageStatus = "TRASHED"
+)
+
+var AllPostOrPageStatus = []PostOrPageStatus{
+	PostOrPageStatusPublished,
+	PostOrPageStatusDraft,
+	PostOrPageStatusPending,
+	PostOrPageStatusScheduled,
+	PostOrPageStatusTrashed,
+}
+
+func (e PostOrPageStatus) IsValid() bool {
+	switch e {
+	case PostOrPageStatusPublished, PostOrPageStatusDraft, PostOrPageStatusPending, PostOrPageStatusScheduled, PostOrPageStatusTrashed:
+		return true
+	}
+	return false
+}
+
+func (e PostOrPageStatus) String() string {
+	return string(e)
+}
+
+func (e *PostOrPageStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PostOrPageStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PostOrPageStatus", str)
+	}
+	return nil
+}
+
+func (e PostOrPageStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -36,12 +36,30 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	FacebookCard struct {
+		Description func(childComplexity int) int
+		Image       func(childComplexity int) int
+		Title       func(childComplexity int) int
+		Type        func(childComplexity int) int
+		URL         func(childComplexity int) int
+	}
+
+	Image struct {
+		Alt         func(childComplexity int) int
+		Caption     func(childComplexity int) int
+		Description func(childComplexity int) int
+		Sizes       func(childComplexity int) int
+		Slug        func(childComplexity int) int
+		URL         func(childComplexity int) int
+	}
+
 	LoginResponse struct {
 		AccessToken  func(childComplexity int) int
 		RefreshToken func(childComplexity int) int
@@ -49,16 +67,67 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Login    func(childComplexity int, input *model.LoginInput) int
-		Logout   func(childComplexity int) int
-		Register func(childComplexity int, input *model.RegisterInput) int
+		Login            func(childComplexity int, input *model.LoginInput) int
+		Logout           func(childComplexity int) int
+		Register         func(childComplexity int, input *model.RegisterInput) int
+		UpdatePost       func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePostStatus func(childComplexity int, input model.UpdatePostStatusInput) int
+	}
+
+	PageOrPost struct {
+		Content       func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		Excerpt       func(childComplexity int) int
+		FeaturedImage func(childComplexity int) int
+		ID            func(childComplexity int) int
+		PublishedAt   func(childComplexity int) int
+		Seo           func(childComplexity int) int
+		Slug          func(childComplexity int) int
+		Title         func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
 	}
 
 	Query struct {
+		GetPage     func(childComplexity int, slug string) int
+		GetPageByID func(childComplexity int, id string) int
+		GetPost     func(childComplexity int, slug string) int
+		GetPostByID func(childComplexity int, id string) int
+		GetPosts    func(childComplexity int, page *int, perPage *int) int
 	}
 
 	RegisterResponse struct {
 		User func(childComplexity int) int
+	}
+
+	Seo struct {
+		Description func(childComplexity int) int
+		Facebook    func(childComplexity int) int
+		Image       func(childComplexity int) int
+		Title       func(childComplexity int) int
+		Twitter     func(childComplexity int) int
+	}
+
+	Size struct {
+		Height func(childComplexity int) int
+		URL    func(childComplexity int) int
+		Width  func(childComplexity int) int
+	}
+
+	Sizes struct {
+		Full        func(childComplexity int) int
+		Large       func(childComplexity int) int
+		Medium      func(childComplexity int) int
+		MediumLarge func(childComplexity int) int
+		Thumbnail   func(childComplexity int) int
+	}
+
+	TwitterCard struct {
+		Card        func(childComplexity int) int
+		Creator     func(childComplexity int) int
+		Description func(childComplexity int) int
+		Image       func(childComplexity int) int
+		Site        func(childComplexity int) int
+		Title       func(childComplexity int) int
 	}
 
 	User struct {
@@ -81,9 +150,18 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
+	UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.PageOrPost, error)
+	UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.PageOrPost, error)
 	Login(ctx context.Context, input *model.LoginInput) (*model.LoginResponse, error)
 	Register(ctx context.Context, input *model.RegisterInput) (*model.RegisterResponse, error)
 	Logout(ctx context.Context) (bool, error)
+}
+type QueryResolver interface {
+	GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.PageOrPost, error)
+	GetPost(ctx context.Context, slug string) (*model.PageOrPost, error)
+	GetPage(ctx context.Context, slug string) (*model.PageOrPost, error)
+	GetPostByID(ctx context.Context, id string) (*model.PageOrPost, error)
+	GetPageByID(ctx context.Context, id string) (*model.PageOrPost, error)
 }
 
 type executableSchema struct {
@@ -100,6 +178,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "FacebookCard.description":
+		if e.complexity.FacebookCard.Description == nil {
+			break
+		}
+
+		return e.complexity.FacebookCard.Description(childComplexity), true
+
+	case "FacebookCard.image":
+		if e.complexity.FacebookCard.Image == nil {
+			break
+		}
+
+		return e.complexity.FacebookCard.Image(childComplexity), true
+
+	case "FacebookCard.title":
+		if e.complexity.FacebookCard.Title == nil {
+			break
+		}
+
+		return e.complexity.FacebookCard.Title(childComplexity), true
+
+	case "FacebookCard.type":
+		if e.complexity.FacebookCard.Type == nil {
+			break
+		}
+
+		return e.complexity.FacebookCard.Type(childComplexity), true
+
+	case "FacebookCard.url":
+		if e.complexity.FacebookCard.URL == nil {
+			break
+		}
+
+		return e.complexity.FacebookCard.URL(childComplexity), true
+
+	case "Image.alt":
+		if e.complexity.Image.Alt == nil {
+			break
+		}
+
+		return e.complexity.Image.Alt(childComplexity), true
+
+	case "Image.caption":
+		if e.complexity.Image.Caption == nil {
+			break
+		}
+
+		return e.complexity.Image.Caption(childComplexity), true
+
+	case "Image.description":
+		if e.complexity.Image.Description == nil {
+			break
+		}
+
+		return e.complexity.Image.Description(childComplexity), true
+
+	case "Image.sizes":
+		if e.complexity.Image.Sizes == nil {
+			break
+		}
+
+		return e.complexity.Image.Sizes(childComplexity), true
+
+	case "Image.slug":
+		if e.complexity.Image.Slug == nil {
+			break
+		}
+
+		return e.complexity.Image.Slug(childComplexity), true
+
+	case "Image.url":
+		if e.complexity.Image.URL == nil {
+			break
+		}
+
+		return e.complexity.Image.URL(childComplexity), true
 
 	case "LoginResponse.accessToken":
 		if e.complexity.LoginResponse.AccessToken == nil {
@@ -153,12 +308,299 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Register(childComplexity, args["input"].(*model.RegisterInput)), true
 
+	case "Mutation.updatePost":
+		if e.complexity.Mutation.UpdatePost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePost(childComplexity, args["input"].(model.UpdatePostInput)), true
+
+	case "Mutation.updatePostStatus":
+		if e.complexity.Mutation.UpdatePostStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePostStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePostStatus(childComplexity, args["input"].(model.UpdatePostStatusInput)), true
+
+	case "PageOrPost.content":
+		if e.complexity.PageOrPost.Content == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.Content(childComplexity), true
+
+	case "PageOrPost.createdAt":
+		if e.complexity.PageOrPost.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.CreatedAt(childComplexity), true
+
+	case "PageOrPost.excerpt":
+		if e.complexity.PageOrPost.Excerpt == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.Excerpt(childComplexity), true
+
+	case "PageOrPost.featuredImage":
+		if e.complexity.PageOrPost.FeaturedImage == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.FeaturedImage(childComplexity), true
+
+	case "PageOrPost.id":
+		if e.complexity.PageOrPost.ID == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.ID(childComplexity), true
+
+	case "PageOrPost.publishedAt":
+		if e.complexity.PageOrPost.PublishedAt == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.PublishedAt(childComplexity), true
+
+	case "PageOrPost.seo":
+		if e.complexity.PageOrPost.Seo == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.Seo(childComplexity), true
+
+	case "PageOrPost.slug":
+		if e.complexity.PageOrPost.Slug == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.Slug(childComplexity), true
+
+	case "PageOrPost.title":
+		if e.complexity.PageOrPost.Title == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.Title(childComplexity), true
+
+	case "PageOrPost.updatedAt":
+		if e.complexity.PageOrPost.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.PageOrPost.UpdatedAt(childComplexity), true
+
+	case "Query.getPage":
+		if e.complexity.Query.GetPage == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPage(childComplexity, args["slug"].(string)), true
+
+	case "Query.getPageByID":
+		if e.complexity.Query.GetPageByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPageByID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPageByID(childComplexity, args["id"].(string)), true
+
+	case "Query.getPost":
+		if e.complexity.Query.GetPost == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPost(childComplexity, args["slug"].(string)), true
+
+	case "Query.getPostByID":
+		if e.complexity.Query.GetPostByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPostByID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPostByID(childComplexity, args["id"].(string)), true
+
+	case "Query.getPosts":
+		if e.complexity.Query.GetPosts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPosts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPosts(childComplexity, args["page"].(*int), args["perPage"].(*int)), true
+
 	case "RegisterResponse.user":
 		if e.complexity.RegisterResponse.User == nil {
 			break
 		}
 
 		return e.complexity.RegisterResponse.User(childComplexity), true
+
+	case "SEO.description":
+		if e.complexity.Seo.Description == nil {
+			break
+		}
+
+		return e.complexity.Seo.Description(childComplexity), true
+
+	case "SEO.facebook":
+		if e.complexity.Seo.Facebook == nil {
+			break
+		}
+
+		return e.complexity.Seo.Facebook(childComplexity), true
+
+	case "SEO.image":
+		if e.complexity.Seo.Image == nil {
+			break
+		}
+
+		return e.complexity.Seo.Image(childComplexity), true
+
+	case "SEO.title":
+		if e.complexity.Seo.Title == nil {
+			break
+		}
+
+		return e.complexity.Seo.Title(childComplexity), true
+
+	case "SEO.twitter":
+		if e.complexity.Seo.Twitter == nil {
+			break
+		}
+
+		return e.complexity.Seo.Twitter(childComplexity), true
+
+	case "Size.height":
+		if e.complexity.Size.Height == nil {
+			break
+		}
+
+		return e.complexity.Size.Height(childComplexity), true
+
+	case "Size.url":
+		if e.complexity.Size.URL == nil {
+			break
+		}
+
+		return e.complexity.Size.URL(childComplexity), true
+
+	case "Size.width":
+		if e.complexity.Size.Width == nil {
+			break
+		}
+
+		return e.complexity.Size.Width(childComplexity), true
+
+	case "Sizes.full":
+		if e.complexity.Sizes.Full == nil {
+			break
+		}
+
+		return e.complexity.Sizes.Full(childComplexity), true
+
+	case "Sizes.large":
+		if e.complexity.Sizes.Large == nil {
+			break
+		}
+
+		return e.complexity.Sizes.Large(childComplexity), true
+
+	case "Sizes.medium":
+		if e.complexity.Sizes.Medium == nil {
+			break
+		}
+
+		return e.complexity.Sizes.Medium(childComplexity), true
+
+	case "Sizes.medium_large":
+		if e.complexity.Sizes.MediumLarge == nil {
+			break
+		}
+
+		return e.complexity.Sizes.MediumLarge(childComplexity), true
+
+	case "Sizes.thumbnail":
+		if e.complexity.Sizes.Thumbnail == nil {
+			break
+		}
+
+		return e.complexity.Sizes.Thumbnail(childComplexity), true
+
+	case "TwitterCard.card":
+		if e.complexity.TwitterCard.Card == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Card(childComplexity), true
+
+	case "TwitterCard.creator":
+		if e.complexity.TwitterCard.Creator == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Creator(childComplexity), true
+
+	case "TwitterCard.description":
+		if e.complexity.TwitterCard.Description == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Description(childComplexity), true
+
+	case "TwitterCard.image":
+		if e.complexity.TwitterCard.Image == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Image(childComplexity), true
+
+	case "TwitterCard.site":
+		if e.complexity.TwitterCard.Site == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Site(childComplexity), true
+
+	case "TwitterCard.title":
+		if e.complexity.TwitterCard.Title == nil {
+			break
+		}
+
+		return e.complexity.TwitterCard.Title(childComplexity), true
 
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
@@ -346,11 +788,128 @@ type LoginResponse {
 type RegisterResponse {
   user: User!
 }
-
-type Mutation {
+`, BuiltIn: false},
+	{Name: "api/schema/mutations.graphql", Input: `type Mutation {
+  updatePostStatus(input: UpdatePostStatusInput!): PageOrPost
+  updatePost(input: UpdatePostInput!): PageOrPost
   login(input: LoginInput): LoginResponse!
   register(input: RegisterInput): RegisterResponse!
   logout: Boolean!
+}
+`, BuiltIn: false},
+	{Name: "api/schema/pageOrPost.graphql", Input: `type PageOrPost {
+  id: String!
+  title: String!
+  slug: String!
+  publishedAt: Time!
+  createdAt: Time!
+  updatedAt: Time!
+  excerpt: String
+  content: String!
+  featuredImage: Image
+  seo: SEO
+}
+
+type Image {
+  slug: String!
+  url: String!
+  alt: String
+  caption: String
+  description: String
+  sizes: Sizes
+}
+
+type Sizes {
+  thumbnail: Size
+  medium: Size
+  medium_large: Size
+  large: Size
+  full: Size
+}
+
+type Size {
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+type TwitterCard {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+type FacebookCard {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+type SEO {
+  title: String
+  description: String
+  image: String
+  twitter: TwitterCard
+  facebook: FacebookCard
+}
+
+type Query {
+  getPosts(page: Int, perPage: Int): [PageOrPost]
+  getPost(slug: String!): PageOrPost
+  getPage(slug: String!): PageOrPost
+  getPostByID(id: String!): PageOrPost
+  getPageByID(id: String!): PageOrPost
+}
+
+enum PostOrPageStatus {
+  PUBLISHED
+  DRAFT
+  PENDING
+  SCHEDULED
+  TRASHED
+}
+
+input UpdatePostStatusInput {
+  id: String!
+  status: PostOrPageStatus!
+}
+
+input UpdatePostInput {
+  title: String
+  content: String
+  excerpt: String
+  featuredImage: String
+  seo: SEOInput
+}
+
+input TwitterCardInput {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+input FacebookCardInput {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+input SEOInput {
+  title: String
+  description: String
+  image: String
+  twitter: TwitterCardInput
+  facebook: FacebookCardInput
 }
 `, BuiltIn: false},
 	{Name: "api/schema/scalars.graphql", Input: `scalar Time
@@ -393,6 +952,36 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updatePostStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdatePostStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdatePostStatusInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdatePostInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdatePostInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -405,6 +994,90 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPageByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPostByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPosts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["perPage"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("perPage"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["perPage"] = arg1
 	return args, nil
 }
 
@@ -445,6 +1118,364 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _FacebookCard_type(ctx context.Context, field graphql.CollectedField, obj *model.FacebookCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FacebookCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FacebookCard_title(ctx context.Context, field graphql.CollectedField, obj *model.FacebookCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FacebookCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FacebookCard_description(ctx context.Context, field graphql.CollectedField, obj *model.FacebookCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FacebookCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FacebookCard_image(ctx context.Context, field graphql.CollectedField, obj *model.FacebookCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FacebookCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FacebookCard_url(ctx context.Context, field graphql.CollectedField, obj *model.FacebookCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FacebookCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_slug(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slug, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_url(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_alt(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_caption(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Caption, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_description(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Image_sizes(ctx context.Context, field graphql.CollectedField, obj *model.Image) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Image",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sizes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Sizes)
+	fc.Result = res
+	return ec.marshalOSizes2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSizes(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _LoginResponse_user(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
 	defer func() {
@@ -549,6 +1580,84 @@ func (ec *executionContext) _LoginResponse_refreshToken(ctx context.Context, fie
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updatePostStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updatePostStatus_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdatePostStatus(rctx, args["input"].(model.UpdatePostStatusInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updatePost_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdatePost(rctx, args["input"].(model.UpdatePostInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -670,6 +1779,542 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PageOrPost_id(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_title(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_slug(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slug, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_publishedAt(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublishedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_excerpt(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Excerpt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_content(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Content, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_featuredImage(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FeaturedImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Image)
+	fc.Result = res
+	return ec.marshalOImage2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐImage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageOrPost_seo(ctx context.Context, field graphql.CollectedField, obj *model.PageOrPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageOrPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Seo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Seo)
+	fc.Result = res
+	return ec.marshalOSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPosts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPosts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPosts(rctx, args["page"].(*int), args["perPage"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPost_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPost(rctx, args["slug"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPage_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPage(rctx, args["slug"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPostByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPostByID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPostByID(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPageByID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPageByID(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageOrPost)
+	fc.Result = res
+	return ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -774,6 +2419,623 @@ func (ec *executionContext) _RegisterResponse_user(ctx context.Context, field gr
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SEO_title(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SEO",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SEO_description(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SEO",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SEO_image(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SEO",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SEO_twitter(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SEO",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Twitter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.TwitterCard)
+	fc.Result = res
+	return ec.marshalOTwitterCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SEO_facebook(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SEO",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Facebook, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.FacebookCard)
+	fc.Result = res
+	return ec.marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Size_width(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Size",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Width, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Size_height(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Size",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Height, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Size_url(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Size",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Sizes_thumbnail(ctx context.Context, field graphql.CollectedField, obj *model.Sizes) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Sizes",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Thumbnail, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Size)
+	fc.Result = res
+	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Sizes_medium(ctx context.Context, field graphql.CollectedField, obj *model.Sizes) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Sizes",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Medium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Size)
+	fc.Result = res
+	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Sizes_medium_large(ctx context.Context, field graphql.CollectedField, obj *model.Sizes) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Sizes",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MediumLarge, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Size)
+	fc.Result = res
+	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Sizes_large(ctx context.Context, field graphql.CollectedField, obj *model.Sizes) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Sizes",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Large, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Size)
+	fc.Result = res
+	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Sizes_full(ctx context.Context, field graphql.CollectedField, obj *model.Sizes) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Sizes",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Full, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Size)
+	fc.Result = res
+	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_card(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Card, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_site(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Site, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_title(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_description(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_image(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TwitterCard_creator(ctx context.Context, field graphql.CollectedField, obj *model.TwitterCard) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TwitterCard",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Creator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -2318,6 +4580,61 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputFacebookCardInput(ctx context.Context, obj interface{}) (model.FacebookCardInput, error) {
+	var it model.FacebookCardInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
 	var it model.LoginInput
 	asMap := map[string]interface{}{}
@@ -2388,6 +4705,210 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj interface{}) (model.SEOInput, error) {
+	var it model.SEOInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "twitter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("twitter"))
+			it.Twitter, err = ec.unmarshalOTwitterCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCardInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "facebook":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("facebook"))
+			it.Facebook, err = ec.unmarshalOFacebookCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCardInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTwitterCardInput(ctx context.Context, obj interface{}) (model.TwitterCardInput, error) {
+	var it model.TwitterCardInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "card":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("card"))
+			it.Card, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "site":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("site"))
+			it.Site, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "creator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creator"))
+			it.Creator, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, obj interface{}) (model.UpdatePostInput, error) {
+	var it model.UpdatePostInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "content":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+			it.Content, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "excerpt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("excerpt"))
+			it.Excerpt, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "featuredImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featuredImage"))
+			it.FeaturedImage, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "seo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
+			it.Seo, err = ec.unmarshalOSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdatePostStatusInput(ctx context.Context, obj interface{}) (model.UpdatePostStatusInput, error) {
+	var it model.UpdatePostStatusInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2395,6 +4916,78 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var facebookCardImplementors = []string{"FacebookCard"}
+
+func (ec *executionContext) _FacebookCard(ctx context.Context, sel ast.SelectionSet, obj *model.FacebookCard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, facebookCardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FacebookCard")
+		case "type":
+			out.Values[i] = ec._FacebookCard_type(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._FacebookCard_title(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._FacebookCard_description(ctx, field, obj)
+		case "image":
+			out.Values[i] = ec._FacebookCard_image(ctx, field, obj)
+		case "url":
+			out.Values[i] = ec._FacebookCard_url(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var imageImplementors = []string{"Image"}
+
+func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, obj *model.Image) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, imageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Image")
+		case "slug":
+			out.Values[i] = ec._Image_slug(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "url":
+			out.Values[i] = ec._Image_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "alt":
+			out.Values[i] = ec._Image_alt(ctx, field, obj)
+		case "caption":
+			out.Values[i] = ec._Image_caption(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._Image_description(ctx, field, obj)
+		case "sizes":
+			out.Values[i] = ec._Image_sizes(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var loginResponseImplementors = []string{"LoginResponse"}
 
@@ -2448,6 +5041,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "updatePostStatus":
+			out.Values[i] = ec._Mutation_updatePostStatus(ctx, field)
+		case "updatePost":
+			out.Values[i] = ec._Mutation_updatePost(ctx, field)
 		case "login":
 			out.Values[i] = ec._Mutation_login(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2474,6 +5071,69 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
+var pageOrPostImplementors = []string{"PageOrPost"}
+
+func (ec *executionContext) _PageOrPost(ctx context.Context, sel ast.SelectionSet, obj *model.PageOrPost) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pageOrPostImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PageOrPost")
+		case "id":
+			out.Values[i] = ec._PageOrPost_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._PageOrPost_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "slug":
+			out.Values[i] = ec._PageOrPost_slug(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "publishedAt":
+			out.Values[i] = ec._PageOrPost_publishedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._PageOrPost_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._PageOrPost_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "excerpt":
+			out.Values[i] = ec._PageOrPost_excerpt(ctx, field, obj)
+		case "content":
+			out.Values[i] = ec._PageOrPost_content(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "featuredImage":
+			out.Values[i] = ec._PageOrPost_featuredImage(ctx, field, obj)
+		case "seo":
+			out.Values[i] = ec._PageOrPost_seo(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -2489,6 +5149,61 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "getPosts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPosts(ctx, field)
+				return res
+			})
+		case "getPost":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPost(ctx, field)
+				return res
+			})
+		case "getPage":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPage(ctx, field)
+				return res
+			})
+		case "getPostByID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPostByID(ctx, field)
+				return res
+			})
+		case "getPageByID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPageByID(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -2520,6 +5235,141 @@ func (ec *executionContext) _RegisterResponse(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sEOImplementors = []string{"SEO"}
+
+func (ec *executionContext) _SEO(ctx context.Context, sel ast.SelectionSet, obj *model.Seo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sEOImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SEO")
+		case "title":
+			out.Values[i] = ec._SEO_title(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._SEO_description(ctx, field, obj)
+		case "image":
+			out.Values[i] = ec._SEO_image(ctx, field, obj)
+		case "twitter":
+			out.Values[i] = ec._SEO_twitter(ctx, field, obj)
+		case "facebook":
+			out.Values[i] = ec._SEO_facebook(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sizeImplementors = []string{"Size"}
+
+func (ec *executionContext) _Size(ctx context.Context, sel ast.SelectionSet, obj *model.Size) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sizeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Size")
+		case "width":
+			out.Values[i] = ec._Size_width(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "height":
+			out.Values[i] = ec._Size_height(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "url":
+			out.Values[i] = ec._Size_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sizesImplementors = []string{"Sizes"}
+
+func (ec *executionContext) _Sizes(ctx context.Context, sel ast.SelectionSet, obj *model.Sizes) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sizesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Sizes")
+		case "thumbnail":
+			out.Values[i] = ec._Sizes_thumbnail(ctx, field, obj)
+		case "medium":
+			out.Values[i] = ec._Sizes_medium(ctx, field, obj)
+		case "medium_large":
+			out.Values[i] = ec._Sizes_medium_large(ctx, field, obj)
+		case "large":
+			out.Values[i] = ec._Sizes_large(ctx, field, obj)
+		case "full":
+			out.Values[i] = ec._Sizes_full(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var twitterCardImplementors = []string{"TwitterCard"}
+
+func (ec *executionContext) _TwitterCard(ctx context.Context, sel ast.SelectionSet, obj *model.TwitterCard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, twitterCardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TwitterCard")
+		case "card":
+			out.Values[i] = ec._TwitterCard_card(ctx, field, obj)
+		case "site":
+			out.Values[i] = ec._TwitterCard_site(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._TwitterCard_title(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._TwitterCard_description(ctx, field, obj)
+		case "image":
+			out.Values[i] = ec._TwitterCard_image(ctx, field, obj)
+		case "creator":
+			out.Values[i] = ec._TwitterCard_creator(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2915,6 +5765,21 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) marshalNLoginResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v model.LoginResponse) graphql.Marshaler {
 	return ec._LoginResponse(ctx, sel, &v)
 }
@@ -2927,6 +5792,16 @@ func (ec *executionContext) marshalNLoginResponse2ᚖgithubᚗcomᚋloopedᚑdev
 		return graphql.Null
 	}
 	return ec._LoginResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx context.Context, v interface{}) (model.PostOrPageStatus, error) {
+	var res model.PostOrPageStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx context.Context, sel ast.SelectionSet, v model.PostOrPageStatus) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNRegisterResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v model.RegisterResponse) graphql.Marshaler {
@@ -2971,6 +5846,16 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostInput(ctx context.Context, v interface{}) (model.UpdatePostInput, error) {
+	res, err := ec.unmarshalInputUpdatePostInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdatePostStatusInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostStatusInput(ctx context.Context, v interface{}) (model.UpdatePostStatusInput, error) {
+	res, err := ec.unmarshalInputUpdatePostStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
@@ -3318,6 +6203,43 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx context.Context, sel ast.SelectionSet, v *model.FacebookCard) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._FacebookCard(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOFacebookCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCardInput(ctx context.Context, v interface{}) (*model.FacebookCardInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputFacebookCardInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOImage2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐImage(ctx context.Context, sel ast.SelectionSet, v *model.Image) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Image(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
+}
+
 func (ec *executionContext) unmarshalOLoginInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (*model.LoginInput, error) {
 	if v == nil {
 		return nil, nil
@@ -3326,12 +6248,89 @@ func (ec *executionContext) unmarshalOLoginInput2ᚖgithubᚗcomᚋloopedᚑdev�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalOPageOrPost2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx context.Context, sel ast.SelectionSet, v []*model.PageOrPost) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPageOrPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPageOrPost(ctx context.Context, sel ast.SelectionSet, v *model.PageOrPost) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PageOrPost(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalORegisterInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterInput(ctx context.Context, v interface{}) (*model.RegisterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputRegisterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx context.Context, sel ast.SelectionSet, v *model.Seo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SEO(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx context.Context, v interface{}) (*model.SEOInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSEOInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx context.Context, sel ast.SelectionSet, v *model.Size) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Size(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSizes2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSizes(ctx context.Context, sel ast.SelectionSet, v *model.Sizes) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Sizes(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
@@ -3356,6 +6355,21 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) marshalOTwitterCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCard(ctx context.Context, sel ast.SelectionSet, v *model.TwitterCard) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TwitterCard(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTwitterCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCardInput(ctx context.Context, v interface{}) (*model.TwitterCardInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTwitterCardInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
