@@ -858,14 +858,6 @@ type SEO {
   facebook: FacebookCard
 }
 
-type Query {
-  getPosts(page: Int, perPage: Int): [PageOrPost]
-  getPost(slug: String!): PageOrPost
-  getPage(slug: String!): PageOrPost
-  getPostByID(id: String!): PageOrPost
-  getPageByID(id: String!): PageOrPost
-}
-
 enum PostOrPageStatus {
   PUBLISHED
   DRAFT
@@ -910,6 +902,14 @@ input SEOInput {
   image: String
   twitter: TwitterCardInput
   facebook: FacebookCardInput
+}
+`, BuiltIn: false},
+	{Name: "api/schema/query.graphql", Input: `type Query {
+  getPosts(page: Int, perPage: Int): [PageOrPost]
+  getPost(slug: String!): PageOrPost
+  getPage(slug: String!): PageOrPost
+  getPostByID(id: String!): PageOrPost
+  getPageByID(id: String!): PageOrPost
 }
 `, BuiltIn: false},
 	{Name: "api/schema/scalars.graphql", Input: `scalar Time
