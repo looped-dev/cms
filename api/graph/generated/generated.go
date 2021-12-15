@@ -308,9 +308,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "api/schema/authentication.graphql", Input: `scalar Time
-
-type User {
+	{Name: "api/schema/authentication.graphql", Input: `type User {
   id: ID!
   name: String!
   email: String!
@@ -354,6 +352,9 @@ type Mutation {
   register(input: RegisterInput): RegisterResponse!
   logout: Boolean!
 }
+`, BuiltIn: false},
+	{Name: "api/schema/scalars.graphql", Input: `scalar Time
+scalar Map
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
