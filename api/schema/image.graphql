@@ -1,0 +1,23 @@
+type Image {
+  id: ID!
+  slug: String!
+  url: String!
+  alt: String
+  caption: String
+  description: String
+  sizes: Sizes
+}
+
+type Sizes {
+  thumbnail: Size
+  medium: Size
+  medium_large: Size
+  large: Size
+  full: Size
+}
+
+type Size {
+  width: Int!
+  height: Int!
+  url: String!
+}

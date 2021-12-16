@@ -26,6 +26,7 @@ type FacebookCardInput struct {
 }
 
 type Image struct {
+	ID          string  `json:"id"`
 	Slug        string  `json:"slug"`
 	URL         string  `json:"url"`
 	Alt         *string `json:"alt"`
@@ -45,17 +46,45 @@ type LoginResponse struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+type Member1 struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	// Email address verification is vital for sending subscription
+	IsEmailVerified bool `json:"isEmailVerified"`
+	// Password is optional as members might not need to login
+	Password     *string               `json:"password"`
+	Subscription []*MemberSubscription `json:"subscription"`
+	CreatedAt    time.Time             `json:"createdAt"`
+	UpdatedAt    time.Time             `json:"updatedAt"`
+}
+
+type MemberSubscription struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	// For free subscriptions, this is set to 0
+	Price     *string   `json:"price"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
 type PageOrPost struct {
-	ID            string    `json:"id"`
-	Title         string    `json:"title"`
-	Slug          string    `json:"slug"`
-	PublishedAt   time.Time `json:"publishedAt"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-	Excerpt       *string   `json:"excerpt"`
-	Content       string    `json:"content"`
-	FeaturedImage *Image    `json:"featuredImage"`
-	Seo           *Seo      `json:"seo"`
+	ID            string         `json:"id"`
+	Title         string         `json:"title"`
+	Slug          string         `json:"slug"`
+	PublishedAt   time.Time      `json:"publishedAt"`
+	IsFeatured    bool           `json:"isFeatured"`
+	Excerpt       *string        `json:"excerpt"`
+	Content       string         `json:"content"`
+	FeaturedImage *Image         `json:"featuredImage"`
+	Type          PostOrPageType `json:"type"`
+	// SEO metadata details for the post or page
+	Seo *Seo `json:"seo"`
+	// Members who have access to this post - this is determined by subscription groups
+	// they are part of.
+	PostAccess []*MemberSubscription `json:"postAccess"`
+	CreatedAt  time.Time             `json:"createdAt"`
+	UpdatedAt  time.Time             `json:"updatedAt"`
 }
 
 type RegisterInput struct {
@@ -96,6 +125,16 @@ type Sizes struct {
 	MediumLarge *Size `json:"medium_large"`
 	Large       *Size `json:"large"`
 	Full        *Size `json:"full"`
+}
+
+type Tag struct {
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Slug        string    `json:"slug"`
+	Image       *Image    `json:"image"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type TwitterCard struct {
@@ -191,5 +230,46 @@ func (e *PostOrPageStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PostOrPageStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PostOrPageType string
+
+const (
+	PostOrPageTypePage PostOrPageType = "PAGE"
+	PostOrPageTypePost PostOrPageType = "POST"
+)
+
+var AllPostOrPageType = []PostOrPageType{
+	PostOrPageTypePage,
+	PostOrPageTypePost,
+}
+
+func (e PostOrPageType) IsValid() bool {
+	switch e {
+	case PostOrPageTypePage, PostOrPageTypePost:
+		return true
+	}
+	return false
+}
+
+func (e PostOrPageType) String() string {
+	return string(e)
+}
+
+func (e *PostOrPageType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PostOrPageType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PostOrPageType", str)
+	}
+	return nil
+}
+
+func (e PostOrPageType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

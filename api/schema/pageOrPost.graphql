@@ -1,37 +1,29 @@
 type PageOrPost {
-  id: String!
+  id: ID!
   title: String!
   slug: String!
   publishedAt: Time!
-  createdAt: Time!
-  updatedAt: Time!
+  isFeatured: Boolean!
   excerpt: String
   content: String!
   featuredImage: Image
+  type: PostOrPageType!
+  """
+  SEO metadata details for the post or page
+  """
   seo: SEO
+  """
+  Members who have access to this post - this is determined by subscription groups
+  they are part of.
+  """
+  postAccess: [MemberSubscription!]
+  createdAt: Time!
+  updatedAt: Time!
 }
 
-type Image {
-  slug: String!
-  url: String!
-  alt: String
-  caption: String
-  description: String
-  sizes: Sizes
-}
-
-type Sizes {
-  thumbnail: Size
-  medium: Size
-  medium_large: Size
-  large: Size
-  full: Size
-}
-
-type Size {
-  width: Int!
-  height: Int!
-  url: String!
+enum PostOrPageType {
+  PAGE
+  POST
 }
 
 type TwitterCard {

@@ -1,0 +1,27 @@
+type Member1 {
+  id: ID!
+  name: String!
+  email: String!
+  """
+  Email address verification is vital for sending subscription
+  """
+  isEmailVerified: Boolean!
+  """
+  Password is optional as members might not need to login
+  """
+  password: String
+  subscription: [MemberSubscription!]!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type MemberSubscription {
+  title: String!
+  description: String!
+  """
+  For free subscriptions, this is set to 0
+  """
+  price: String
+  createdAt: Time!
+  updatedAt: Time!
+}

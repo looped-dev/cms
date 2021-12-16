@@ -1,0 +1,9 @@
+type Tag {
+  id: ID!
+  title: String!
+  slug: String!
+  image: Image
+  description: String
+  createdAt: Time!
+  updatedAt: Time!
+}
