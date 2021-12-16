@@ -16,6 +16,7 @@ type Member1 {
 }
 
 type MemberSubscription {
+  id: ID!
   title: String!
   description: String!
   """

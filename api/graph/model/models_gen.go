@@ -60,6 +60,7 @@ type Member1 struct {
 }
 
 type MemberSubscription struct {
+	ID          string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	// For free subscriptions, this is set to 0
