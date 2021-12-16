@@ -156,11 +156,15 @@ type TwitterCardInput struct {
 }
 
 type UpdatePostInput struct {
-	Title         *string   `json:"title"`
-	Content       *string   `json:"content"`
-	Excerpt       *string   `json:"excerpt"`
-	FeaturedImage *string   `json:"featuredImage"`
-	Seo           *SEOInput `json:"seo"`
+	Title         *string `json:"title"`
+	Content       *string `json:"content"`
+	Excerpt       *string `json:"excerpt"`
+	FeaturedImage *string `json:"featuredImage"`
+	// If a post is featured, default to false.
+	IsFeatured *bool `json:"isFeatured"`
+	// List of subscription groups with access to the the post
+	PostAccess []string  `json:"postAccess"`
+	Seo        *SEOInput `json:"seo"`
 }
 
 type UpdatePostStatusInput struct {

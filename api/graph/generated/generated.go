@@ -1093,6 +1093,14 @@ input UpdatePostInput {
   content: String
   excerpt: String
   featuredImage: String
+  """
+  If a post is featured, default to false.
+  """
+  isFeatured: Boolean
+  """
+  List of subscription groups with access to the the post
+  """
+  postAccess: [ID!]
   seo: SEOInput
 }
 
@@ -5941,6 +5949,22 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featuredImage"))
 			it.FeaturedImage, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isFeatured":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isFeatured"))
+			it.IsFeatured, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "postAccess":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postAccess"))
+			it.PostAccess, err = ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

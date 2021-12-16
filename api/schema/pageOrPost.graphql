@@ -69,6 +69,14 @@ input UpdatePostInput {
   content: String
   excerpt: String
   featuredImage: String
+  """
+  If a post is featured, default to false.
+  """
+  isFeatured: Boolean
+  """
+  List of subscription groups with access to the the post
+  """
+  postAccess: [ID!]
   seo: SEOInput
 }
 
