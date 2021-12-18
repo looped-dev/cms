@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/99designs/gqlgen v0.14.0
 	github.com/vektah/gqlparser/v2 v2.2.0
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 )
 
 require (
