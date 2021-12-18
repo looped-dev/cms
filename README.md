@@ -4,8 +4,9 @@
 
 Looped Headless CMS is a modern, lightweight, and opinionated headless CMS for
 managing blogs, publications, and journals. This CMS is inspired by the Ghost
-CMS but focuses on being a headless CMS only to enable you to build custom
-experiences for your content publication. At the same time, we handle the
+CMS but focuses on being a headless CMS only to enable you to build custom and
+rich user
+experiences for your readers and users. At the same time, we handle the
 nitty-gritty stuff like Content Management, Member Subscriptions, Payments, and
 so on.
 
