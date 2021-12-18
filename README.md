@@ -16,6 +16,8 @@ As a headless content management system (CMS), you bring your frontend, which
 you can build using Frameworks like Angular, React, Vue, Vanilla JS, or static
 site generators like Hugo, Jekyll, etc.
 
+## Features
+
 This is still a work in progress; for the initial version, I am targetting the
 following features:
 
@@ -24,3 +26,8 @@ following features:
 - GraphQL API for connecting your frontend to the headless CMS
 - Membership and Membership Subscription feature - allowing you to control access to content by members.
 - Staff Management - Be able to give access to your staff to access the Admin UI and manage content with granular access control
+
+## Questions, Suggestions and Ideas
+
+If you have any questions or suggestions, feel free to start a discussion
+[here](https://github.com/looped-dev/cms/discussions).
