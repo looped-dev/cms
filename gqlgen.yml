@@ -54,3 +54,5 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Email:
+    model: github.com/looped-dev/cms/api/graph/model.Email

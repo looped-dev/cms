@@ -1,7 +1,7 @@
 type User {
   id: ID!
   name: String!
-  email: String!
+  email: Email!
   emailVerified: Boolean!
   roles: [UserRole!]!
   password: String!
@@ -17,13 +17,13 @@ type UserRole {
 }
 
 input LoginInput {
-  email: String!
+  email: Email!
   password: String!
 }
 
 input RegisterInput {
   name: String!
-  email: String!
+  email: Email!
   password: String!
 }
 

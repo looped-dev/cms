@@ -962,7 +962,7 @@ var sources = []*ast.Source{
 	{Name: "api/schema/authentication.graphql", Input: `type User {
   id: ID!
   name: String!
-  email: String!
+  email: Email!
   emailVerified: Boolean!
   roles: [UserRole!]!
   password: String!
@@ -978,13 +978,13 @@ type UserRole {
 }
 
 input LoginInput {
-  email: String!
+  email: Email!
   password: String!
 }
 
 input RegisterInput {
   name: String!
-  email: String!
+  email: Email!
   password: String!
 }
 
@@ -1147,11 +1147,12 @@ input SEOInput {
 `, BuiltIn: false},
 	{Name: "api/schema/scalars.graphql", Input: `scalar Time
 scalar Map
+scalar Email
 `, BuiltIn: false},
 	{Name: "api/schema/subscriptions.graphql", Input: `type Member1 {
   id: ID!
   name: String!
-  email: String!
+  email: Email!
   """
   Email address verification is vital for sending subscription
   """
@@ -1991,7 +1992,7 @@ func (ec *executionContext) _Member1_email(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNEmail2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Member1_isEmailVerified(ctx context.Context, field graphql.CollectedField, obj *model.Member1) (ret graphql.Marshaler) {
@@ -4272,7 +4273,7 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNEmail2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_emailVerified(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -5780,7 +5781,7 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5819,7 +5820,7 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7066,6 +7067,21 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
 	res := graphql.MarshalBoolean(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNEmail2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := model.UnmarshalEmail(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNEmail2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := model.MarshalEmail(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

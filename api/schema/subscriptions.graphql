@@ -1,7 +1,7 @@
 type Member1 {
   id: ID!
   name: String!
-  email: String!
+  email: Email!
   """
   Email address verification is vital for sending subscription
   """
