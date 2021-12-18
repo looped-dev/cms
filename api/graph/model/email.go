@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"io"
+	"log"
 	"regexp"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -32,7 +33,10 @@ func MarshalEmail(email string) graphql.Marshaler {
 	return graphql.WriterFunc(func(writer io.Writer) {
 		if email != "" {
 			if VerifyEmailAddress(email) {
-				writer.Write([]byte(email))
+				_, err := writer.Write([]byte(email))
+				if err != nil {
+					log.Printf("%v", err)
+				}
 			}
 		}
 	})
