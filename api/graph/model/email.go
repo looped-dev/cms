@@ -10,7 +10,8 @@ import (
 
 // VerifyEmailAddress verifies that the input is a valid email address
 func VerifyEmailAddress(email string) bool {
-	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	const emailRegexString = `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
+	emailRegex := regexp.MustCompile(emailRegexString)
 	return emailRegex.MatchString(email)
 }
 
