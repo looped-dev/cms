@@ -54,7 +54,7 @@ func TestUnMarshalEmail(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    bool
+		want    string
 		wantErr bool
 	}{
 		{
@@ -62,7 +62,7 @@ func TestUnMarshalEmail(t *testing.T) {
 			args: args{
 				value: "johndoe@example.com",
 			},
-			want:    true,
+			want:    "johndoe@example.com",
 			wantErr: false,
 		},
 		{
@@ -70,7 +70,7 @@ func TestUnMarshalEmail(t *testing.T) {
 			args: args{
 				value: "janedoeexample.com",
 			},
-			want:    false,
+			want:    "",
 			wantErr: true,
 		},
 		{
@@ -78,7 +78,7 @@ func TestUnMarshalEmail(t *testing.T) {
 			args: args{
 				value: "janedoe@example.com",
 			},
-			want:    true,
+			want:    "janedoe@example.com",
 			wantErr: false,
 		},
 	}
