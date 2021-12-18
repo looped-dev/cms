@@ -1,6 +1,6 @@
 # LoopedCms
 
-[![API](https://github.com/looped-dev/cms/actions/workflows/api.yml/badge.svg)](https://github.com/looped-dev/cms/actions/workflows/api.yml).
+[![API](https://github.com/looped-dev/cms/actions/workflows/api.yml/badge.svg)](https://github.com/looped-dev/cms/actions/workflows/api.yml)
 
 This project was generated using [Nx](https://nx.dev).
 
