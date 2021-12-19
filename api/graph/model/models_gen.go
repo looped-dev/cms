@@ -41,12 +41,12 @@ type LoginInput struct {
 }
 
 type LoginResponse struct {
-	User         *User  `json:"user" bson:"user,omitempty"`
+	Staff        *Staff `json:"staff" bson:"staff,omitempty"`
 	AccessToken  string `json:"accessToken" bson:"accessToken,omitempty"`
 	RefreshToken string `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
-type Member1 struct {
+type Member struct {
 	ID    string `json:"id" bson:"_id,omitempty"`
 	Name  string `json:"name" bson:"name,omitempty"`
 	Email string `json:"email" bson:"email,omitempty"`
@@ -69,23 +69,36 @@ type MemberSubscription struct {
 	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
-type PageOrPost struct {
-	ID            string         `json:"id" bson:"_id,omitempty"`
-	Title         string         `json:"title" bson:"title,omitempty"`
-	Slug          string         `json:"slug" bson:"slug,omitempty"`
-	PublishedAt   time.Time      `json:"publishedAt" bson:"publishedAt,omitempty"`
-	IsFeatured    bool           `json:"isFeatured" bson:"isFeatured,omitempty"`
-	Excerpt       *string        `json:"excerpt" bson:"excerpt,omitempty"`
-	Content       string         `json:"content" bson:"content,omitempty"`
-	FeaturedImage *Image         `json:"featuredImage" bson:"featuredImage,omitempty"`
-	Type          PostOrPageType `json:"type" bson:"type,omitempty"`
+type Page struct {
+	ID            string  `json:"id" bson:"_id,omitempty"`
+	Title         string  `json:"title" bson:"title,omitempty"`
+	Slug          string  `json:"slug" bson:"slug,omitempty"`
+	Excerpt       *string `json:"excerpt" bson:"excerpt,omitempty"`
+	Content       string  `json:"content" bson:"content,omitempty"`
+	FeaturedImage *Image  `json:"featuredImage" bson:"featuredImage,omitempty"`
+	// SEO metadata details for the page
+	Seo         *Seo      `json:"seo" bson:"seo,omitempty"`
+	PublishedAt time.Time `json:"publishedAt" bson:"publishedAt,omitempty"`
+	CreatedAt   time.Time `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
+}
+
+type Post struct {
+	ID            string  `json:"id" bson:"_id,omitempty"`
+	Title         string  `json:"title" bson:"title,omitempty"`
+	Slug          string  `json:"slug" bson:"slug,omitempty"`
+	IsFeatured    bool    `json:"isFeatured" bson:"isFeatured,omitempty"`
+	Excerpt       *string `json:"excerpt" bson:"excerpt,omitempty"`
+	Content       string  `json:"content" bson:"content,omitempty"`
+	FeaturedImage *Image  `json:"featuredImage" bson:"featuredImage,omitempty"`
 	// SEO metadata details for the post or page
 	Seo *Seo `json:"seo" bson:"seo,omitempty"`
 	// Members who have access to this post - this is determined by subscription groups
 	// they are part of.
-	PostAccess []*MemberSubscription `json:"postAccess" bson:"postAccess,omitempty"`
-	CreatedAt  time.Time             `json:"createdAt" bson:"createdAt,omitempty"`
-	UpdatedAt  time.Time             `json:"updatedAt" bson:"updatedAt,omitempty"`
+	PostAccess  []*MemberSubscription `json:"postAccess" bson:"postAccess,omitempty"`
+	PublishedAt time.Time             `json:"publishedAt" bson:"publishedAt,omitempty"`
+	CreatedAt   time.Time             `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt   time.Time             `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
 type RegisterInput struct {
@@ -95,7 +108,7 @@ type RegisterInput struct {
 }
 
 type RegisterResponse struct {
-	User *User `json:"user" bson:"user,omitempty"`
+	Staff *Staff `json:"staff" bson:"staff,omitempty"`
 }
 
 type Seo struct {
@@ -128,6 +141,24 @@ type Sizes struct {
 	Full        *Size `json:"full" bson:"full,omitempty"`
 }
 
+type Staff struct {
+	ID            string       `json:"id" bson:"_id,omitempty"`
+	Name          string       `json:"name" bson:"name,omitempty"`
+	Email         string       `json:"email" bson:"email,omitempty"`
+	EmailVerified bool         `json:"emailVerified" bson:"emailVerified,omitempty"`
+	Roles         []*StaffRole `json:"roles" bson:"roles,omitempty"`
+	Password      string       `json:"password" bson:"password,omitempty"`
+	CreatedAt     time.Time    `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt     time.Time    `json:"updatedAt" bson:"updatedAt,omitempty"`
+}
+
+type StaffRole struct {
+	Name        string    `json:"name" bson:"name,omitempty"`
+	Description string    `json:"description" bson:"description,omitempty"`
+	CreatedAt   time.Time `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
+}
+
 type Tag struct {
 	ID          string    `json:"id" bson:"_id,omitempty"`
 	Title       string    `json:"title" bson:"title,omitempty"`
@@ -156,6 +187,23 @@ type TwitterCardInput struct {
 	Creator     *string `json:"creator" bson:"creator,omitempty"`
 }
 
+type UpdatePageInput struct {
+	Title         *string `json:"title" bson:"title,omitempty"`
+	Content       *string `json:"content" bson:"content,omitempty"`
+	Excerpt       *string `json:"excerpt" bson:"excerpt,omitempty"`
+	FeaturedImage *string `json:"featuredImage" bson:"featuredImage,omitempty"`
+	// If a post is featured, default to false.
+	IsFeatured *bool `json:"isFeatured" bson:"isFeatured,omitempty"`
+	// List of subscription groups with access to the the post
+	PostAccess []string  `json:"postAccess" bson:"postAccess,omitempty"`
+	Seo        *SEOInput `json:"seo" bson:"seo,omitempty"`
+}
+
+type UpdatePageStatusInput struct {
+	ID     string           `json:"id" bson:"_id,omitempty"`
+	Status PostOrPageStatus `json:"status" bson:"status,omitempty"`
+}
+
 type UpdatePostInput struct {
 	Title         *string `json:"title" bson:"title,omitempty"`
 	Content       *string `json:"content" bson:"content,omitempty"`
@@ -171,24 +219,6 @@ type UpdatePostInput struct {
 type UpdatePostStatusInput struct {
 	ID     string           `json:"id" bson:"_id,omitempty"`
 	Status PostOrPageStatus `json:"status" bson:"status,omitempty"`
-}
-
-type User struct {
-	ID            string      `json:"id" bson:"_id,omitempty"`
-	Name          string      `json:"name" bson:"name,omitempty"`
-	Email         string      `json:"email" bson:"email,omitempty"`
-	EmailVerified bool        `json:"emailVerified" bson:"emailVerified,omitempty"`
-	Roles         []*UserRole `json:"roles" bson:"roles,omitempty"`
-	Password      string      `json:"password" bson:"password,omitempty"`
-	CreatedAt     time.Time   `json:"createdAt" bson:"createdAt,omitempty"`
-	UpdatedAt     time.Time   `json:"updatedAt" bson:"updatedAt,omitempty"`
-}
-
-type UserRole struct {
-	Name        string    `json:"name" bson:"name,omitempty"`
-	Description string    `json:"description" bson:"description,omitempty"`
-	CreatedAt   time.Time `json:"createdAt" bson:"createdAt,omitempty"`
-	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
 type PostOrPageStatus string
@@ -235,46 +265,5 @@ func (e *PostOrPageStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PostOrPageStatus) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type PostOrPageType string
-
-const (
-	PostOrPageTypePage PostOrPageType = "PAGE"
-	PostOrPageTypePost PostOrPageType = "POST"
-)
-
-var AllPostOrPageType = []PostOrPageType{
-	PostOrPageTypePage,
-	PostOrPageTypePost,
-}
-
-func (e PostOrPageType) IsValid() bool {
-	switch e {
-	case PostOrPageTypePage, PostOrPageTypePost:
-		return true
-	}
-	return false
-}
-
-func (e PostOrPageType) String() string {
-	return string(e)
-}
-
-func (e *PostOrPageType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PostOrPageType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PostOrPageType", str)
-	}
-	return nil
-}
-
-func (e PostOrPageType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

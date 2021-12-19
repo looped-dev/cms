@@ -1,13 +1,11 @@
-type PageOrPost {
+type Post {
   id: ID!
   title: String!
   slug: String!
-  publishedAt: Time!
   isFeatured: Boolean!
   excerpt: String
   content: String!
   featuredImage: Image
-  type: PostOrPageType!
   """
   SEO metadata details for the post or page
   """
@@ -17,13 +15,9 @@ type PageOrPost {
   they are part of.
   """
   postAccess: [MemberSubscription!]
+  publishedAt: Time!
   createdAt: Time!
   updatedAt: Time!
-}
-
-enum PostOrPageType {
-  PAGE
-  POST
 }
 
 type TwitterCard {

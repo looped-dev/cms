@@ -11,23 +11,23 @@ import (
 	"github.com/looped-dev/cms/api/graph/model"
 )
 
-func (r *queryResolver) GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.PageOrPost, error) {
+func (r *queryResolver) GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.Post, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) GetPost(ctx context.Context, slug string) (*model.PageOrPost, error) {
+func (r *queryResolver) GetPost(ctx context.Context, slug string) (*model.Post, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) GetPage(ctx context.Context, slug string) (*model.PageOrPost, error) {
+func (r *queryResolver) GetPage(ctx context.Context, slug string) (*model.Page, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) GetPostByID(ctx context.Context, id string) (*model.PageOrPost, error) {
+func (r *queryResolver) GetPostByID(ctx context.Context, id string) (*model.Post, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*model.PageOrPost, error) {
+func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*model.Page, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

@@ -1,4 +1,4 @@
-type Member1 {
+type Member {
   id: ID!
   name: String!
   email: Email!

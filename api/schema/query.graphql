@@ -1,7 +1,7 @@
 type Query {
-  getPosts(page: Int, perPage: Int): [PageOrPost]
-  getPost(slug: String!): PageOrPost
-  getPage(slug: String!): PageOrPost
-  getPostByID(id: String!): PageOrPost
-  getPageByID(id: String!): PageOrPost
+  getPosts(page: Int, perPage: Int): [Post!]
+  getPost(slug: String!): Post
+  getPage(slug: String!): Page
+  getPostByID(id: String!): Post
+  getPageByID(id: String!): Page
 }

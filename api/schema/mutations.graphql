@@ -1,7 +1,0 @@
-type Mutation {
-  updatePostStatus(input: UpdatePostStatusInput!): PageOrPost
-  updatePost(input: UpdatePostInput!): PageOrPost
-  login(input: LoginInput): LoginResponse!
-  register(input: RegisterInput): RegisterResponse!
-  logout: Boolean!
-}

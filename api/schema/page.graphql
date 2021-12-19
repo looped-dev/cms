@@ -1,0 +1,36 @@
+type Page {
+  id: ID!
+  title: String!
+  slug: String!
+  excerpt: String
+  content: String!
+  featuredImage: Image
+  """
+  SEO metadata details for the page
+  """
+  seo: SEO
+  publishedAt: Time!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input UpdatePageStatusInput {
+  id: String!
+  status: PostOrPageStatus!
+}
+
+input UpdatePageInput {
+  title: String
+  content: String
+  excerpt: String
+  featuredImage: String
+  """
+  If a post is featured, default to false.
+  """
+  isFeatured: Boolean
+  """
+  List of subscription groups with access to the the post
+  """
+  postAccess: [ID!]
+  seo: SEOInput
+}

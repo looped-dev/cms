@@ -11,11 +11,19 @@ import (
 	"github.com/looped-dev/cms/api/graph/model"
 )
 
-func (r *mutationResolver) UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.PageOrPost, error) {
+func (r *mutationResolver) UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.PageOrPost, error) {
+func (r *mutationResolver) UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdatePageStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Page, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdatePage(ctx context.Context, input model.UpdatePostInput) (*model.Page, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

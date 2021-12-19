@@ -1,15 +1,15 @@
-type User {
+type Staff {
   id: ID!
   name: String!
   email: Email!
   emailVerified: Boolean!
-  roles: [UserRole!]!
+  roles: [StaffRole!]!
   password: String!
   createdAt: Time!
   updatedAt: Time!
 }
 
-type UserRole {
+type StaffRole {
   name: String!
   description: String!
   createdAt: Time!
@@ -28,11 +28,11 @@ input RegisterInput {
 }
 
 type LoginResponse {
-  user: User!
+  staff: Staff!
   accessToken: String!
   refreshToken: String!
 }
 
 type RegisterResponse {
-  user: User!
+  staff: Staff!
 }
