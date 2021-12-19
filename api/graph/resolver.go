@@ -1,7 +1,7 @@
 package graph
 
 //go:generate go run github.com/99designs/gqlgen
-
+//go:generate go run github.com/looped-dev/cms/api/graph/plugins/modelgen
 
 // This file will not be regenerated automatically.
 //

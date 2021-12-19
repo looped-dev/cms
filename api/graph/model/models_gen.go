@@ -10,185 +10,185 @@ import (
 )
 
 type FacebookCard struct {
-	Type        *string `json:"type"`
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Image       *string `json:"image"`
-	URL         *string `json:"url"`
+	Type        *string `json:"type" bson:"type"`
+	Title       *string `json:"title" bson:"title"`
+	Description *string `json:"description" bson:"description"`
+	Image       *string `json:"image" bson:"image"`
+	URL         *string `json:"url" bson:"url"`
 }
 
 type FacebookCardInput struct {
-	Type        *string `json:"type"`
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Image       *string `json:"image"`
-	URL         *string `json:"url"`
+	Type        *string `json:"type" bson:"type"`
+	Title       *string `json:"title" bson:"title"`
+	Description *string `json:"description" bson:"description"`
+	Image       *string `json:"image" bson:"image"`
+	URL         *string `json:"url" bson:"url"`
 }
 
 type Image struct {
-	ID          string  `json:"id"`
-	Slug        string  `json:"slug"`
-	URL         string  `json:"url"`
-	Alt         *string `json:"alt"`
-	Caption     *string `json:"caption"`
-	Description *string `json:"description"`
-	Sizes       *Sizes  `json:"sizes"`
+	ID          string  `json:"id" bson:"_id"`
+	Slug        string  `json:"slug" bson:"slug"`
+	URL         string  `json:"url" bson:"url"`
+	Alt         *string `json:"alt" bson:"alt"`
+	Caption     *string `json:"caption" bson:"caption"`
+	Description *string `json:"description" bson:"description"`
+	Sizes       *Sizes  `json:"sizes" bson:"sizes"`
 }
 
 type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
 }
 
 type LoginResponse struct {
-	User         *User  `json:"user"`
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	User         *User  `json:"user" bson:"user"`
+	AccessToken  string `json:"accessToken" bson:"accessToken"`
+	RefreshToken string `json:"refreshToken" bson:"refreshToken"`
 }
 
 type Member1 struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    string `json:"id" bson:"_id"`
+	Name  string `json:"name" bson:"name"`
+	Email string `json:"email" bson:"email"`
 	// Email address verification is vital for sending subscription
-	IsEmailVerified bool `json:"isEmailVerified"`
+	IsEmailVerified bool `json:"isEmailVerified" bson:"isEmailVerified"`
 	// Password is optional as members might not need to login
-	Password     *string               `json:"password"`
-	Subscription []*MemberSubscription `json:"subscription"`
-	CreatedAt    time.Time             `json:"createdAt"`
-	UpdatedAt    time.Time             `json:"updatedAt"`
+	Password     *string               `json:"password" bson:"password"`
+	Subscription []*MemberSubscription `json:"subscription" bson:"subscription"`
+	CreatedAt    time.Time             `json:"createdAt" bson:"createdAt"`
+	UpdatedAt    time.Time             `json:"updatedAt" bson:"updatedAt"`
 }
 
 type MemberSubscription struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID          string `json:"id" bson:"_id"`
+	Title       string `json:"title" bson:"title"`
+	Description string `json:"description" bson:"description"`
 	// For free subscriptions, this is set to 0
-	Price     *string   `json:"price"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Price     *string   `json:"price" bson:"price"`
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
 }
 
 type PageOrPost struct {
-	ID            string         `json:"id"`
-	Title         string         `json:"title"`
-	Slug          string         `json:"slug"`
-	PublishedAt   time.Time      `json:"publishedAt"`
-	IsFeatured    bool           `json:"isFeatured"`
-	Excerpt       *string        `json:"excerpt"`
-	Content       string         `json:"content"`
-	FeaturedImage *Image         `json:"featuredImage"`
-	Type          PostOrPageType `json:"type"`
+	ID            string         `json:"id" bson:"_id"`
+	Title         string         `json:"title" bson:"title"`
+	Slug          string         `json:"slug" bson:"slug"`
+	PublishedAt   time.Time      `json:"publishedAt" bson:"publishedAt"`
+	IsFeatured    bool           `json:"isFeatured" bson:"isFeatured"`
+	Excerpt       *string        `json:"excerpt" bson:"excerpt"`
+	Content       string         `json:"content" bson:"content"`
+	FeaturedImage *Image         `json:"featuredImage" bson:"featuredImage"`
+	Type          PostOrPageType `json:"type" bson:"type"`
 	// SEO metadata details for the post or page
-	Seo *Seo `json:"seo"`
+	Seo *Seo `json:"seo" bson:"seo"`
 	// Members who have access to this post - this is determined by subscription groups
 	// they are part of.
-	PostAccess []*MemberSubscription `json:"postAccess"`
-	CreatedAt  time.Time             `json:"createdAt"`
-	UpdatedAt  time.Time             `json:"updatedAt"`
+	PostAccess []*MemberSubscription `json:"postAccess" bson:"postAccess"`
+	CreatedAt  time.Time             `json:"createdAt" bson:"createdAt"`
+	UpdatedAt  time.Time             `json:"updatedAt" bson:"updatedAt"`
 }
 
 type RegisterInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" bson:"name"`
+	Email    string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
 }
 
 type RegisterResponse struct {
-	User *User `json:"user"`
+	User *User `json:"user" bson:"user"`
 }
 
 type Seo struct {
-	Title       *string       `json:"title"`
-	Description *string       `json:"description"`
-	Image       *string       `json:"image"`
-	Twitter     *TwitterCard  `json:"twitter"`
-	Facebook    *FacebookCard `json:"facebook"`
+	Title       *string       `json:"title" bson:"title"`
+	Description *string       `json:"description" bson:"description"`
+	Image       *string       `json:"image" bson:"image"`
+	Twitter     *TwitterCard  `json:"twitter" bson:"twitter"`
+	Facebook    *FacebookCard `json:"facebook" bson:"facebook"`
 }
 
 type SEOInput struct {
-	Title       *string            `json:"title"`
-	Description *string            `json:"description"`
-	Image       *string            `json:"image"`
-	Twitter     *TwitterCardInput  `json:"twitter"`
-	Facebook    *FacebookCardInput `json:"facebook"`
+	Title       *string            `json:"title" bson:"title"`
+	Description *string            `json:"description" bson:"description"`
+	Image       *string            `json:"image" bson:"image"`
+	Twitter     *TwitterCardInput  `json:"twitter" bson:"twitter"`
+	Facebook    *FacebookCardInput `json:"facebook" bson:"facebook"`
 }
 
 type Size struct {
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	URL    string `json:"url"`
+	Width  int    `json:"width" bson:"width"`
+	Height int    `json:"height" bson:"height"`
+	URL    string `json:"url" bson:"url"`
 }
 
 type Sizes struct {
-	Thumbnail   *Size `json:"thumbnail"`
-	Medium      *Size `json:"medium"`
-	MediumLarge *Size `json:"medium_large"`
-	Large       *Size `json:"large"`
-	Full        *Size `json:"full"`
+	Thumbnail   *Size `json:"thumbnail" bson:"thumbnail"`
+	Medium      *Size `json:"medium" bson:"medium"`
+	MediumLarge *Size `json:"medium_large" bson:"medium_large"`
+	Large       *Size `json:"large" bson:"large"`
+	Full        *Size `json:"full" bson:"full"`
 }
 
 type Tag struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Slug        string    `json:"slug"`
-	Image       *Image    `json:"image"`
-	Description *string   `json:"description"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID          string    `json:"id" bson:"_id"`
+	Title       string    `json:"title" bson:"title"`
+	Slug        string    `json:"slug" bson:"slug"`
+	Image       *Image    `json:"image" bson:"image"`
+	Description *string   `json:"description" bson:"description"`
+	CreatedAt   time.Time `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt"`
 }
 
 type TwitterCard struct {
-	Card        *string `json:"card"`
-	Site        *string `json:"site"`
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Image       *string `json:"image"`
-	Creator     *string `json:"creator"`
+	Card        *string `json:"card" bson:"card"`
+	Site        *string `json:"site" bson:"site"`
+	Title       *string `json:"title" bson:"title"`
+	Description *string `json:"description" bson:"description"`
+	Image       *string `json:"image" bson:"image"`
+	Creator     *string `json:"creator" bson:"creator"`
 }
 
 type TwitterCardInput struct {
-	Card        *string `json:"card"`
-	Site        *string `json:"site"`
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Image       *string `json:"image"`
-	Creator     *string `json:"creator"`
+	Card        *string `json:"card" bson:"card"`
+	Site        *string `json:"site" bson:"site"`
+	Title       *string `json:"title" bson:"title"`
+	Description *string `json:"description" bson:"description"`
+	Image       *string `json:"image" bson:"image"`
+	Creator     *string `json:"creator" bson:"creator"`
 }
 
 type UpdatePostInput struct {
-	Title         *string `json:"title"`
-	Content       *string `json:"content"`
-	Excerpt       *string `json:"excerpt"`
-	FeaturedImage *string `json:"featuredImage"`
+	Title         *string `json:"title" bson:"title"`
+	Content       *string `json:"content" bson:"content"`
+	Excerpt       *string `json:"excerpt" bson:"excerpt"`
+	FeaturedImage *string `json:"featuredImage" bson:"featuredImage"`
 	// If a post is featured, default to false.
-	IsFeatured *bool `json:"isFeatured"`
+	IsFeatured *bool `json:"isFeatured" bson:"isFeatured"`
 	// List of subscription groups with access to the the post
-	PostAccess []string  `json:"postAccess"`
-	Seo        *SEOInput `json:"seo"`
+	PostAccess []string  `json:"postAccess" bson:"postAccess"`
+	Seo        *SEOInput `json:"seo" bson:"seo"`
 }
 
 type UpdatePostStatusInput struct {
-	ID     string           `json:"id"`
-	Status PostOrPageStatus `json:"status"`
+	ID     string           `json:"id" bson:"_id"`
+	Status PostOrPageStatus `json:"status" bson:"status"`
 }
 
 type User struct {
-	ID            string      `json:"id"`
-	Name          string      `json:"name"`
-	Email         string      `json:"email"`
-	EmailVerified bool        `json:"emailVerified"`
-	Roles         []*UserRole `json:"roles"`
-	Password      string      `json:"password"`
-	CreatedAt     time.Time   `json:"createdAt"`
-	UpdatedAt     time.Time   `json:"updatedAt"`
+	ID            string      `json:"id" bson:"_id"`
+	Name          string      `json:"name" bson:"name"`
+	Email         string      `json:"email" bson:"email"`
+	EmailVerified bool        `json:"emailVerified" bson:"emailVerified"`
+	Roles         []*UserRole `json:"roles" bson:"roles"`
+	Password      string      `json:"password" bson:"password"`
+	CreatedAt     time.Time   `json:"createdAt" bson:"createdAt"`
+	UpdatedAt     time.Time   `json:"updatedAt" bson:"updatedAt"`
 }
 
 type UserRole struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	Name        string    `json:"name" bson:"name"`
+	Description string    `json:"description" bson:"description"`
+	CreatedAt   time.Time `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt"`
 }
 
 type PostOrPageStatus string
