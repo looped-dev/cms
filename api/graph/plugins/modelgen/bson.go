@@ -16,7 +16,7 @@ func mutateHook(b *modelgen.ModelBuild) *modelgen.ModelBuild {
 			if name == "id" {
 				name = "_id"
 			}
-			field.Tag += ` bson:"` + name + `"`
+			field.Tag += ` bson:"` + name + `,omitempty"`
 		}
 	}
 	return b
