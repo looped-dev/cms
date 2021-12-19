@@ -1,10 +1,8 @@
 package model
 
 import (
-	"reflect"
+	"bytes"
 	"testing"
-
-	"github.com/99designs/gqlgen/graphql"
 )
 
 func TestVerifyEmailAddress(t *testing.T) {
@@ -96,7 +94,6 @@ func TestUnMarshalEmail(t *testing.T) {
 	}
 }
 
-// todo: add tests for UnMarshalPassword
 func TestMarshalEmail(t *testing.T) {
 	type args struct {
 		email string
@@ -104,14 +101,39 @@ func TestMarshalEmail(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want graphql.Marshaler
+		want string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Valid email address: johndoe@example.com",
+			args: args{
+				email: "johndoe@example.com",
+			},
+			want: "johndoe@example.com",
+		},
+		{
+			name: "Valid email address: Empty string",
+			args: args{
+				email: "",
+			},
+			want: "",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := MarshalEmail(tt.args.email); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MarshalEmail() = %v, want %v", got, tt.want)
+			got := MarshalEmail(tt.args.email)
+			buffer := &bytes.Buffer{}
+			got.MarshalGQL(buffer)
+
+			if tt.want != "" {
+				if buffer.String() != tt.want {
+					t.Errorf("MarshalEmail() = %v, want %v", buffer.String(), tt.want)
+					return
+				}
+			} else {
+				if buffer.String() != "" {
+					t.Errorf("MarshalEmail() = %v, want %v", buffer.String(), tt.want)
+					return
+				}
 			}
 		})
 	}
