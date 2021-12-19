@@ -1086,6 +1086,35 @@ type Size {
   url: String!
 }
 `, BuiltIn: false},
+	{Name: "api/schema/members.graphql", Input: `type Member {
+  id: ID!
+  name: String!
+  email: Email!
+  """
+  Email address verification is vital for sending subscription
+  """
+  isEmailVerified: Boolean!
+  """
+  Password is optional as members might not need to login
+  """
+  password: String
+  subscription: [MemberSubscription!]!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type MemberSubscription {
+  id: ID!
+  title: String!
+  description: String!
+  """
+  For free subscriptions, this is set to 0
+  """
+  price: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+`, BuiltIn: false},
 	{Name: "api/schema/mutation.graphql", Input: `type Mutation {
   updatePostStatus(input: UpdatePostStatusInput!): Post
   updatePost(input: UpdatePostInput!): Post
@@ -1283,35 +1312,6 @@ type LoginResponse {
 
 type RegisterResponse {
   staff: Staff!
-}
-`, BuiltIn: false},
-	{Name: "api/schema/subscriptions.graphql", Input: `type Member {
-  id: ID!
-  name: String!
-  email: Email!
-  """
-  Email address verification is vital for sending subscription
-  """
-  isEmailVerified: Boolean!
-  """
-  Password is optional as members might not need to login
-  """
-  password: String
-  subscription: [MemberSubscription!]!
-  createdAt: Time!
-  updatedAt: Time!
-}
-
-type MemberSubscription {
-  id: ID!
-  title: String!
-  description: String!
-  """
-  For free subscriptions, this is set to 0
-  """
-  price: String
-  createdAt: Time!
-  updatedAt: Time!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/tags.graphql", Input: `type Tag {
