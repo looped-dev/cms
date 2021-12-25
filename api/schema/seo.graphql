@@ -1,43 +1,9 @@
-type TwitterCard {
-  card: String
-  site: String
-  title: String
-  description: String
-  image: String
-  creator: String
-}
-
-type FacebookCard {
-  type: String
-  title: String
-  description: String
-  image: String
-  url: String
-}
-
 type SEO {
   title: String
   description: String
   image: String
   twitter: TwitterCard
   facebook: FacebookCard
-}
-
-input TwitterCardInput {
-  card: String
-  site: String
-  title: String
-  description: String
-  image: String
-  creator: String
-}
-
-input FacebookCardInput {
-  type: String
-  title: String
-  description: String
-  image: String
-  url: String
 }
 
 input SEOInput {

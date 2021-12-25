@@ -1278,46 +1278,12 @@ input UpdatePostInput {
 scalar Map
 scalar Email
 `, BuiltIn: false},
-	{Name: "api/schema/seo.graphql", Input: `type TwitterCard {
-  card: String
-  site: String
-  title: String
-  description: String
-  image: String
-  creator: String
-}
-
-type FacebookCard {
-  type: String
-  title: String
-  description: String
-  image: String
-  url: String
-}
-
-type SEO {
+	{Name: "api/schema/seo.graphql", Input: `type SEO {
   title: String
   description: String
   image: String
   twitter: TwitterCard
   facebook: FacebookCard
-}
-
-input TwitterCardInput {
-  card: String
-  site: String
-  title: String
-  description: String
-  image: String
-  creator: String
-}
-
-input FacebookCardInput {
-  type: String
-  title: String
-  description: String
-  image: String
-  url: String
 }
 
 input SEOInput {
@@ -1338,6 +1304,40 @@ input SiteSettingsInput {
   siteName: String!
   baseURL: String!
   seo: SEOInput!
+}
+`, BuiltIn: false},
+	{Name: "api/schema/social.graphql", Input: `type TwitterCard {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+type FacebookCard {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+input TwitterCardInput {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+input FacebookCardInput {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
 }
 `, BuiltIn: false},
 	{Name: "api/schema/staff.graphql", Input: `type Staff {
