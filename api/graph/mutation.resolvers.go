@@ -27,11 +27,11 @@ func (r *mutationResolver) UpdatePage(ctx context.Context, input model.UpdatePos
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) Login(ctx context.Context, input *model.LoginInput) (*model.LoginResponse, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) Register(ctx context.Context, input *model.RegisterInput) (*model.RegisterResponse, error) {
+func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInput) (*model.RegisterResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

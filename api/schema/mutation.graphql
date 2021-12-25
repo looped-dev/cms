@@ -3,8 +3,8 @@ type Mutation {
   updatePost(input: UpdatePostInput!): Post
   updatePageStatus(input: UpdatePostStatusInput!): Page
   updatePage(input: UpdatePostInput!): Page
-  login(input: LoginInput): LoginResponse!
-  register(input: RegisterInput): RegisterResponse!
+  login(input: LoginInput!): LoginResponse!
+  register(input: RegisterInput!): RegisterResponse!
   logout: Boolean!
   updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
 }
