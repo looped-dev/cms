@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -88,13 +89,14 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Login            func(childComplexity int, input *model.LoginInput) int
-		Logout           func(childComplexity int) int
-		Register         func(childComplexity int, input *model.RegisterInput) int
-		UpdatePage       func(childComplexity int, input model.UpdatePostInput) int
-		UpdatePageStatus func(childComplexity int, input model.UpdatePostStatusInput) int
-		UpdatePost       func(childComplexity int, input model.UpdatePostInput) int
-		UpdatePostStatus func(childComplexity int, input model.UpdatePostStatusInput) int
+		Login              func(childComplexity int, input *model.LoginInput) int
+		Logout             func(childComplexity int) int
+		Register           func(childComplexity int, input *model.RegisterInput) int
+		UpdatePage         func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePageStatus   func(childComplexity int, input model.UpdatePostStatusInput) int
+		UpdatePost         func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePostStatus   func(childComplexity int, input model.UpdatePostStatusInput) int
+		UpdateSiteSettings func(childComplexity int, input model.SiteSettingsInput) int
 	}
 
 	Page struct {
@@ -126,11 +128,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetPage     func(childComplexity int, slug string) int
-		GetPageByID func(childComplexity int, id string) int
-		GetPost     func(childComplexity int, slug string) int
-		GetPostByID func(childComplexity int, id string) int
-		GetPosts    func(childComplexity int, page *int, perPage *int) int
+		GetPage      func(childComplexity int, slug string) int
+		GetPageByID  func(childComplexity int, id string) int
+		GetPost      func(childComplexity int, slug string) int
+		GetPostByID  func(childComplexity int, id string) int
+		GetPosts     func(childComplexity int, page *int, perPage *int) int
+		SiteSettings func(childComplexity int) int
 	}
 
 	RegisterResponse struct {
@@ -143,6 +146,12 @@ type ComplexityRoot struct {
 		Image       func(childComplexity int) int
 		Title       func(childComplexity int) int
 		Twitter     func(childComplexity int) int
+	}
+
+	SiteSettings struct {
+		BaseURL  func(childComplexity int) int
+		Seo      func(childComplexity int) int
+		SiteName func(childComplexity int) int
 	}
 
 	Size struct {
@@ -205,6 +214,7 @@ type MutationResolver interface {
 	Login(ctx context.Context, input *model.LoginInput) (*model.LoginResponse, error)
 	Register(ctx context.Context, input *model.RegisterInput) (*model.RegisterResponse, error)
 	Logout(ctx context.Context) (bool, error)
+	UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error)
 }
 type QueryResolver interface {
 	GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.Post, error)
@@ -212,6 +222,7 @@ type QueryResolver interface {
 	GetPage(ctx context.Context, slug string) (*model.Page, error)
 	GetPostByID(ctx context.Context, id string) (*model.Post, error)
 	GetPageByID(ctx context.Context, id string) (*model.Page, error)
+	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
 }
 
 type executableSchema struct {
@@ -511,6 +522,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdatePostStatus(childComplexity, args["input"].(model.UpdatePostStatusInput)), true
 
+	case "Mutation.updateSiteSettings":
+		if e.complexity.Mutation.UpdateSiteSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSiteSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSiteSettings(childComplexity, args["input"].(model.SiteSettingsInput)), true
+
 	case "Page.content":
 		if e.complexity.Page.Content == nil {
 			break
@@ -725,6 +748,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPosts(childComplexity, args["page"].(*int), args["perPage"].(*int)), true
 
+	case "Query.siteSettings":
+		if e.complexity.Query.SiteSettings == nil {
+			break
+		}
+
+		return e.complexity.Query.SiteSettings(childComplexity), true
+
 	case "RegisterResponse.staff":
 		if e.complexity.RegisterResponse.Staff == nil {
 			break
@@ -766,6 +796,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Seo.Twitter(childComplexity), true
+
+	case "SiteSettings.baseURL":
+		if e.complexity.SiteSettings.BaseURL == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.BaseURL(childComplexity), true
+
+	case "SiteSettings.seo":
+		if e.complexity.SiteSettings.Seo == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.Seo(childComplexity), true
+
+	case "SiteSettings.siteName":
+		if e.complexity.SiteSettings.SiteName == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.SiteName(childComplexity), true
 
 	case "Size.height":
 		if e.complexity.Size.Height == nil {
@@ -1123,6 +1174,7 @@ type MemberSubscription {
   login(input: LoginInput): LoginResponse!
   register(input: RegisterInput): RegisterResponse!
   logout: Boolean!
+  updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/page.graphql", Input: `type Page {
@@ -1184,31 +1236,6 @@ input UpdatePageInput {
   updatedAt: Time!
 }
 
-type TwitterCard {
-  card: String
-  site: String
-  title: String
-  description: String
-  image: String
-  creator: String
-}
-
-type FacebookCard {
-  type: String
-  title: String
-  description: String
-  image: String
-  url: String
-}
-
-type SEO {
-  title: String
-  description: String
-  image: String
-  twitter: TwitterCard
-  facebook: FacebookCard
-}
-
 enum PostOrPageStatus {
   PUBLISHED
   DRAFT
@@ -1237,6 +1264,44 @@ input UpdatePostInput {
   postAccess: [ID!]
   seo: SEOInput
 }
+`, BuiltIn: false},
+	{Name: "api/schema/query.graphql", Input: `type Query {
+  getPosts(page: Int, perPage: Int): [Post!]
+  getPost(slug: String!): Post
+  getPage(slug: String!): Page
+  getPostByID(id: String!): Post
+  getPageByID(id: String!): Page
+  siteSettings: SiteSettings!
+}
+`, BuiltIn: false},
+	{Name: "api/schema/scalars.graphql", Input: `scalar Time
+scalar Map
+scalar Email
+`, BuiltIn: false},
+	{Name: "api/schema/seo.graphql", Input: `type TwitterCard {
+  card: String
+  site: String
+  title: String
+  description: String
+  image: String
+  creator: String
+}
+
+type FacebookCard {
+  type: String
+  title: String
+  description: String
+  image: String
+  url: String
+}
+
+type SEO {
+  title: String
+  description: String
+  image: String
+  twitter: TwitterCard
+  facebook: FacebookCard
+}
 
 input TwitterCardInput {
   card: String
@@ -1263,17 +1328,17 @@ input SEOInput {
   facebook: FacebookCardInput
 }
 `, BuiltIn: false},
-	{Name: "api/schema/query.graphql", Input: `type Query {
-  getPosts(page: Int, perPage: Int): [Post!]
-  getPost(slug: String!): Post
-  getPage(slug: String!): Page
-  getPostByID(id: String!): Post
-  getPageByID(id: String!): Page
+	{Name: "api/schema/settings.graphql", Input: `type SiteSettings {
+  siteName: String!
+  baseURL: String!
+  seo: SEO!
 }
-`, BuiltIn: false},
-	{Name: "api/schema/scalars.graphql", Input: `scalar Time
-scalar Map
-scalar Email
+
+input SiteSettingsInput {
+  siteName: String!
+  baseURL: String!
+  seo: SEOInput!
+}
 `, BuiltIn: false},
 	{Name: "api/schema/staff.graphql", Input: `type Staff {
   id: ID!
@@ -1413,6 +1478,21 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdatePostInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateSiteSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.SiteSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2815,6 +2895,48 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateSiteSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateSiteSettings_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSiteSettings(rctx, args["input"].(model.SiteSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SiteSettings)
+	fc.Result = res
+	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Page_id(ctx context.Context, field graphql.CollectedField, obj *model.Page) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3759,6 +3881,41 @@ func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphq
 	return ec.marshalOPage2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPage(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_siteSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SiteSettings(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SiteSettings)
+	fc.Result = res
+	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4023,6 +4180,111 @@ func (ec *executionContext) _SEO_facebook(ctx context.Context, field graphql.Col
 	res := resTmp.(*model.FacebookCard)
 	fc.Result = res
 	return ec.marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_siteName(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SiteName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_baseURL(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BaseURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_seo(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Seo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Seo)
+	fc.Result = res
+	return ec.marshalNSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Size_width(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
@@ -6443,6 +6705,45 @@ func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSiteSettingsInput(ctx context.Context, obj interface{}) (model.SiteSettingsInput, error) {
+	var it model.SiteSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "siteName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteName"))
+			it.SiteName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseURL":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseURL"))
+			it.BaseURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "seo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
+			it.Seo, err = ec.unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTwitterCardInput(ctx context.Context, obj interface{}) (model.TwitterCardInput, error) {
 	var it model.TwitterCardInput
 	asMap := map[string]interface{}{}
@@ -6978,6 +7279,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateSiteSettings":
+			out.Values[i] = ec._Mutation_updateSiteSettings(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7192,6 +7498,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_getPageByID(ctx, field)
 				return res
 			})
+		case "siteSettings":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_siteSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -7255,6 +7575,43 @@ func (ec *executionContext) _SEO(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._SEO_twitter(ctx, field, obj)
 		case "facebook":
 			out.Values[i] = ec._SEO_facebook(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var siteSettingsImplementors = []string{"SiteSettings"}
+
+func (ec *executionContext) _SiteSettings(ctx context.Context, sel ast.SelectionSet, obj *model.SiteSettings) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, siteSettingsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SiteSettings")
+		case "siteName":
+			out.Values[i] = ec._SiteSettings_siteName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "baseURL":
+			out.Values[i] = ec._SiteSettings_baseURL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "seo":
+			out.Values[i] = ec._SiteSettings_seo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7934,6 +8291,40 @@ func (ec *executionContext) marshalNRegisterResponse2ᚖgithubᚗcomᚋloopedᚑ
 		return graphql.Null
 	}
 	return ec._RegisterResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx context.Context, sel ast.SelectionSet, v *model.Seo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SEO(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx context.Context, v interface{}) (*model.SEOInput, error) {
+	res, err := ec.unmarshalInputSEOInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSiteSettings2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx context.Context, sel ast.SelectionSet, v model.SiteSettings) graphql.Marshaler {
+	return ec._SiteSettings(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx context.Context, sel ast.SelectionSet, v *model.SiteSettings) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SiteSettings(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettingsInput(ctx context.Context, v interface{}) (model.SiteSettingsInput, error) {
+	res, err := ec.unmarshalInputSiteSettingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaff(ctx context.Context, sel ast.SelectionSet, v *model.Staff) graphql.Marshaler {

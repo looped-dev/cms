@@ -31,6 +31,10 @@ func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*model.Page
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) SiteSettings(ctx context.Context) (*model.SiteSettings, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 

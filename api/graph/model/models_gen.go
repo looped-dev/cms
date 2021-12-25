@@ -127,6 +127,18 @@ type SEOInput struct {
 	Facebook    *FacebookCardInput `json:"facebook" bson:"facebook,omitempty"`
 }
 
+type SiteSettings struct {
+	SiteName string `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL  string `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo      *Seo   `json:"seo" bson:"seo,omitempty"`
+}
+
+type SiteSettingsInput struct {
+	SiteName string    `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL  string    `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo      *SEOInput `json:"seo" bson:"seo,omitempty"`
+}
+
 type Size struct {
 	Width  int    `json:"width" bson:"width,omitempty"`
 	Height int    `json:"height" bson:"height,omitempty"`

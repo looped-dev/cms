@@ -1,0 +1,11 @@
+type SiteSettings {
+  siteName: String!
+  baseURL: String!
+  seo: SEO!
+}
+
+input SiteSettingsInput {
+  siteName: String!
+  baseURL: String!
+  seo: SEOInput!
+}

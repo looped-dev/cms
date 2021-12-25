@@ -39,6 +39,10 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
