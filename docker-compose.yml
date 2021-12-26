@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: looped
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  api:
+    build:
+      context: .
+      dockerfile: .docker/api.dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
