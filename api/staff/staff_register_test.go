@@ -29,10 +29,7 @@ func TestStaff_StaffRegister(t *testing.T) {
 		Email:    "johndoe@example.com",
 		Password: "password",
 	}
-	s := &Staff{
-		client: client,
-	}
-	got, err := s.StaffRegister(staffInput)
+	got, err := StaffRegister(client, staffInput)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Email, staffInput.Email)
 	assert.Equal(t, got.Name, staffInput.Name)

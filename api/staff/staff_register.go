@@ -10,12 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Staff struct {
-	client *mongo.Client
-}
-
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
-func (s *Staff) StaffRegister(input *model.RegisterInput) (*model.Staff, error) {
+func StaffRegister(client *mongo.Client, input *model.RegisterInput) (*model.Staff, error) {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
@@ -28,7 +24,7 @@ func (s *Staff) StaffRegister(input *model.RegisterInput) (*model.Staff, error) 
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
-	result, err := s.client.Database("cms").Collection("staff").InsertOne(context.TODO(), staff)
+	result, err := client.Database("cms").Collection("staff").InsertOne(context.TODO(), staff)
 	if err != nil {
 		return nil, err
 	}
