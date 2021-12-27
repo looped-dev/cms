@@ -6,6 +6,7 @@ import (
 
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -31,6 +32,6 @@ func (s *Staff) StaffRegister(input *model.RegisterInput) (*model.Staff, error) 
 	if err != nil {
 		return nil, err
 	}
-	staff.ID = result.InsertedID.(string)
+	staff.ID = result.InsertedID.(primitive.ObjectID).String()
 	return staff, nil
 }
