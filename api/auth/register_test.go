@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/looped-dev/cms/api/graph/model"
 )
 
 func Test_hashPassword(t *testing.T) {
@@ -57,23 +55,6 @@ func Test_hashPassword(t *testing.T) {
 				t.Errorf("hashed password doesn't match the input password, error = %v", errHash)
 				return
 			}
-		})
-	}
-}
-
-func TestRegister(t *testing.T) {
-	type args struct {
-		input model.LoginInput
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			Register(tt.args.input)
 		})
 	}
 }
