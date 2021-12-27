@@ -5,6 +5,8 @@ services:
   db:
     image: mongo
     restart: always
+    ports:
+      - 27017:27017
     environment:
       # This are temporary credentials, i need to figure out how to allow users
       # to set their own credentials when usig this headless CMS
@@ -21,4 +23,4 @@ services:
     ports:
       - 8080:8080
     environment:
-      - MONGODB_CONNSTRING=db://looped:root@db
+      - MONGODB_CONNSTRING=mongodb://looped:root@db
