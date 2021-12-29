@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/looped-dev/cms/api/graph/model"
@@ -50,12 +51,14 @@ func TestMain(m *testing.M) {
 	}
 
 	// run tests
-	m.Run()
+	code := m.Run()
 
 	// When you're done, kill and remove the container
 	if err = pool.Purge(resource); err != nil {
 		log.Fatalf("Could not purge resource: %s", err)
 	}
+
+	os.Exit(code)
 }
 
 func TestStaff_StaffRegister(t *testing.T) {
