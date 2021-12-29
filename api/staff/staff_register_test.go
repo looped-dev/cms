@@ -9,6 +9,7 @@ import (
 
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/ory/dockertest/v3"
+	"github.com/ory/dockertest/v3/docker"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,13 +24,26 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	resource, err := pool.Run("mongo", "5.0", []string{
-		"MONGO_INITDB_ROOT_USERNAME=looped",
-		"MONGO_INITDB_ROOT_PASSWORD=root",
+	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
+		Repository: "mongo",
+		Tag:        "5.0",
+		Env: []string{
+			"MONGO_INITDB_ROOT_USERNAME=looped",
+			"MONGO_INITDB_ROOT_PASSWORD=root",
+		},
+	}, func(config *docker.HostConfig) {
+		// set AutoRemove to true so that stopped container goes away by itself
+		config.AutoRemove = true
+		config.RestartPolicy = docker.RestartPolicy{
+			Name: "no",
+		}
 	})
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
 	}
+
+	// set timeout to 5 minutes
+	resource.Expire(300)
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	err = pool.Retry(func() error {
