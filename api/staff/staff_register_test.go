@@ -64,6 +64,18 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
+	// create a login user for testing
+	staffInput := &model.RegisterInput{
+		Name:     "test",
+		Email:    "login_test@example.com",
+		Password: "password",
+	}
+	_, errRegisterUser := StaffRegister(db, staffInput)
+
+	if errRegisterUser != nil {
+		log.Fatalf("Unable to create users for testing")
+	}
+
 	// run tests
 	code := m.Run()
 
