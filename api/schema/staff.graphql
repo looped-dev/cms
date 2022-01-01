@@ -1,15 +1,15 @@
-type Staff {
+type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   id: ID!
   name: String!
   email: Email!
   emailVerified: Boolean!
-  roles: [StaffRole!]!
-  password: String!
+  roles: [StaffRole!]! @goField(forceResolver: true)
   createdAt: Time!
   updatedAt: Time!
 }
 
-type StaffRole {
+type StaffRole
+  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
   name: String!
   description: String!
   createdAt: Time!

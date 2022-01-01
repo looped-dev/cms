@@ -7,6 +7,8 @@ import (
 	"io"
 	"strconv"
 	"time"
+
+	"github.com/looped-dev/cms/api/models"
 )
 
 type FacebookCard struct {
@@ -41,9 +43,9 @@ type LoginInput struct {
 }
 
 type LoginResponse struct {
-	Staff        *Staff `json:"staff" bson:"staff,omitempty"`
-	AccessToken  string `json:"accessToken" bson:"accessToken,omitempty"`
-	RefreshToken string `json:"refreshToken" bson:"refreshToken,omitempty"`
+	Staff        *models.Staff `json:"staff" bson:"staff,omitempty"`
+	AccessToken  string        `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
 type Member struct {
@@ -108,7 +110,7 @@ type RegisterInput struct {
 }
 
 type RegisterResponse struct {
-	Staff *Staff `json:"staff" bson:"staff,omitempty"`
+	Staff *models.Staff `json:"staff" bson:"staff,omitempty"`
 }
 
 type Seo struct {
@@ -151,24 +153,6 @@ type Sizes struct {
 	MediumLarge *Size `json:"medium_large" bson:"medium_large,omitempty"`
 	Large       *Size `json:"large" bson:"large,omitempty"`
 	Full        *Size `json:"full" bson:"full,omitempty"`
-}
-
-type Staff struct {
-	ID            string       `json:"id" bson:"_id,omitempty"`
-	Name          string       `json:"name" bson:"name,omitempty"`
-	Email         string       `json:"email" bson:"email,omitempty"`
-	EmailVerified bool         `json:"emailVerified" bson:"emailVerified,omitempty"`
-	Roles         []*StaffRole `json:"roles" bson:"roles,omitempty"`
-	Password      string       `json:"password" bson:"password,omitempty"`
-	CreatedAt     time.Time    `json:"createdAt" bson:"createdAt,omitempty"`
-	UpdatedAt     time.Time    `json:"updatedAt" bson:"updatedAt,omitempty"`
-}
-
-type StaffRole struct {
-	Name        string    `json:"name" bson:"name,omitempty"`
-	Description string    `json:"description" bson:"description,omitempty"`
-	CreatedAt   time.Time `json:"createdAt" bson:"createdAt,omitempty"`
-	UpdatedAt   time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
 type Tag struct {

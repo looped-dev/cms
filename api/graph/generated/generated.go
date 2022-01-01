@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/models"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -38,6 +39,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Staff() StaffResolver
 }
 
 type DirectiveRoot struct {
@@ -174,7 +176,6 @@ type ComplexityRoot struct {
 		EmailVerified func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Name          func(childComplexity int) int
-		Password      func(childComplexity int) int
 		Roles         func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 	}
@@ -223,6 +224,9 @@ type QueryResolver interface {
 	GetPostByID(ctx context.Context, id string) (*model.Post, error)
 	GetPageByID(ctx context.Context, id string) (*model.Page, error)
 	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
+}
+type StaffResolver interface {
+	Roles(ctx context.Context, obj *models.Staff) ([]*models.StaffRole, error)
 }
 
 type executableSchema struct {
@@ -909,13 +913,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Staff.Name(childComplexity), true
 
-	case "Staff.password":
-		if e.complexity.Staff.Password == nil {
-			break
-		}
-
-		return e.complexity.Staff.Password(childComplexity), true
-
 	case "Staff.roles":
 		if e.complexity.Staff.Roles == nil {
 			break
@@ -1340,18 +1337,18 @@ input FacebookCardInput {
   url: String
 }
 `, BuiltIn: false},
-	{Name: "api/schema/staff.graphql", Input: `type Staff {
+	{Name: "api/schema/staff.graphql", Input: `type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   id: ID!
   name: String!
   email: Email!
   emailVerified: Boolean!
-  roles: [StaffRole!]!
-  password: String!
+  roles: [StaffRole!]! @goField(forceResolver: true)
   createdAt: Time!
   updatedAt: Time!
 }
 
-type StaffRole {
+type StaffRole
+  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
   name: String!
   description: String!
   createdAt: Time!
@@ -1388,6 +1385,18 @@ type RegisterResponse {
   createdAt: Time!
   updatedAt: Time!
 }
+`, BuiltIn: false},
+	{Name: "api/schema/utils/directives.graphql", Input: `# gqlgen build in directives
+
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -2061,9 +2070,9 @@ func (ec *executionContext) _LoginResponse_staff(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Staff)
+	res := resTmp.(*models.Staff)
 	fc.Result = res
-	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaff(ctx, field.Selections, res)
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _LoginResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
@@ -4017,9 +4026,9 @@ func (ec *executionContext) _RegisterResponse_staff(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Staff)
+	res := resTmp.(*models.Staff)
 	fc.Result = res
-	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaff(ctx, field.Selections, res)
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SEO_title(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
@@ -4552,7 +4561,7 @@ func (ec *executionContext) _Sizes_full(ctx context.Context, field graphql.Colle
 	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4587,7 +4596,7 @@ func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4622,7 +4631,7 @@ func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4657,7 +4666,7 @@ func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.Coll
 	return ec.marshalNEmail2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4692,7 +4701,7 @@ func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field grap
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4703,14 +4712,14 @@ func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.Coll
 		Object:     "Staff",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Roles, nil
+		return ec.resolvers.Staff().Roles(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4722,47 +4731,12 @@ func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.StaffRole)
+	res := resTmp.([]*models.StaffRole)
 	fc.Result = res
-	return ec.marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRoleᚄ(ctx, field.Selections, res)
+	return ec.marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRoleᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_password(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Staff",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Password, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4797,7 +4771,7 @@ func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4832,7 +4806,7 @@ func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffRole_name(ctx context.Context, field graphql.CollectedField, obj *model.StaffRole) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffRole_name(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4867,7 +4841,7 @@ func (ec *executionContext) _StaffRole_name(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffRole_description(ctx context.Context, field graphql.CollectedField, obj *model.StaffRole) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffRole_description(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4902,7 +4876,7 @@ func (ec *executionContext) _StaffRole_description(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffRole_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.StaffRole) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffRole_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4937,7 +4911,7 @@ func (ec *executionContext) _StaffRole_createdAt(ctx context.Context, field grap
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffRole_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.StaffRole) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffRole_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7694,7 +7668,7 @@ func (ec *executionContext) _Sizes(ctx context.Context, sel ast.SelectionSet, ob
 
 var staffImplementors = []string{"Staff"}
 
-func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, obj *model.Staff) graphql.Marshaler {
+func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, obj *models.Staff) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, staffImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -7706,42 +7680,46 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Staff_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Staff_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "email":
 			out.Values[i] = ec._Staff_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "emailVerified":
 			out.Values[i] = ec._Staff_emailVerified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "roles":
-			out.Values[i] = ec._Staff_roles(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "password":
-			out.Values[i] = ec._Staff_password(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Staff_roles(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "createdAt":
 			out.Values[i] = ec._Staff_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Staff_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -7756,7 +7734,7 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 
 var staffRoleImplementors = []string{"StaffRole"}
 
-func (ec *executionContext) _StaffRole(ctx context.Context, sel ast.SelectionSet, obj *model.StaffRole) graphql.Marshaler {
+func (ec *executionContext) _StaffRole(ctx context.Context, sel ast.SelectionSet, obj *models.StaffRole) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, staffRoleImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -8337,7 +8315,7 @@ func (ec *executionContext) unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaff(ctx context.Context, sel ast.SelectionSet, v *model.Staff) graphql.Marshaler {
+func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v *models.Staff) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8347,7 +8325,7 @@ func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcms�
 	return ec._Staff(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.StaffRole) graphql.Marshaler {
+func (ec *executionContext) marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.StaffRole) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8371,7 +8349,7 @@ func (ec *executionContext) marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdev�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRole(ctx, sel, v[i])
+			ret[i] = ec.marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -8391,7 +8369,7 @@ func (ec *executionContext) marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdev�
 	return ret
 }
 
-func (ec *executionContext) marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRole(ctx context.Context, sel ast.SelectionSet, v *model.StaffRole) graphql.Marshaler {
+func (ec *executionContext) marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx context.Context, sel ast.SelectionSet, v *models.StaffRole) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -8945,6 +8923,48 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
