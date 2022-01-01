@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Staff struct Staff/Admin members within the CMS
 type Staff struct {
 	ID            string       `json:"id" bson:"_id,omitempty"`
 	Name          string       `json:"name" bson:"name,omitempty"`
@@ -15,6 +16,7 @@ type Staff struct {
 	UpdatedAt     time.Time    `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
+// StaffRole struct Staff/Admin roles within the CMS
 type StaffRole struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
