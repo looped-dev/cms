@@ -43,7 +43,9 @@ func TestMain(m *testing.M) {
 	}
 
 	// set timeout to 5 minutes
-	resource.Expire(300)
+	if err := resource.Expire(300); err != nil {
+		log.Fatalf("Couldn't setup resource expiration to 5 minutes: %v", err)
+	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	err = pool.Retry(func() error {
@@ -88,12 +90,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestStaff_StaffRegister(t *testing.T) {
-	type fields struct {
-		client *mongo.Client
-	}
-	type args struct {
-		input *model.RegisterInput
-	}
 	staffInput := &model.RegisterInput{
 		Name:     "test",
 		Email:    "johndoe@example.com",

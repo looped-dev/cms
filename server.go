@@ -29,7 +29,11 @@ func run() error {
 		return fmt.Errorf("Failed to create a db client: %v", err)
 	}
 
-	defer client.Disconnect(context.TODO())
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Printf("Failed to close the db connection: %v", err)
+		}
+	}()
 
 	srv := handler.NewDefaultServer(
 		generated.NewExecutableSchema(

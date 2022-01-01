@@ -26,10 +26,13 @@ jobs:
       with:
         install: true
 
-    # - name: golangci-lint
-    #   uses: golangci/golangci-lint-action@v2
-    #   with:
-    #     version: "latest"
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: "latest"
+        # Optional: golangci-lint command line arguments.
+        args: -v
+
 
     - name: Set up Go
       uses: actions/setup-go@v2
