@@ -33,7 +33,6 @@ jobs:
         # Optional: golangci-lint command line arguments.
         args: -v
 
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
