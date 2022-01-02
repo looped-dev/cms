@@ -135,9 +135,11 @@ type Sizes struct {
 }
 
 type StaffAcceptInviteInput struct {
-	ID       string `json:"id" bson:"_id,omitempty"`
-	Name     string `json:"name" bson:"name,omitempty"`
-	Password string `json:"password" bson:"password,omitempty"`
+	ID              string `json:"id" bson:"_id,omitempty"`
+	Name            string `json:"name" bson:"name,omitempty"`
+	Password        string `json:"password" bson:"password,omitempty"`
+	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`
+	Code            string `json:"code" bson:"code,omitempty"`
 }
 
 type StaffChangePasswordInput struct {

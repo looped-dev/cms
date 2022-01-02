@@ -41,6 +41,8 @@ input StaffAcceptInviteInput {
   id: ID!
   name: String!
   password: String!
+  confirmPassword: String!
+  code: String!
 }
 
 input StaffUpdateInput {
