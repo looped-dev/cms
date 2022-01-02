@@ -8,7 +8,7 @@ import (
 )
 
 func TestStaffLogin(t *testing.T) {
-	staff, err := StaffLogin(db, &model.LoginInput{
+	staff, err := StaffLogin(db, &model.StaffLoginInput{
 		Email:    "login_test@example.com",
 		Password: "password",
 	})

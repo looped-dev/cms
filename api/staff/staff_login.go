@@ -10,7 +10,7 @@ import (
 )
 
 // StaffLogin login staff (admin users) and returns the Staff object.
-func StaffLogin(client *mongo.Client, input *model.LoginInput) (*models.Staff, error) {
+func StaffLogin(client *mongo.Client, input *model.StaffLoginInput) (*models.Staff, error) {
 	staff := &models.Staff{}
 	err := client.Database("cms").Collection("staff").FindOne(
 		context.TODO(),

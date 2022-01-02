@@ -12,7 +12,7 @@ import (
 )
 
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
-func StaffRegister(client *mongo.Client, input *model.RegisterInput) (*models.Staff, error) {
+func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*models.Staff, error) {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return nil, err

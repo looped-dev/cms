@@ -67,7 +67,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// create a login user for testing
-	staffInput := &model.RegisterInput{
+	staffInput := &model.StaffRegisterInput{
 		Name:     "test",
 		Email:    "login_test@example.com",
 		Password: "password",
@@ -90,7 +90,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestStaff_StaffRegister(t *testing.T) {
-	staffInput := &model.RegisterInput{
+	staffInput := &model.StaffRegisterInput{
 		Name:     "test",
 		Email:    "johndoe@example.com",
 		Password: "password",
