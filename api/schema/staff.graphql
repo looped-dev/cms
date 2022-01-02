@@ -1,17 +1,28 @@
+enum StaffRole
+  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
+  """
+  Trusted staff user who should be able to manage all content and users, as well
+  as site settings and options.
+  """
+  ADMINISTRATOR
+  """
+  Can invite and manage other Authors and Contributors, as well as edit and
+  publish any posts on the site.
+  """
+  EDITOR
+  """
+  A trusted user who can create, edit and publish their own posts, but can’t
+  modify others.
+  """
+  AUTHOR
+}
+
 type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   id: ID!
   name: String!
   email: Email!
   emailVerified: Boolean!
-  roles: [StaffRole!]! @goField(forceResolver: true)
-  createdAt: Time!
-  updatedAt: Time!
-}
-
-type StaffRole
-  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
-  name: String!
-  description: String!
+  role: StaffRole! @goField(forceResolver: true)
   createdAt: Time!
   updatedAt: Time!
 }

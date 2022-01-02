@@ -5,14 +5,13 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/models"
 )
 
-func (r *staffResolver) Roles(ctx context.Context, obj *models.Staff) ([]*models.StaffRole, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *staffResolver) Role(ctx context.Context, obj *models.Staff) (models.StaffRole, error) {
+	return obj.Role, nil
 }
 
 // Staff returns generated.StaffResolver implementation.

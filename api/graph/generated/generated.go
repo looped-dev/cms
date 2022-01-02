@@ -176,15 +176,8 @@ type ComplexityRoot struct {
 		EmailVerified func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Name          func(childComplexity int) int
-		Roles         func(childComplexity int) int
+		Role          func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
-	}
-
-	StaffRole struct {
-		CreatedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		Name        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
 	}
 
 	Tag struct {
@@ -226,7 +219,7 @@ type QueryResolver interface {
 	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
 }
 type StaffResolver interface {
-	Roles(ctx context.Context, obj *models.Staff) ([]*models.StaffRole, error)
+	Role(ctx context.Context, obj *models.Staff) (models.StaffRole, error)
 }
 
 type executableSchema struct {
@@ -913,12 +906,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Staff.Name(childComplexity), true
 
-	case "Staff.roles":
-		if e.complexity.Staff.Roles == nil {
+	case "Staff.role":
+		if e.complexity.Staff.Role == nil {
 			break
 		}
 
-		return e.complexity.Staff.Roles(childComplexity), true
+		return e.complexity.Staff.Role(childComplexity), true
 
 	case "Staff.updatedAt":
 		if e.complexity.Staff.UpdatedAt == nil {
@@ -926,34 +919,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Staff.UpdatedAt(childComplexity), true
-
-	case "StaffRole.createdAt":
-		if e.complexity.StaffRole.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.StaffRole.CreatedAt(childComplexity), true
-
-	case "StaffRole.description":
-		if e.complexity.StaffRole.Description == nil {
-			break
-		}
-
-		return e.complexity.StaffRole.Description(childComplexity), true
-
-	case "StaffRole.name":
-		if e.complexity.StaffRole.Name == nil {
-			break
-		}
-
-		return e.complexity.StaffRole.Name(childComplexity), true
-
-	case "StaffRole.updatedAt":
-		if e.complexity.StaffRole.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.StaffRole.UpdatedAt(childComplexity), true
 
 	case "Tag.createdAt":
 		if e.complexity.Tag.CreatedAt == nil {
@@ -1110,6 +1075,22 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "api/schema/common/directives.graphql", Input: `# gqlgen build in directives
+
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+`, BuiltIn: false},
+	{Name: "api/schema/common/scalars.graphql", Input: `scalar Time
+scalar Map
+scalar Email
+`, BuiltIn: false},
 	{Name: "api/schema/image.graphql", Input: `type Image {
   id: ID!
   slug: String!
@@ -1271,10 +1252,6 @@ input UpdatePostInput {
   siteSettings: SiteSettings!
 }
 `, BuiltIn: false},
-	{Name: "api/schema/scalars.graphql", Input: `scalar Time
-scalar Map
-scalar Email
-`, BuiltIn: false},
 	{Name: "api/schema/seo.graphql", Input: `type SEO {
   title: String
   description: String
@@ -1337,20 +1314,31 @@ input FacebookCardInput {
   url: String
 }
 `, BuiltIn: false},
-	{Name: "api/schema/staff.graphql", Input: `type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
+	{Name: "api/schema/staff.graphql", Input: `enum StaffRole
+  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
+  """
+  Trusted staff user who should be able to manage all content and users, as well
+  as site settings and options.
+  """
+  ADMINISTRATOR
+  """
+  Can invite and manage other Authors and Contributors, as well as edit and
+  publish any posts on the site.
+  """
+  EDITOR
+  """
+  A trusted user who can create, edit and publish their own posts, but can’t
+  modify others.
+  """
+  AUTHOR
+}
+
+type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   id: ID!
   name: String!
   email: Email!
   emailVerified: Boolean!
-  roles: [StaffRole!]! @goField(forceResolver: true)
-  createdAt: Time!
-  updatedAt: Time!
-}
-
-type StaffRole
-  @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
-  name: String!
-  description: String!
+  role: StaffRole! @goField(forceResolver: true)
   createdAt: Time!
   updatedAt: Time!
 }
@@ -1385,18 +1373,6 @@ type RegisterResponse {
   createdAt: Time!
   updatedAt: Time!
 }
-`, BuiltIn: false},
-	{Name: "api/schema/utils/directives.graphql", Input: `# gqlgen build in directives
-
-directive @goModel(
-  model: String
-  models: [String!]
-) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
-
-directive @goField(
-  forceResolver: Boolean
-  name: String
-) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -4701,7 +4677,7 @@ func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field grap
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_role(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4719,7 +4695,7 @@ func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.Coll
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Staff().Roles(rctx, obj)
+		return ec.resolvers.Staff().Role(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4731,9 +4707,9 @@ func (ec *executionContext) _Staff_roles(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*models.StaffRole)
+	res := resTmp.(models.StaffRole)
 	fc.Result = res
-	return ec.marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRoleᚄ(ctx, field.Selections, res)
+	return ec.marshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
@@ -4780,146 +4756,6 @@ func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.
 	}()
 	fc := &graphql.FieldContext{
 		Object:     "Staff",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _StaffRole_name(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffRole",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _StaffRole_description(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffRole",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _StaffRole_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffRole",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _StaffRole_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffRole) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffRole",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -7697,7 +7533,7 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "roles":
+		case "role":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -7705,7 +7541,7 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Staff_roles(ctx, field, obj)
+				res = ec._Staff_role(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -7720,48 +7556,6 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Staff_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var staffRoleImplementors = []string{"StaffRole"}
-
-func (ec *executionContext) _StaffRole(ctx context.Context, sel ast.SelectionSet, obj *models.StaffRole) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, staffRoleImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("StaffRole")
-		case "name":
-			out.Values[i] = ec._StaffRole_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "description":
-			out.Values[i] = ec._StaffRole_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._StaffRole_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updatedAt":
-			out.Values[i] = ec._StaffRole_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -8325,58 +8119,20 @@ func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcms�
 	return ec._Staff(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNStaffRole2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.StaffRole) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
+func (ec *executionContext) unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx context.Context, v interface{}) (models.StaffRole, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := models.StaffRole(tmp)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNStaffRole2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx context.Context, sel ast.SelectionSet, v *models.StaffRole) graphql.Marshaler {
-	if v == nil {
+func (ec *executionContext) marshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx context.Context, sel ast.SelectionSet, v models.StaffRole) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
-		return graphql.Null
 	}
-	return ec._StaffRole(ctx, sel, v)
+	return res
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
