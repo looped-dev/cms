@@ -1423,6 +1423,13 @@ type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   updatedAt: Time!
 }
 
+input StaffRegisterInput {
+  name: String!
+  email: Email!
+  password: String!
+  role: StaffRole!
+}
+
 input StaffLoginInput {
   email: Email!
   password: String!
@@ -7093,6 +7100,53 @@ func (ec *executionContext) unmarshalInputStaffLoginInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffRegisterInput(ctx context.Context, obj interface{}) (model.StaffRegisterInput, error) {
+	var it model.StaffRegisterInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "role":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			it.Role, err = ec.unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, v)
 			if err != nil {
 				return it, err
 			}

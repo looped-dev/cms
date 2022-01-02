@@ -27,6 +27,13 @@ type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   updatedAt: Time!
 }
 
+input StaffRegisterInput {
+  name: String!
+  email: Email!
+  password: String!
+  role: StaffRole!
+}
+
 input StaffLoginInput {
   email: Email!
   password: String!

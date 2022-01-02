@@ -172,6 +172,13 @@ type StaffLoginResponse struct {
 	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
+type StaffRegisterInput struct {
+	Name     string           `json:"name" bson:"name,omitempty"`
+	Email    string           `json:"email" bson:"email,omitempty"`
+	Password string           `json:"password" bson:"password,omitempty"`
+	Role     models.StaffRole `json:"role" bson:"role,omitempty"`
+}
+
 type StaffResetPasswordInput struct {
 	Email           string `json:"email" bson:"email,omitempty"`
 	Code            string `json:"code" bson:"code,omitempty"`
