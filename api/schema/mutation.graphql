@@ -3,8 +3,15 @@ type Mutation {
   updatePost(input: UpdatePostInput!): Post
   updatePageStatus(input: UpdatePostStatusInput!): Page
   updatePage(input: UpdatePostInput!): Page
-  login(input: LoginInput!): LoginResponse!
-  register(input: RegisterInput!): RegisterResponse!
-  logout: Boolean!
+  # Staff Users
+  staffLogin(input: StaffLoginInput!): StaffLoginResponse!
+  staffInvite(input: StaffInviteInput!): Staff!
+  staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
+  staffUpdate(input: StaffUpdateInput!): Staff!
+  staffDelete(input: StaffDeleteInput!): Staff!
+  staffChangePassword(input: StaffChangePasswordInput!): Staff!
+  staffResetPassword(input: StaffResetPasswordInput!): Staff!
+  staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
+  staffLogout: Boolean!
   updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
 }

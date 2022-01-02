@@ -37,17 +37,6 @@ type Image struct {
 	Sizes       *Sizes  `json:"sizes" bson:"sizes,omitempty"`
 }
 
-type LoginInput struct {
-	Email    string `json:"email" bson:"email,omitempty"`
-	Password string `json:"password" bson:"password,omitempty"`
-}
-
-type LoginResponse struct {
-	Staff        *models.Staff `json:"staff" bson:"staff,omitempty"`
-	AccessToken  string        `json:"accessToken" bson:"accessToken,omitempty"`
-	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
-}
-
 type Member struct {
 	ID    string `json:"id" bson:"_id,omitempty"`
 	Name  string `json:"name" bson:"name,omitempty"`
@@ -103,16 +92,6 @@ type Post struct {
 	UpdatedAt   time.Time             `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
 
-type RegisterInput struct {
-	Name     string `json:"name" bson:"name,omitempty"`
-	Email    string `json:"email" bson:"email,omitempty"`
-	Password string `json:"password" bson:"password,omitempty"`
-}
-
-type RegisterResponse struct {
-	Staff *models.Staff `json:"staff" bson:"staff,omitempty"`
-}
-
 type Seo struct {
 	Title       *string       `json:"title" bson:"title,omitempty"`
 	Description *string       `json:"description" bson:"description,omitempty"`
@@ -153,6 +132,54 @@ type Sizes struct {
 	MediumLarge *Size `json:"medium_large" bson:"medium_large,omitempty"`
 	Large       *Size `json:"large" bson:"large,omitempty"`
 	Full        *Size `json:"full" bson:"full,omitempty"`
+}
+
+type StaffAcceptInviteInput struct {
+	ID       string `json:"id" bson:"_id,omitempty"`
+	Name     string `json:"name" bson:"name,omitempty"`
+	Password string `json:"password" bson:"password,omitempty"`
+}
+
+type StaffChangePasswordInput struct {
+	ID              string `json:"id" bson:"_id,omitempty"`
+	Password        string `json:"password" bson:"password,omitempty"`
+	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`
+}
+
+type StaffDeleteInput struct {
+	ID string `json:"id" bson:"_id,omitempty"`
+}
+
+type StaffForgotPasswordInput struct {
+	Email string `json:"email" bson:"email,omitempty"`
+}
+
+type StaffInviteInput struct {
+	Email string           `json:"email" bson:"email,omitempty"`
+	Role  models.StaffRole `json:"role" bson:"role,omitempty"`
+}
+
+type StaffLoginInput struct {
+	Email    string `json:"email" bson:"email,omitempty"`
+	Password string `json:"password" bson:"password,omitempty"`
+}
+
+type StaffLoginResponse struct {
+	Staff        *models.Staff `json:"staff" bson:"staff,omitempty"`
+	AccessToken  string        `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
+}
+
+type StaffResetPasswordInput struct {
+	Email           string `json:"email" bson:"email,omitempty"`
+	Code            string `json:"code" bson:"code,omitempty"`
+	Password        string `json:"password" bson:"password,omitempty"`
+	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`
+}
+
+type StaffUpdateInput struct {
+	Name  string `json:"name" bson:"name,omitempty"`
+	Email string `json:"email" bson:"email,omitempty"`
 }
 
 type Tag struct {

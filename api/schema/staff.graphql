@@ -27,23 +27,50 @@ type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   updatedAt: Time!
 }
 
-input LoginInput {
+input StaffLoginInput {
   email: Email!
   password: String!
 }
 
-input RegisterInput {
+input StaffInviteInput {
+  email: Email!
+  role: StaffRole!
+}
+
+input StaffAcceptInviteInput {
+  id: ID!
+  name: String!
+  password: String!
+}
+
+input StaffUpdateInput {
   name: String!
   email: Email!
-  password: String!
 }
 
-type LoginResponse {
+input StaffDeleteInput {
+  id: ID!
+}
+
+input StaffChangePasswordInput {
+  id: ID!
+  password: String!
+  confirmPassword: String!
+}
+
+type StaffLoginResponse {
   staff: Staff!
   accessToken: String!
   refreshToken: String!
 }
 
-type RegisterResponse {
-  staff: Staff!
+input StaffResetPasswordInput {
+  email: Email!
+  code: String!
+  password: String!
+  confirmPassword: String!
+}
+
+input StaffForgotPasswordInput {
+  email: Email!
 }

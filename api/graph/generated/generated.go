@@ -64,12 +64,6 @@ type ComplexityRoot struct {
 		URL         func(childComplexity int) int
 	}
 
-	LoginResponse struct {
-		AccessToken  func(childComplexity int) int
-		RefreshToken func(childComplexity int) int
-		Staff        func(childComplexity int) int
-	}
-
 	Member struct {
 		CreatedAt       func(childComplexity int) int
 		Email           func(childComplexity int) int
@@ -91,14 +85,20 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Login              func(childComplexity int, input model.LoginInput) int
-		Logout             func(childComplexity int) int
-		Register           func(childComplexity int, input model.RegisterInput) int
-		UpdatePage         func(childComplexity int, input model.UpdatePostInput) int
-		UpdatePageStatus   func(childComplexity int, input model.UpdatePostStatusInput) int
-		UpdatePost         func(childComplexity int, input model.UpdatePostInput) int
-		UpdatePostStatus   func(childComplexity int, input model.UpdatePostStatusInput) int
-		UpdateSiteSettings func(childComplexity int, input model.SiteSettingsInput) int
+		StaffAcceptInvite   func(childComplexity int, input model.StaffAcceptInviteInput) int
+		StaffChangePassword func(childComplexity int, input model.StaffChangePasswordInput) int
+		StaffDelete         func(childComplexity int, input model.StaffDeleteInput) int
+		StaffForgotPassword func(childComplexity int, input model.StaffForgotPasswordInput) int
+		StaffInvite         func(childComplexity int, input model.StaffInviteInput) int
+		StaffLogin          func(childComplexity int, input model.StaffLoginInput) int
+		StaffLogout         func(childComplexity int) int
+		StaffResetPassword  func(childComplexity int, input model.StaffResetPasswordInput) int
+		StaffUpdate         func(childComplexity int, input model.StaffUpdateInput) int
+		UpdatePage          func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePageStatus    func(childComplexity int, input model.UpdatePostStatusInput) int
+		UpdatePost          func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePostStatus    func(childComplexity int, input model.UpdatePostStatusInput) int
+		UpdateSiteSettings  func(childComplexity int, input model.SiteSettingsInput) int
 	}
 
 	Page struct {
@@ -136,10 +136,6 @@ type ComplexityRoot struct {
 		GetPostByID  func(childComplexity int, id string) int
 		GetPosts     func(childComplexity int, page *int, perPage *int) int
 		SiteSettings func(childComplexity int) int
-	}
-
-	RegisterResponse struct {
-		Staff func(childComplexity int) int
 	}
 
 	Seo struct {
@@ -180,6 +176,12 @@ type ComplexityRoot struct {
 		UpdatedAt     func(childComplexity int) int
 	}
 
+	StaffLoginResponse struct {
+		AccessToken  func(childComplexity int) int
+		RefreshToken func(childComplexity int) int
+		Staff        func(childComplexity int) int
+	}
+
 	Tag struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -205,9 +207,15 @@ type MutationResolver interface {
 	UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.Post, error)
 	UpdatePageStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Page, error)
 	UpdatePage(ctx context.Context, input model.UpdatePostInput) (*model.Page, error)
-	Login(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
-	Register(ctx context.Context, input model.RegisterInput) (*model.RegisterResponse, error)
-	Logout(ctx context.Context) (bool, error)
+	StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error)
+	StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error)
+	StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error)
+	StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.Staff, error)
+	StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.Staff, error)
+	StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.Staff, error)
+	StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.Staff, error)
+	StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.Staff, error)
+	StaffLogout(ctx context.Context) (bool, error)
 	UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error)
 }
 type QueryResolver interface {
@@ -321,27 +329,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Image.URL(childComplexity), true
 
-	case "LoginResponse.accessToken":
-		if e.complexity.LoginResponse.AccessToken == nil {
-			break
-		}
-
-		return e.complexity.LoginResponse.AccessToken(childComplexity), true
-
-	case "LoginResponse.refreshToken":
-		if e.complexity.LoginResponse.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.LoginResponse.RefreshToken(childComplexity), true
-
-	case "LoginResponse.staff":
-		if e.complexity.LoginResponse.Staff == nil {
-			break
-		}
-
-		return e.complexity.LoginResponse.Staff(childComplexity), true
-
 	case "Member.createdAt":
 		if e.complexity.Member.CreatedAt == nil {
 			break
@@ -440,36 +427,108 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MemberSubscription.UpdatedAt(childComplexity), true
 
-	case "Mutation.login":
-		if e.complexity.Mutation.Login == nil {
+	case "Mutation.staffAcceptInvite":
+		if e.complexity.Mutation.StaffAcceptInvite == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_staffAcceptInvite_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.LoginInput)), true
+		return e.complexity.Mutation.StaffAcceptInvite(childComplexity, args["input"].(model.StaffAcceptInviteInput)), true
 
-	case "Mutation.logout":
-		if e.complexity.Mutation.Logout == nil {
+	case "Mutation.staffChangePassword":
+		if e.complexity.Mutation.StaffChangePassword == nil {
 			break
 		}
 
-		return e.complexity.Mutation.Logout(childComplexity), true
-
-	case "Mutation.register":
-		if e.complexity.Mutation.Register == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_register_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_staffChangePassword_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Register(childComplexity, args["input"].(model.RegisterInput)), true
+		return e.complexity.Mutation.StaffChangePassword(childComplexity, args["input"].(model.StaffChangePasswordInput)), true
+
+	case "Mutation.staffDelete":
+		if e.complexity.Mutation.StaffDelete == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffDelete_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffDelete(childComplexity, args["input"].(model.StaffDeleteInput)), true
+
+	case "Mutation.staffForgotPassword":
+		if e.complexity.Mutation.StaffForgotPassword == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffForgotPassword_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffForgotPassword(childComplexity, args["input"].(model.StaffForgotPasswordInput)), true
+
+	case "Mutation.staffInvite":
+		if e.complexity.Mutation.StaffInvite == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffInvite_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffInvite(childComplexity, args["input"].(model.StaffInviteInput)), true
+
+	case "Mutation.staffLogin":
+		if e.complexity.Mutation.StaffLogin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffLogin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffLogin(childComplexity, args["input"].(model.StaffLoginInput)), true
+
+	case "Mutation.staffLogout":
+		if e.complexity.Mutation.StaffLogout == nil {
+			break
+		}
+
+		return e.complexity.Mutation.StaffLogout(childComplexity), true
+
+	case "Mutation.staffResetPassword":
+		if e.complexity.Mutation.StaffResetPassword == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffResetPassword_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffResetPassword(childComplexity, args["input"].(model.StaffResetPasswordInput)), true
+
+	case "Mutation.staffUpdate":
+		if e.complexity.Mutation.StaffUpdate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffUpdate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffUpdate(childComplexity, args["input"].(model.StaffUpdateInput)), true
 
 	case "Mutation.updatePage":
 		if e.complexity.Mutation.UpdatePage == nil {
@@ -752,13 +811,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.SiteSettings(childComplexity), true
 
-	case "RegisterResponse.staff":
-		if e.complexity.RegisterResponse.Staff == nil {
-			break
-		}
-
-		return e.complexity.RegisterResponse.Staff(childComplexity), true
-
 	case "SEO.description":
 		if e.complexity.Seo.Description == nil {
 			break
@@ -919,6 +971,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Staff.UpdatedAt(childComplexity), true
+
+	case "StaffLoginResponse.accessToken":
+		if e.complexity.StaffLoginResponse.AccessToken == nil {
+			break
+		}
+
+		return e.complexity.StaffLoginResponse.AccessToken(childComplexity), true
+
+	case "StaffLoginResponse.refreshToken":
+		if e.complexity.StaffLoginResponse.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.StaffLoginResponse.RefreshToken(childComplexity), true
+
+	case "StaffLoginResponse.staff":
+		if e.complexity.StaffLoginResponse.Staff == nil {
+			break
+		}
+
+		return e.complexity.StaffLoginResponse.Staff(childComplexity), true
 
 	case "Tag.createdAt":
 		if e.complexity.Tag.CreatedAt == nil {
@@ -1149,9 +1222,16 @@ type MemberSubscription {
   updatePost(input: UpdatePostInput!): Post
   updatePageStatus(input: UpdatePostStatusInput!): Page
   updatePage(input: UpdatePostInput!): Page
-  login(input: LoginInput!): LoginResponse!
-  register(input: RegisterInput!): RegisterResponse!
-  logout: Boolean!
+  # Staff Users
+  staffLogin(input: StaffLoginInput!): StaffLoginResponse!
+  staffInvite(input: StaffInviteInput!): Staff!
+  staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
+  staffUpdate(input: StaffUpdateInput!): Staff!
+  staffDelete(input: StaffDeleteInput!): Staff!
+  staffChangePassword(input: StaffChangePasswordInput!): Staff!
+  staffResetPassword(input: StaffResetPasswordInput!): Staff!
+  staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
+  staffLogout: Boolean!
   updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
 }
 `, BuiltIn: false},
@@ -1343,25 +1423,52 @@ type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   updatedAt: Time!
 }
 
-input LoginInput {
+input StaffLoginInput {
   email: Email!
   password: String!
 }
 
-input RegisterInput {
+input StaffInviteInput {
+  email: Email!
+  role: StaffRole!
+}
+
+input StaffAcceptInviteInput {
+  id: ID!
+  name: String!
+  password: String!
+}
+
+input StaffUpdateInput {
   name: String!
   email: Email!
-  password: String!
 }
 
-type LoginResponse {
+input StaffDeleteInput {
+  id: ID!
+}
+
+input StaffChangePasswordInput {
+  id: ID!
+  password: String!
+  confirmPassword: String!
+}
+
+type StaffLoginResponse {
   staff: Staff!
   accessToken: String!
   refreshToken: String!
 }
 
-type RegisterResponse {
-  staff: Staff!
+input StaffResetPasswordInput {
+  email: Email!
+  code: String!
+  password: String!
+  confirmPassword: String!
+}
+
+input StaffForgotPasswordInput {
+  email: Email!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/tags.graphql", Input: `type Tag {
@@ -1381,13 +1488,13 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_staffAcceptInvite_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.LoginInput
+	var arg0 model.StaffAcceptInviteInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLoginInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
+		arg0, err = ec.unmarshalNStaffAcceptInviteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffAcceptInviteInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1396,13 +1503,103 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_register_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_staffChangePassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.RegisterInput
+	var arg0 model.StaffChangePasswordInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNRegisterInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterInput(ctx, tmp)
+		arg0, err = ec.unmarshalNStaffChangePasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffChangePasswordInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffDelete_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffDeleteInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffDeleteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffDeleteInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffForgotPassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffForgotPasswordInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffForgotPasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffForgotPasswordInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffInvite_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffInviteInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffInviteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffInviteInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffLogin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffLoginInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffLoginInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffResetPassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffResetPasswordInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffResetPasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffResetPasswordInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffUpdate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffUpdateInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffUpdateInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffUpdateInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2014,111 +2211,6 @@ func (ec *executionContext) _Image_sizes(ctx context.Context, field graphql.Coll
 	res := resTmp.(*model.Sizes)
 	fc.Result = res
 	return ec.marshalOSizes2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSizes(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LoginResponse_staff(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LoginResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Staff, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.Staff)
-	fc.Result = res
-	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LoginResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LoginResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LoginResponse_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.LoginResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LoginResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Member_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
@@ -2761,7 +2853,7 @@ func (ec *executionContext) _Mutation_updatePage(ctx context.Context, field grap
 	return ec.marshalOPage2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_staffLogin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2778,7 +2870,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_login_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_staffLogin_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -2786,7 +2878,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Login(rctx, args["input"].(model.LoginInput))
+		return ec.resolvers.Mutation().StaffLogin(rctx, args["input"].(model.StaffLoginInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2798,12 +2890,12 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.LoginResponse)
+	res := resTmp.(*model.StaffLoginResponse)
 	fc.Result = res
-	return ec.marshalNLoginResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginResponse(ctx, field.Selections, res)
+	return ec.marshalNStaffLoginResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_register(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_staffInvite(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2820,7 +2912,7 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_register_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_staffInvite_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -2828,7 +2920,7 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Register(rctx, args["input"].(model.RegisterInput))
+		return ec.resolvers.Mutation().StaffInvite(rctx, args["input"].(model.StaffInviteInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2840,12 +2932,264 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.RegisterResponse)
+	res := resTmp.(*models.Staff)
 	fc.Result = res
-	return ec.marshalNRegisterResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterResponse(ctx, field.Selections, res)
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_staffAcceptInvite(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffAcceptInvite_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffAcceptInvite(rctx, args["input"].(model.StaffAcceptInviteInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffUpdate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffUpdate_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffUpdate(rctx, args["input"].(model.StaffUpdateInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffDelete(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffDelete_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffDelete(rctx, args["input"].(model.StaffDeleteInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffChangePassword(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffChangePassword_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffChangePassword(rctx, args["input"].(model.StaffChangePasswordInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffResetPassword(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffResetPassword_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffResetPassword(rctx, args["input"].(model.StaffResetPasswordInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffForgotPassword(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffForgotPassword_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffForgotPassword(rctx, args["input"].(model.StaffForgotPasswordInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffLogout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2863,7 +3207,7 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Logout(rctx)
+		return ec.resolvers.Mutation().StaffLogout(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3972,41 +4316,6 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RegisterResponse_staff(ctx context.Context, field graphql.CollectedField, obj *model.RegisterResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RegisterResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Staff, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.Staff)
-	fc.Result = res
-	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _SEO_title(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4780,6 +5089,111 @@ func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.
 	res := resTmp.(time.Time)
 	fc.Result = res
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffLoginResponse_staff(ctx context.Context, field graphql.CollectedField, obj *model.StaffLoginResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffLoginResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Staff, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffLoginResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.StaffLoginResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffLoginResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffLoginResponse_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.StaffLoginResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffLoginResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Tag_id(ctx context.Context, field graphql.CollectedField, obj *model.Tag) (ret graphql.Marshaler) {
@@ -6390,76 +6804,6 @@ func (ec *executionContext) unmarshalInputFacebookCardInput(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
-	var it model.LoginInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "email":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "password":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-			it.Password, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj interface{}) (model.RegisterInput, error) {
-	var it model.RegisterInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "email":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "password":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-			it.Password, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj interface{}) (model.SEOInput, error) {
 	var it model.SEOInput
 	asMap := map[string]interface{}{}
@@ -6545,6 +6889,270 @@ func (ec *executionContext) unmarshalInputSiteSettingsInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
 			it.Seo, err = ec.unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffAcceptInviteInput(ctx context.Context, obj interface{}) (model.StaffAcceptInviteInput, error) {
+	var it model.StaffAcceptInviteInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffChangePasswordInput(ctx context.Context, obj interface{}) (model.StaffChangePasswordInput, error) {
+	var it model.StaffChangePasswordInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "confirmPassword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("confirmPassword"))
+			it.ConfirmPassword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffDeleteInput(ctx context.Context, obj interface{}) (model.StaffDeleteInput, error) {
+	var it model.StaffDeleteInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffForgotPasswordInput(ctx context.Context, obj interface{}) (model.StaffForgotPasswordInput, error) {
+	var it model.StaffForgotPasswordInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffInviteInput(ctx context.Context, obj interface{}) (model.StaffInviteInput, error) {
+	var it model.StaffInviteInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "role":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			it.Role, err = ec.unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffLoginInput(ctx context.Context, obj interface{}) (model.StaffLoginInput, error) {
+	var it model.StaffLoginInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffResetPasswordInput(ctx context.Context, obj interface{}) (model.StaffResetPasswordInput, error) {
+	var it model.StaffResetPasswordInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "code":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+			it.Code, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "confirmPassword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("confirmPassword"))
+			it.ConfirmPassword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStaffUpdateInput(ctx context.Context, obj interface{}) (model.StaffUpdateInput, error) {
+	var it model.StaffUpdateInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6906,43 +7514,6 @@ func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var loginResponseImplementors = []string{"LoginResponse"}
-
-func (ec *executionContext) _LoginResponse(ctx context.Context, sel ast.SelectionSet, obj *model.LoginResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, loginResponseImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("LoginResponse")
-		case "staff":
-			out.Values[i] = ec._LoginResponse_staff(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "accessToken":
-			out.Values[i] = ec._LoginResponse_accessToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshToken":
-			out.Values[i] = ec._LoginResponse_refreshToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var memberImplementors = []string{"Member"}
 
 func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, obj *model.Member) graphql.Marshaler {
@@ -7074,18 +7645,48 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_updatePageStatus(ctx, field)
 		case "updatePage":
 			out.Values[i] = ec._Mutation_updatePage(ctx, field)
-		case "login":
-			out.Values[i] = ec._Mutation_login(ctx, field)
+		case "staffLogin":
+			out.Values[i] = ec._Mutation_staffLogin(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "register":
-			out.Values[i] = ec._Mutation_register(ctx, field)
+		case "staffInvite":
+			out.Values[i] = ec._Mutation_staffInvite(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "logout":
-			out.Values[i] = ec._Mutation_logout(ctx, field)
+		case "staffAcceptInvite":
+			out.Values[i] = ec._Mutation_staffAcceptInvite(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffUpdate":
+			out.Values[i] = ec._Mutation_staffUpdate(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffDelete":
+			out.Values[i] = ec._Mutation_staffDelete(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffChangePassword":
+			out.Values[i] = ec._Mutation_staffChangePassword(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffResetPassword":
+			out.Values[i] = ec._Mutation_staffResetPassword(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffForgotPassword":
+			out.Values[i] = ec._Mutation_staffForgotPassword(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffLogout":
+			out.Values[i] = ec._Mutation_staffLogout(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -7337,33 +7938,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var registerResponseImplementors = []string{"RegisterResponse"}
-
-func (ec *executionContext) _RegisterResponse(ctx context.Context, sel ast.SelectionSet, obj *model.RegisterResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, registerResponseImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("RegisterResponse")
-		case "staff":
-			out.Values[i] = ec._RegisterResponse_staff(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var sEOImplementors = []string{"SEO"}
 
 func (ec *executionContext) _SEO(ctx context.Context, sel ast.SelectionSet, obj *model.Seo) graphql.Marshaler {
@@ -7556,6 +8130,43 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Staff_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var staffLoginResponseImplementors = []string{"StaffLoginResponse"}
+
+func (ec *executionContext) _StaffLoginResponse(ctx context.Context, sel ast.SelectionSet, obj *model.StaffLoginResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, staffLoginResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StaffLoginResponse")
+		case "staff":
+			out.Values[i] = ec._StaffLoginResponse_staff(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accessToken":
+			out.Values[i] = ec._StaffLoginResponse_accessToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshToken":
+			out.Values[i] = ec._StaffLoginResponse_refreshToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -7963,25 +8574,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNLoginInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (model.LoginInput, error) {
-	res, err := ec.unmarshalInputLoginInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNLoginResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v model.LoginResponse) graphql.Marshaler {
-	return ec._LoginResponse(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNLoginResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v *model.LoginResponse) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._LoginResponse(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNMemberSubscription2ᚕᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐMemberSubscriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MemberSubscription) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -8056,25 +8648,6 @@ func (ec *executionContext) marshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdev
 	return v
 }
 
-func (ec *executionContext) unmarshalNRegisterInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterInput(ctx context.Context, v interface{}) (model.RegisterInput, error) {
-	res, err := ec.unmarshalInputRegisterInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNRegisterResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v model.RegisterResponse) graphql.Marshaler {
-	return ec._RegisterResponse(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNRegisterResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v *model.RegisterResponse) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._RegisterResponse(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx context.Context, sel ast.SelectionSet, v *model.Seo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -8109,6 +8682,10 @@ func (ec *executionContext) unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNStaff2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v models.Staff) graphql.Marshaler {
+	return ec._Staff(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v *models.Staff) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -8117,6 +8694,55 @@ func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcms�
 		return graphql.Null
 	}
 	return ec._Staff(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNStaffAcceptInviteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffAcceptInviteInput(ctx context.Context, v interface{}) (model.StaffAcceptInviteInput, error) {
+	res, err := ec.unmarshalInputStaffAcceptInviteInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStaffChangePasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffChangePasswordInput(ctx context.Context, v interface{}) (model.StaffChangePasswordInput, error) {
+	res, err := ec.unmarshalInputStaffChangePasswordInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStaffDeleteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffDeleteInput(ctx context.Context, v interface{}) (model.StaffDeleteInput, error) {
+	res, err := ec.unmarshalInputStaffDeleteInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStaffForgotPasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffForgotPasswordInput(ctx context.Context, v interface{}) (model.StaffForgotPasswordInput, error) {
+	res, err := ec.unmarshalInputStaffForgotPasswordInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStaffInviteInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffInviteInput(ctx context.Context, v interface{}) (model.StaffInviteInput, error) {
+	res, err := ec.unmarshalInputStaffInviteInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStaffLoginInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginInput(ctx context.Context, v interface{}) (model.StaffLoginInput, error) {
+	res, err := ec.unmarshalInputStaffLoginInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStaffLoginResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginResponse(ctx context.Context, sel ast.SelectionSet, v model.StaffLoginResponse) graphql.Marshaler {
+	return ec._StaffLoginResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNStaffLoginResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginResponse(ctx context.Context, sel ast.SelectionSet, v *model.StaffLoginResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._StaffLoginResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNStaffResetPasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffResetPasswordInput(ctx context.Context, v interface{}) (model.StaffResetPasswordInput, error) {
+	res, err := ec.unmarshalInputStaffResetPasswordInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx context.Context, v interface{}) (models.StaffRole, error) {
@@ -8133,6 +8759,11 @@ func (ec *executionContext) marshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcms�
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNStaffUpdateInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffUpdateInput(ctx context.Context, v interface{}) (model.StaffUpdateInput, error) {
+	res, err := ec.unmarshalInputStaffUpdateInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
