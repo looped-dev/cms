@@ -36,3 +36,36 @@ func GenerateStaffAccessToken(staff *models.Staff) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(signInString))
 }
+
+func VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &StaffJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(signInString), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(*StaffJWTClaims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, err
+}
+
+// CreateStaffRefreshTokenSession creates a new refresh token session for the
+// staff and saves in the database. This allows the option to revoke the token
+// and also tracking usage of refresh tokens. The refresh tokens will be single
+// use and once used, they will be invalidated.
+func CreateStaffRefreshTokenSession(staff *models.Staff) {
+	panic("Not Implemented")
+}
+
+func GenerateStaffRefreshToken(staff *models.Staff) (string, error) {
+	panic("Not Implemented")
+}
+
+func VerifyStaffRefreshToken(tokenString string) error {
+	panic("Not Implemented")
+}
+
+func RevokeStaffRefreshToken(tokenString string) error {
+	panic("Not Implemented")
+}
