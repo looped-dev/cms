@@ -32,3 +32,30 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 	staff.ID = result.InsertedID.(primitive.ObjectID).String()
 	return staff, nil
 }
+
+// StaffSendInvite creates a new staff, with a specific role and creates an invite
+// code and sends an email to the staff member.
+func StaffSendInvite(client *mongo.Client, input *model.StaffInviteInput) (*models.Staff, error) {
+	panic("not implemented")
+}
+
+// StaffAcceptInvite verify invite code and set the new staff password and email
+// as verified.
+func StaffAcceptInvite(client *mongo.Client, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
+	panic("not implemented")
+}
+
+// StaffUpdate updates the details of the staff i.e. Name, Email, Role.
+func StaffUpdate(client *mongo.Client, input *model.StaffUpdateInput) (*models.Staff, error) {
+	panic("not implemented")
+}
+
+// StaffDelete soft deletes the staff from the database by adding a delatedAt field.
+func StaffDelete(client *mongo.Client, input *model.StaffDeleteInput) (*models.Staff, error) {
+	panic("not implemented")
+}
+
+// StaffChangePassword update the staff password.
+func StaffChangePassword(client *mongo.Client, input *model.StaffChangePasswordInput) (*models.Staff, error) {
+	panic("not implemented")
+}
