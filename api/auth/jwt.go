@@ -19,7 +19,7 @@ type StaffJWTClaims struct {
 	jwt.StandardClaims
 }
 
-func GenerateStaffJWTToken(staff *models.Staff) (string, error) {
+func GenerateStaffAccessToken(staff *models.Staff) (string, error) {
 	claims := StaffJWTClaims{
 		ID:            staff.ID,
 		Name:          staff.Name,
