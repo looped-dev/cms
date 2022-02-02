@@ -11,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
+	"github.com/looped-dev/cms/api/utils/configs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,7 +24,7 @@ func run() error {
 		port = defaultPort
 	}
 
-	mongoDbConnString := os.Getenv("MONGODB_CONNSTRING")
+	mongoDbConnString := configs.GetConfig("MONGODB_CONNSTRING")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoDbConnString))
 	if err != nil {
 		return fmt.Errorf("Failed to create a db client: %v", err)
