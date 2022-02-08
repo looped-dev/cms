@@ -23,8 +23,8 @@ type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
   email: Email!
   emailVerified: Boolean!
   role: StaffRole! @goField(forceResolver: true)
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: MongoTime!
+  updatedAt: MongoTime!
 }
 
 input StaffRegisterInput {
