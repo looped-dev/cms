@@ -135,7 +135,7 @@ type Sizes struct {
 }
 
 type StaffAcceptInviteInput struct {
-	ID              string `json:"id" bson:"_id,omitempty"`
+	Email           string `json:"email" bson:"email,omitempty"`
 	Name            string `json:"name" bson:"name,omitempty"`
 	Password        string `json:"password" bson:"password,omitempty"`
 	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`

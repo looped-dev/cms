@@ -45,7 +45,7 @@ input StaffInviteInput {
 }
 
 input StaffAcceptInviteInput {
-  id: ID!
+  email: String!
   name: String!
   password: String!
   confirmPassword: String!
