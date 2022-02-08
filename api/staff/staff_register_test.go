@@ -99,5 +99,5 @@ func TestStaff_StaffRegister(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, got.Email, staffInput.Email)
 	assert.Equal(t, got.Name, staffInput.Name)
-	assert.NotEqual(t, got.Password, staffInput.Password)
+	assert.NotEqual(t, got.HashedPassword, staffInput.Password)
 }

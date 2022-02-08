@@ -22,7 +22,7 @@ func StaffVerifyLoginCredentials(client *mongo.Client, input *model.StaffLoginIn
 	if err != nil {
 		return nil, err
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(staff.Password), []byte(input.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(staff.HashedPassword), []byte(input.Password))
 	if err != nil {
 		return nil, fmt.Errorf("Incorrect password: %v", err)
 	}

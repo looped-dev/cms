@@ -2,6 +2,7 @@ package staff
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/looped-dev/cms/api/graph/model"
@@ -17,13 +18,16 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 	if err != nil {
 		return nil, err
 	}
+	createdAt := primitive.Timestamp{
+		T: uint32(time.Now().Unix()),
+	}
 	staff := &models.Staff{
-		Name:          input.Name,
-		Email:         input.Email,
-		Password:      hashedPassword,
-		EmailVerified: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:           input.Name,
+		Email:          input.Email,
+		HashedPassword: hashedPassword,
+		EmailVerified:  false,
+		CreatedAt:      createdAt,
+		UpdatedAt:      createdAt,
 	}
 	result, err := client.Database("cms").Collection("staff").InsertOne(context.TODO(), staff)
 	if err != nil {
@@ -41,8 +45,23 @@ func StaffSendInvite(client *mongo.Client, input *model.StaffInviteInput) (*mode
 
 // StaffAcceptInvite verify invite code and set the new staff password and email
 // as verified.
-func StaffAcceptInvite(client *mongo.Client, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
-	panic("not implemented")
+func StaffAcceptInvite(client *mongo.Client, ctx context.Context, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
+	if input.ConfirmPassword != input.Password {
+		return nil, fmt.Errorf("Password and confirm password do not match")
+	}
+	staff, err := fetchStaffFromDB(client, ctx, input.Email)
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching staff: %v", err)
+	}
+	// check if invite code is valid
+	if err := validateInviteCode(input.Code, staff.InviteCode); err != nil {
+		return nil, err
+	}
+	// update staff in database
+	if err := updateStaffInDB(client, ctx, staff, input); err != nil {
+		return nil, fmt.Errorf("Error updating staff: %v", err)
+	}
+	return staff, nil
 }
 
 // StaffUpdate updates the details of the staff i.e. Name, Email, Role.
