@@ -7,10 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var sampleConfig = []byte(`
-DATABASE_NAME: "cms"
-`)
-
 func TestGetConfig(t *testing.T) {
 	viper.Set("DATABASE_NAME", "cms")
 	value := GetConfig("DATABASE_NAME")
