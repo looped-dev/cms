@@ -10,6 +10,7 @@ import (
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
+	"github.com/looped-dev/cms/api/staff"
 )
 
 func (r *mutationResolver) UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error) {
@@ -29,15 +30,15 @@ func (r *mutationResolver) UpdatePage(ctx context.Context, input model.UpdatePos
 }
 
 func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	return staff.StaffLogin(r.DB, &input)
 }
 
 func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error) {
-	panic(fmt.Errorf("not implemented"))
+	return staff.StaffSendInvite(r.DB, &input)
 }
 
 func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error) {
-	panic(fmt.Errorf("not implemented"))
+	return staff.StaffAcceptInvite(r.DB, ctx, &input)
 }
 
 func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.Staff, error) {
