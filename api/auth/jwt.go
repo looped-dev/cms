@@ -21,7 +21,7 @@ type StaffJWTClaims struct {
 
 func GenerateStaffAccessToken(staff *models.Staff) (string, error) {
 	claims := StaffJWTClaims{
-		ID:            staff.ID,
+		ID:            staff.ID.Hex(),
 		Name:          staff.Name,
 		Email:         staff.Email,
 		Role:          staff.Role.String(),

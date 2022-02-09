@@ -5,12 +5,14 @@ import (
 
 	"github.com/looped-dev/cms/api/models"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestGenerateStaffJWTToken(t *testing.T) {
 	type args struct {
 		staff *models.Staff
 	}
+	id, _ := primitive.ObjectIDFromHex("123456789")
 	tests := []struct {
 		name    string
 		args    args
@@ -22,7 +24,7 @@ func TestGenerateStaffJWTToken(t *testing.T) {
 				staff: &models.Staff{
 					Name:  "John Doe",
 					Email: "johndoe@example.com",
-					ID:    "123456789",
+					ID:    id,
 					Role:  models.StaffRoleAdministrator,
 				},
 			},

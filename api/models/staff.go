@@ -6,7 +6,7 @@ import (
 
 // Staff struct Staff/Admin members within the CMS
 type Staff struct {
-	ID             string              `json:"id" bson:"_id,omitempty"`
+	ID             primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
 	Name           string              `json:"name" bson:"name,omitempty"`
 	Email          string              `json:"email" bson:"email,omitempty"`
 	EmailVerified  bool                `json:"emailVerified" bson:"emailVerified,omitempty"`
