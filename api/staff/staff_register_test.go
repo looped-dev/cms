@@ -107,7 +107,7 @@ func TestStaff_StaffRegister(t *testing.T) {
 
 func TestStaffAcceptInvite(t *testing.T) {
 	staffInsert := &models.Staff{
-		Email: "johndoe@example.com",
+		Email: "johndoe2@example.com",
 		InviteCode: models.InviteCode{
 			Code: "CODE",
 			Expiry: primitive.Timestamp{
