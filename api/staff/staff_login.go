@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func StaffVerifyLoginCredentials(client *mongo.Client, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
+func StaffLogin(client *mongo.Client, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staff := &models.Staff{}
 	err := client.Database("cms").Collection("staff").FindOne(
 		context.TODO(),
