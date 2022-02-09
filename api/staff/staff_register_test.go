@@ -105,6 +105,22 @@ func TestStaff_StaffRegister(t *testing.T) {
 	assert.NotEqual(t, got.HashedPassword, staffInput.Password)
 }
 
+func TestStaffSendInvite(t *testing.T) {
+	staffInvite := &model.StaffInviteInput{
+		Email: "johninvite@example.com",
+		Role:  models.StaffRoleEditor,
+	}
+	staff, err := StaffSendInvite(db, context.TODO(), staffInvite)
+	assert.NoError(t, err)
+	fetchStaff, err := fetchStaffFromDB(db, context.TODO(), staffInvite.Email)
+	assert.NoError(t, err)
+	assert.Equal(t, staff.Email, fetchStaff.Email)
+	assert.NotEmpty(t, fetchStaff.InviteCode)
+	assert.NotEmpty(t, fetchStaff.InviteCode.Expiry)
+	// check whether the code expiry time is with 24 hours
+	assert.Greater(t, fetchStaff.InviteCode.Expiry.T, uint32(time.Now().Unix())+60*59*24)
+}
+
 func TestStaffAcceptInvite(t *testing.T) {
 	staffInsert := &models.Staff{
 		Email: "johndoe2@example.com",

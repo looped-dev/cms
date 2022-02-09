@@ -34,7 +34,7 @@ func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLogi
 }
 
 func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error) {
-	return staff.StaffSendInvite(r.DB, &input)
+	return staff.StaffSendInvite(r.DB, ctx, &input)
 }
 
 func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error) {

@@ -39,8 +39,30 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 
 // StaffSendInvite creates a new staff, with a specific role and creates an invite
 // code and sends an email to the staff member.
-func StaffSendInvite(client *mongo.Client, input *model.StaffInviteInput) (*models.Staff, error) {
-	panic("not implemented")
+func StaffSendInvite(client *mongo.Client, ctx context.Context, input *model.StaffInviteInput) (*models.Staff, error) {
+	code := utils.GenerateInviteCode()
+	staff := &models.Staff{
+		Email: input.Email,
+		Role:  input.Role,
+		InviteCode: models.InviteCode{
+			Code: code,
+			Expiry: primitive.Timestamp{
+				T: uint32(time.Now().Unix() + 60*60*24),
+			},
+		},
+	}
+	staff, err := addNewStaffToDB(client, ctx, staff)
+	if err != nil {
+		return nil, err
+	}
+
+	// send email
+	// err = mail.SendEmail(staff.Email, configs.GetConfig("MAIL_FROM"), "Invite to CMS", fmt.Sprintf("Your invite code is %s", code))
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return staff, nil
 }
 
 // StaffAcceptInvite verify invite code and set the new staff password and email
