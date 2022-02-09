@@ -33,7 +33,7 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 	if err != nil {
 		return nil, err
 	}
-	staff.ID = result.InsertedID.(primitive.ObjectID).String()
+	staff.ID = result.InsertedID.(primitive.ObjectID)
 	return staff, nil
 }
 

@@ -6,11 +6,14 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/models"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -100,4 +103,31 @@ func TestStaff_StaffRegister(t *testing.T) {
 	assert.Equal(t, got.Email, staffInput.Email)
 	assert.Equal(t, got.Name, staffInput.Name)
 	assert.NotEqual(t, got.HashedPassword, staffInput.Password)
+}
+
+func TestStaffAcceptInvite(t *testing.T) {
+	staffInsert := &models.Staff{
+		Email: "johndoe@example.com",
+		InviteCode: models.InviteCode{
+			Code: "CODE",
+			Expiry: primitive.Timestamp{
+				T: uint32(time.Now().Add(time.Hour).Unix()),
+			},
+		},
+	}
+	staff, err := addNewStaffToDB(db, context.TODO(), staffInsert)
+	assert.NoError(t, err)
+	invite := &model.StaffAcceptInviteInput{
+		Name:            "John Doe",
+		Email:           staffInsert.Email,
+		Code:            "CODE",
+		Password:        "password",
+		ConfirmPassword: "password",
+	}
+	staffInvite, err := StaffAcceptInvite(db, context.TODO(), invite)
+	assert.NoError(t, err)
+	assert.Equal(t, staff.ID, staffInvite.ID)
+	assert.Equal(t, staff.Email, staffInvite.Email)
+	assert.NotNil(t, staff.HashedPassword)
+	assert.Empty(t, staffInvite.InviteCode)
 }
