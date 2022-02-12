@@ -110,9 +110,12 @@ func TestStaffSendInvite(t *testing.T) {
 		Email: "johninvite@example.com",
 		Role:  models.StaffRoleEditor,
 	}
-	staff, err := StaffSendInvite(db, context.TODO(), staffInvite)
+	staffClass := Staff{
+		DBClient: db,
+	}
+	staff, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
 	assert.NoError(t, err)
-	fetchStaff, err := fetchStaffFromDB(db, context.TODO(), staffInvite.Email)
+	fetchStaff, err := staffClass.fetchStaffFromDB(context.TODO(), staffInvite.Email)
 	assert.NoError(t, err)
 	assert.Equal(t, staff.Email, fetchStaff.Email)
 	assert.NotEmpty(t, fetchStaff.InviteCode)
@@ -131,7 +134,10 @@ func TestStaffAcceptInvite(t *testing.T) {
 			},
 		},
 	}
-	staff, err := addNewStaffToDB(db, context.TODO(), staffInsert)
+	staffClass := Staff{
+		DBClient: db,
+	}
+	staff, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
 	assert.NoError(t, err)
 	invite := &model.StaffAcceptInviteInput{
 		Name:            "John Doe",
@@ -140,7 +146,7 @@ func TestStaffAcceptInvite(t *testing.T) {
 		Password:        "password",
 		ConfirmPassword: "password",
 	}
-	staffInvite, err := StaffAcceptInvite(db, context.TODO(), invite)
+	staffInvite, err := staffClass.StaffAcceptInvite(context.TODO(), invite)
 	assert.NoError(t, err)
 	assert.Equal(t, staff.ID, staffInvite.ID)
 	assert.Equal(t, staff.Email, staffInvite.Email)

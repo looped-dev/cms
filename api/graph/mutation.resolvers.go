@@ -34,11 +34,13 @@ func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLogi
 }
 
 func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error) {
-	return staff.StaffSendInvite(r.DB, ctx, &input)
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffSendInvite(ctx, &input)
 }
 
 func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error) {
-	return staff.StaffAcceptInvite(r.DB, ctx, &input)
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffAcceptInvite(ctx, &input)
 }
 
 func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.Staff, error) {

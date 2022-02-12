@@ -5,12 +5,26 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
 	"github.com/looped-dev/cms/api/utils"
+	mail "github.com/xhit/go-simple-mail/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+type Staff struct {
+	SMTPClient *mail.SMTPClient
+	DBClient   *mongo.Client
+}
+
+func NewStaff(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *Staff {
+	return &Staff{
+		SMTPClient: smtpClient,
+		DBClient:   dbClient,
+	}
+}
 
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
 func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*models.Staff, error) {
@@ -39,7 +53,7 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 
 // StaffSendInvite creates a new staff, with a specific role and creates an invite
 // code and sends an email to the staff member.
-func StaffSendInvite(client *mongo.Client, ctx context.Context, input *model.StaffInviteInput) (*models.Staff, error) {
+func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInput) (*models.Staff, error) {
 	code := utils.GenerateInviteCode()
 	staff := &models.Staff{
 		Email: input.Email,
@@ -51,27 +65,25 @@ func StaffSendInvite(client *mongo.Client, ctx context.Context, input *model.Sta
 			},
 		},
 	}
-	staff, err := addNewStaffToDB(client, ctx, staff)
+	staff, err := s.addNewStaffToDB(ctx, staff)
 	if err != nil {
 		return nil, err
 	}
-
 	// send email
-	// err = mail.SendEmail(staff.Email, configs.GetConfig("MAIL_FROM"), "Invite to CMS", fmt.Sprintf("Your invite code is %s", code))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
+	err = emails.SendEmail(s.SMTPClient, emails.SendMailConfig{})
+	if err != nil {
+		return nil, err
+	}
 	return staff, nil
 }
 
 // StaffAcceptInvite verify invite code and set the new staff password and email
 // as verified.
-func StaffAcceptInvite(client *mongo.Client, ctx context.Context, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
+func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
 	if input.ConfirmPassword != input.Password {
 		return nil, fmt.Errorf("Password and confirm password do not match")
 	}
-	staff, err := fetchStaffFromDB(client, ctx, input.Email)
+	staff, err := s.fetchStaffFromDB(ctx, input.Email)
 	if err != nil {
 		return nil, fmt.Errorf("Error fetching staff: %v", err)
 	}
@@ -80,7 +92,7 @@ func StaffAcceptInvite(client *mongo.Client, ctx context.Context, input *model.S
 		return nil, err
 	}
 	// update staff in database
-	if err := updateStaffInDB(client, ctx, staff, input); err != nil {
+	if err := s.updateStaffInDB(ctx, staff, input); err != nil {
 		return nil, fmt.Errorf("Error updating staff: %v", err)
 	}
 	return staff, nil

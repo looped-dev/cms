@@ -10,16 +10,15 @@ import (
 	"github.com/looped-dev/cms/api/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func addNewStaffToDB(client *mongo.Client, ctx context.Context, staff *models.Staff) (*models.Staff, error) {
+func (s Staff) addNewStaffToDB(ctx context.Context, staff *models.Staff) (*models.Staff, error) {
 	createdAt := primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
 	staff.CreatedAt = createdAt
 	staff.UpdatedAt = createdAt
-	result, err := client.Database("cms").Collection("staff").InsertOne(
+	result, err := s.DBClient.Database("cms").Collection("staff").InsertOne(
 		ctx,
 		staff,
 	)
@@ -27,9 +26,9 @@ func addNewStaffToDB(client *mongo.Client, ctx context.Context, staff *models.St
 	return staff, err
 }
 
-func fetchStaffFromDB(client *mongo.Client, ctx context.Context, email string) (*models.Staff, error) {
+func (s Staff) fetchStaffFromDB(ctx context.Context, email string) (*models.Staff, error) {
 	staff := &models.Staff{}
-	err := client.Database("cms").Collection("staff").FindOne(
+	err := s.DBClient.Database("cms").Collection("staff").FindOne(
 		ctx,
 		bson.M{"email": email},
 	).Decode(staff)
@@ -39,7 +38,7 @@ func fetchStaffFromDB(client *mongo.Client, ctx context.Context, email string) (
 	return staff, nil
 }
 
-func updateStaffInDB(client *mongo.Client, ctx context.Context, staff *models.Staff, input *model.StaffAcceptInviteInput) error {
+func (s Staff) updateStaffInDB(ctx context.Context, staff *models.Staff, input *model.StaffAcceptInviteInput) error {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return fmt.Errorf("Error hashing password: %v", err)
@@ -53,7 +52,7 @@ func updateStaffInDB(client *mongo.Client, ctx context.Context, staff *models.St
 	staff.UpdatedAt = primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	_, err = client.Database("cms").Collection("staff").UpdateOne(
+	_, err = s.DBClient.Database("cms").Collection("staff").UpdateOne(
 		ctx,
 		bson.M{"_id": staff.ID},
 		bson.M{
