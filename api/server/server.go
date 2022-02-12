@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/utils/configs"
@@ -30,6 +31,11 @@ func run() error {
 		return fmt.Errorf("Failed to create a db client: %v", err)
 	}
 
+	mailServer, err := emails.NewSMTPClient()
+	if err != nil {
+		return fmt.Errorf("Failed to create a mail server: %v", err)
+	}
+
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
 			log.Printf("Failed to close the db connection: %v", err)
@@ -40,7 +46,8 @@ func run() error {
 		generated.NewExecutableSchema(
 			generated.Config{
 				Resolvers: &graph.Resolver{
-					DB: client,
+					DB:         client,
+					SMTPClient: mailServer,
 				},
 			},
 		),
