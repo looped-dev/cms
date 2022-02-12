@@ -4,8 +4,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Staff struct Staff/Admin members within the CMS
-type Staff struct {
+// StaffMember struct StaffMember/Admin members within the CMS
+type StaffMember struct {
 	ID             primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
 	Name           string              `json:"name" bson:"name,omitempty"`
 	Email          string              `json:"email" bson:"email,omitempty"`

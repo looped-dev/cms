@@ -11,7 +11,7 @@ import (
 	"github.com/looped-dev/cms/api/models"
 )
 
-func (r *staffResolver) Role(ctx context.Context, obj *models.Staff) (models.StaffRole, error) {
+func (r *staffResolver) Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

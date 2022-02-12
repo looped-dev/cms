@@ -17,7 +17,7 @@ enum StaffRole
   AUTHOR
 }
 
-type Staff @goModel(model: "github.com/looped-dev/cms/api/models.Staff") {
+type Staff @goModel(model: "github.com/looped-dev/cms/api/models.StaffMember") {
   id: ID!
   name: String!
   email: Email!

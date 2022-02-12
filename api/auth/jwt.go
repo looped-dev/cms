@@ -19,7 +19,7 @@ type StaffJWTClaims struct {
 	jwt.StandardClaims
 }
 
-func GenerateStaffAccessToken(staff *models.Staff) (string, error) {
+func GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
 	claims := StaffJWTClaims{
 		ID:            staff.ID.Hex(),
 		Name:          staff.Name,
@@ -54,11 +54,11 @@ func VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
 // staff and saves in the database. This allows the option to revoke the token
 // and also tracking usage of refresh tokens. The refresh tokens will be single
 // use and once used, they will be invalidated.
-func CreateStaffRefreshTokenSession(staff *models.Staff) {
+func CreateStaffRefreshTokenSession(staff *models.StaffMember) {
 	panic("Not Implemented")
 }
 
-func GenerateStaffRefreshToken(staff *models.Staff) (string, error) {
+func GenerateStaffRefreshToken(staff *models.StaffMember) (string, error) {
 	panic("Not Implemented")
 }
 

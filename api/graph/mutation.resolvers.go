@@ -33,33 +33,33 @@ func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLogi
 	return staff.StaffLogin(r.DB, &input)
 }
 
-func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error) {
 	staff := staff.NewStaff(r.SMTPClient, r.DB)
 	return staff.StaffSendInvite(ctx, &input)
 }
 
-func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.StaffMember, error) {
 	staff := staff.NewStaff(r.SMTPClient, r.DB)
 	return staff.StaffAcceptInvite(ctx, &input)
 }
 
-func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.StaffMember, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.StaffMember, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.StaffMember, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.Staff, error) {
+func (r *mutationResolver) StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.StaffMember, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

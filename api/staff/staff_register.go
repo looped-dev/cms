@@ -27,7 +27,7 @@ func NewStaff(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *Staff {
 }
 
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
-func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*models.Staff, error) {
+func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*models.StaffMember, error) {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 	createdAt := primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	staff := &models.Staff{
+	staff := &models.StaffMember{
 		Name:           input.Name,
 		Email:          input.Email,
 		HashedPassword: hashedPassword,
@@ -53,9 +53,9 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 
 // StaffSendInvite creates a new staff, with a specific role and creates an invite
 // code and sends an email to the staff member.
-func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInput) (*models.Staff, error) {
+func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInput) (*models.StaffMember, error) {
 	code := utils.GenerateInviteCode()
-	staff := &models.Staff{
+	staffMember := &models.StaffMember{
 		Email: input.Email,
 		Role:  input.Role,
 		InviteCode: models.InviteCode{
@@ -65,7 +65,7 @@ func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInpu
 			},
 		},
 	}
-	staff, err := s.addNewStaffToDB(ctx, staff)
+	staffMember, err := s.addNewStaffToDB(ctx, staffMember)
 	if err != nil {
 		return nil, err
 	}
@@ -74,12 +74,12 @@ func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInpu
 	if err != nil {
 		return nil, err
 	}
-	return staff, nil
+	return staffMember, nil
 }
 
 // StaffAcceptInvite verify invite code and set the new staff password and email
 // as verified.
-func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.Staff, error) {
+func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.StaffMember, error) {
 	if input.ConfirmPassword != input.Password {
 		return nil, fmt.Errorf("Password and confirm password do not match")
 	}
@@ -99,16 +99,16 @@ func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptIn
 }
 
 // StaffUpdate updates the details of the staff i.e. Name, Email, Role.
-func StaffUpdate(client *mongo.Client, input *model.StaffUpdateInput) (*models.Staff, error) {
+func StaffUpdate(client *mongo.Client, input *model.StaffUpdateInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffDelete soft deletes the staff from the database by adding a delatedAt field.
-func StaffDelete(client *mongo.Client, input *model.StaffDeleteInput) (*models.Staff, error) {
+func StaffDelete(client *mongo.Client, input *model.StaffDeleteInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffChangePassword update the staff password.
-func StaffChangePassword(client *mongo.Client, input *model.StaffChangePasswordInput) (*models.Staff, error) {
+func StaffChangePassword(client *mongo.Client, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }

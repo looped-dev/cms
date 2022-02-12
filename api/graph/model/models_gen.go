@@ -167,7 +167,7 @@ type StaffLoginInput struct {
 }
 
 type StaffLoginResponse struct {
-	Staff        *models.Staff `json:"staff" bson:"staff,omitempty"`
+	Staff        *models.StaffMember `json:"staff" bson:"staff,omitempty"`
 	AccessToken  string        `json:"accessToken" bson:"accessToken,omitempty"`
 	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
 }

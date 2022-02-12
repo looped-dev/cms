@@ -10,7 +10,7 @@ import (
 
 func TestGenerateStaffJWTToken(t *testing.T) {
 	type args struct {
-		staff *models.Staff
+		staff *models.StaffMember
 	}
 	id, _ := primitive.ObjectIDFromHex("123456789")
 	tests := []struct {
@@ -21,7 +21,7 @@ func TestGenerateStaffJWTToken(t *testing.T) {
 		{
 			name: "should generate a valid JWT token",
 			args: args{
-				staff: &models.Staff{
+				staff: &models.StaffMember{
 					Name:  "John Doe",
 					Email: "johndoe@example.com",
 					ID:    id,

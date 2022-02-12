@@ -12,51 +12,51 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s Staff) addNewStaffToDB(ctx context.Context, staff *models.Staff) (*models.Staff, error) {
+func (s Staff) addNewStaffToDB(ctx context.Context, staffMember *models.StaffMember) (*models.StaffMember, error) {
 	createdAt := primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	staff.CreatedAt = createdAt
-	staff.UpdatedAt = createdAt
+	staffMember.CreatedAt = createdAt
+	staffMember.UpdatedAt = createdAt
 	result, err := s.DBClient.Database("cms").Collection("staff").InsertOne(
 		ctx,
-		staff,
+		staffMember,
 	)
-	staff.ID = result.InsertedID.(primitive.ObjectID)
-	return staff, err
+	staffMember.ID = result.InsertedID.(primitive.ObjectID)
+	return staffMember, err
 }
 
-func (s Staff) fetchStaffFromDB(ctx context.Context, email string) (*models.Staff, error) {
-	staff := &models.Staff{}
+func (s Staff) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
+	staffMember := &models.StaffMember{}
 	err := s.DBClient.Database("cms").Collection("staff").FindOne(
 		ctx,
 		bson.M{"email": email},
-	).Decode(staff)
+	).Decode(staffMember)
 	if err != nil {
 		return nil, err
 	}
-	return staff, nil
+	return staffMember, nil
 }
 
-func (s Staff) updateStaffInDB(ctx context.Context, staff *models.Staff, input *model.StaffAcceptInviteInput) error {
+func (s Staff) updateStaffInDB(ctx context.Context, staffMember *models.StaffMember, input *model.StaffAcceptInviteInput) error {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return fmt.Errorf("Error hashing password: %v", err)
 	}
 	// update staff object with new details from the user
-	staff.HashedPassword = hashedPassword
-	staff.EmailVerified = true
-	staff.Name = input.Name
+	staffMember.HashedPassword = hashedPassword
+	staffMember.EmailVerified = true
+	staffMember.Name = input.Name
 	// remove invite code as now user has password
-	staff.InviteCode = models.InviteCode{}
-	staff.UpdatedAt = primitive.Timestamp{
+	staffMember.InviteCode = models.InviteCode{}
+	staffMember.UpdatedAt = primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
 	_, err = s.DBClient.Database("cms").Collection("staff").UpdateOne(
 		ctx,
-		bson.M{"_id": staff.ID},
+		bson.M{"_id": staffMember.ID},
 		bson.M{
-			"$set": staff,
+			"$set": staffMember,
 		},
 	)
 	return err

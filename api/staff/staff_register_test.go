@@ -113,19 +113,19 @@ func TestStaffSendInvite(t *testing.T) {
 	staffClass := Staff{
 		DBClient: db,
 	}
-	staff, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
+	staffMember, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
 	assert.NoError(t, err)
-	fetchStaff, err := staffClass.fetchStaffFromDB(context.TODO(), staffInvite.Email)
+	fetchStaffMember, err := staffClass.fetchStaffFromDB(context.TODO(), staffInvite.Email)
 	assert.NoError(t, err)
-	assert.Equal(t, staff.Email, fetchStaff.Email)
-	assert.NotEmpty(t, fetchStaff.InviteCode)
-	assert.NotEmpty(t, fetchStaff.InviteCode.Expiry)
+	assert.Equal(t, staffMember.Email, fetchStaffMember.Email)
+	assert.NotEmpty(t, fetchStaffMember.InviteCode)
+	assert.NotEmpty(t, fetchStaffMember.InviteCode.Expiry)
 	// check whether the code expiry time is with 24 hours
-	assert.Greater(t, fetchStaff.InviteCode.Expiry.T, uint32(time.Now().Unix())+60*59*24)
+	assert.Greater(t, fetchStaffMember.InviteCode.Expiry.T, uint32(time.Now().Unix())+60*59*24)
 }
 
 func TestStaffAcceptInvite(t *testing.T) {
-	staffInsert := &models.Staff{
+	staffInsert := &models.StaffMember{
 		Email: "johndoe2@example.com",
 		InviteCode: models.InviteCode{
 			Code: "CODE",
@@ -137,7 +137,7 @@ func TestStaffAcceptInvite(t *testing.T) {
 	staffClass := Staff{
 		DBClient: db,
 	}
-	staff, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
+	staffMember, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
 	assert.NoError(t, err)
 	invite := &model.StaffAcceptInviteInput{
 		Name:            "John Doe",
@@ -146,10 +146,10 @@ func TestStaffAcceptInvite(t *testing.T) {
 		Password:        "password",
 		ConfirmPassword: "password",
 	}
-	staffInvite, err := staffClass.StaffAcceptInvite(context.TODO(), invite)
+	staffMemberInvite, err := staffClass.StaffAcceptInvite(context.TODO(), invite)
 	assert.NoError(t, err)
-	assert.Equal(t, staff.ID, staffInvite.ID)
-	assert.Equal(t, staff.Email, staffInvite.Email)
-	assert.NotNil(t, staff.HashedPassword)
-	assert.Empty(t, staffInvite.InviteCode)
+	assert.Equal(t, staffMember.ID, staffMemberInvite.ID)
+	assert.Equal(t, staffMember.Email, staffMemberInvite.Email)
+	assert.NotNil(t, staffMember.HashedPassword)
+	assert.Empty(t, staffMemberInvite.InviteCode)
 }

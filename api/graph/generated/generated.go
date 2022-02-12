@@ -209,13 +209,13 @@ type MutationResolver interface {
 	UpdatePageStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Page, error)
 	UpdatePage(ctx context.Context, input model.UpdatePostInput) (*model.Page, error)
 	StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error)
-	StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.Staff, error)
-	StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.Staff, error)
-	StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.Staff, error)
-	StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.Staff, error)
-	StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.Staff, error)
-	StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.Staff, error)
-	StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.Staff, error)
+	StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error)
+	StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.StaffMember, error)
+	StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.StaffMember, error)
+	StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.StaffMember, error)
+	StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.StaffMember, error)
+	StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.StaffMember, error)
+	StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.StaffMember, error)
 	StaffLogout(ctx context.Context) (bool, error)
 	UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error)
 }
@@ -228,7 +228,7 @@ type QueryResolver interface {
 	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
 }
 type StaffResolver interface {
-	Role(ctx context.Context, obj *models.Staff) (models.StaffRole, error)
+	Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error)
 }
 
 type executableSchema struct {
@@ -2958,7 +2958,7 @@ func (ec *executionContext) _Mutation_staffInvite(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3000,7 +3000,7 @@ func (ec *executionContext) _Mutation_staffAcceptInvite(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3042,7 +3042,7 @@ func (ec *executionContext) _Mutation_staffUpdate(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3084,7 +3084,7 @@ func (ec *executionContext) _Mutation_staffDelete(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3126,7 +3126,7 @@ func (ec *executionContext) _Mutation_staffChangePassword(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3168,7 +3168,7 @@ func (ec *executionContext) _Mutation_staffResetPassword(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -3210,7 +3210,7 @@ func (ec *executionContext) _Mutation_staffForgotPassword(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -4872,7 +4872,7 @@ func (ec *executionContext) _Sizes_full(ctx context.Context, field graphql.Colle
 	return ec.marshalOSize2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSize(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4907,7 +4907,7 @@ func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4942,7 +4942,7 @@ func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4977,7 +4977,7 @@ func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.Coll
 	return ec.marshalNEmail2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5012,7 +5012,7 @@ func (ec *executionContext) _Staff_emailVerified(ctx context.Context, field grap
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_role(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_role(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5047,7 +5047,7 @@ func (ec *executionContext) _Staff_role(ctx context.Context, field graphql.Colle
 	return ec.marshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5082,7 +5082,7 @@ func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.
 	return ec.marshalNMongoTime2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐTimestamp(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.Staff) (ret graphql.Marshaler) {
+func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5147,7 +5147,7 @@ func (ec *executionContext) _StaffLoginResponse_staff(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Staff)
+	res := resTmp.(*models.StaffMember)
 	fc.Result = res
 	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx, field.Selections, res)
 }
@@ -8626,7 +8626,7 @@ func (ec *executionContext) _Sizes(ctx context.Context, sel ast.SelectionSet, ob
 
 var staffImplementors = []string{"Staff"}
 
-func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, obj *models.Staff) graphql.Marshaler {
+func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, obj *models.StaffMember) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, staffImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -9516,11 +9516,11 @@ func (ec *executionContext) unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNStaff2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v models.Staff) graphql.Marshaler {
+func (ec *executionContext) marshalNStaff2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v models.StaffMember) graphql.Marshaler {
 	return ec._Staff(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v *models.Staff) graphql.Marshaler {
+func (ec *executionContext) marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaff(ctx context.Context, sel ast.SelectionSet, v *models.StaffMember) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
