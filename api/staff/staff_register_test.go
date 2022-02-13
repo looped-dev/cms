@@ -2,7 +2,6 @@ package staff
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -10,15 +9,16 @@ import (
 
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
+	test_setup "github.com/looped-dev/cms/api/test_setup"
 	"github.com/ory/dockertest/v3"
-	"github.com/ory/dockertest/v3/docker"
 	"github.com/stretchr/testify/assert"
+	mail "github.com/xhit/go-simple-mail/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var db *mongo.Client
+var smtpClient *mail.SMTPClient
 
 func TestMain(m *testing.M) {
 	var err error
@@ -26,59 +26,14 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
-
-	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
-		Repository: "mongo",
-		Tag:        "5.0",
-		Env: []string{
-			"MONGO_INITDB_ROOT_USERNAME=looped",
-			"MONGO_INITDB_ROOT_PASSWORD=root",
-		},
-	}, func(config *docker.HostConfig) {
-		// set AutoRemove to true so that stopped container goes away by itself
-		config.AutoRemove = true
-		config.RestartPolicy = docker.RestartPolicy{
-			Name: "no",
-		}
-	})
-	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+	testContainer := test_setup.TestContainers{
+		Pool: pool,
 	}
 
-	// set timeout to 5 minutes
-	if err := resource.Expire(300); err != nil {
-		log.Fatalf("Couldn't setup resource expiration to 5 minutes: %v", err)
-	}
-
-	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	err = pool.Retry(func() error {
-		var err error
-		db, err = mongo.Connect(
-			context.TODO(),
-			options.Client().ApplyURI(
-				fmt.Sprintf("mongodb://looped:root@localhost:%s", resource.GetPort("27017/tcp")),
-			),
-		)
-		if err != nil {
-			return err
-		}
-		return db.Ping(context.TODO(), nil)
-	})
-
+	var resource *dockertest.Resource
+	db, resource, err = testContainer.NewMongoContainer(context.TODO())
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
-	}
-
-	// create a login user for testing
-	staffInput := &model.StaffRegisterInput{
-		Name:     "test",
-		Email:    "login_test@example.com",
-		Password: "password",
-	}
-	_, errRegisterUser := StaffRegister(db, staffInput)
-
-	if errRegisterUser != nil {
-		log.Fatalf("Unable to create users for testing")
 	}
 
 	// run tests
@@ -111,7 +66,8 @@ func TestStaffSendInvite(t *testing.T) {
 		Role:  models.StaffRoleEditor,
 	}
 	staffClass := Staff{
-		DBClient: db,
+		DBClient:   db,
+		SMTPClient: smtpClient,
 	}
 	staffMember, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
 	assert.NoError(t, err)
