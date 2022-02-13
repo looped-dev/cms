@@ -9,11 +9,11 @@ import (
 )
 
 type SendMailConfig struct {
-	emailTo   string
-	emailFrom string
-	subject   string
-	htmlBody  string
-	plainBody string
+	EmailTo   string
+	EmailFrom string
+	Subject   string
+	HtmlBody  string
+	PlainBody string
 }
 
 func NewSMTPClient() (*mail.SMTPClient, error) {
@@ -34,13 +34,20 @@ func NewSMTPClient() (*mail.SMTPClient, error) {
 	return server.Connect()
 }
 
+func NewMockSMTPClient(host string, port int) (*mail.SMTPClient, error) {
+	server := mail.NewSMTPClient()
+	server.Host = host
+	server.Port = port
+	return server.Connect()
+}
+
 func SendEmail(smtpClient *mail.SMTPClient, config SendMailConfig) error {
 	// Create email
 	email := mail.NewMSG()
-	email.SetFrom(fmt.Sprintf("From Me <%s>", config.emailFrom))
-	email.AddTo(config.emailTo)
-	email.SetSubject(config.subject)
-	email.SetBody(mail.TextHTML, config.htmlBody)
-	email.SetBody(mail.TextPlain, config.plainBody)
+	email.SetFrom(fmt.Sprintf("From Me <%s>", config.EmailFrom))
+	email.AddTo(config.EmailTo)
+	email.SetSubject(config.Subject)
+	email.SetBody(mail.TextHTML, config.HtmlBody)
+	email.SetBody(mail.TextPlain, config.PlainBody)
 	return email.Send(smtpClient)
 }

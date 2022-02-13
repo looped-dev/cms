@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
 	"github.com/looped-dev/cms/api/utils"
@@ -70,10 +69,16 @@ func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInpu
 		return nil, err
 	}
 	// send email
-	err = emails.SendEmail(s.SMTPClient, emails.SendMailConfig{})
-	if err != nil {
-		return nil, err
-	}
+	// err = emails.SendEmail(s.SMTPClient, emails.SendMailConfig{
+	// 	EmailTo:   staffMember.Email,
+	// 	EmailFrom: "info@looped.dev",
+	// 	Subject:   "Invite to Looped CMS",
+	// 	HtmlBody:  "Hi,<br><br>You have been invited to Looped CMS. Please click the link below to register.<br><br><a href=\"https://looped.dev/staff/register?code=" + code + "\">Register</a>",
+	// 	PlainBody: "Hi,\n\nYou have been invited to Looped CMS. Please click the link below to register.\n\nhttps://looped.dev/staff/register?code=" + code,
+	// })
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return staffMember, nil
 }
 
@@ -83,19 +88,19 @@ func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptIn
 	if input.ConfirmPassword != input.Password {
 		return nil, fmt.Errorf("Password and confirm password do not match")
 	}
-	staff, err := s.fetchStaffFromDB(ctx, input.Email)
+	staffMember, err := s.fetchStaffFromDB(ctx, input.Email)
 	if err != nil {
 		return nil, fmt.Errorf("Error fetching staff: %v", err)
 	}
 	// check if invite code is valid
-	if err := validateInviteCode(input.Code, staff.InviteCode); err != nil {
+	if err := validateInviteCode(input.Code, staffMember.InviteCode); err != nil {
 		return nil, err
 	}
 	// update staff in database
-	if err := s.updateStaffInDB(ctx, staff, input); err != nil {
+	if err := s.updateStaffInDB(ctx, staffMember, input); err != nil {
 		return nil, fmt.Errorf("Error updating staff: %v", err)
 	}
-	return staff, nil
+	return staffMember, nil
 }
 
 // StaffUpdate updates the details of the staff i.e. Name, Email, Role.
