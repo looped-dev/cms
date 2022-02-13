@@ -36,12 +36,22 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
+	var resourceSMTP *dockertest.Resource
+	smtpClient, resourceSMTP, err = testContainer.NewMailTestServer(context.TODO())
+	if err != nil {
+		log.Fatalf("Could not connect to docker: %s", err)
+	}
+
 	// run tests
 	code := m.Run()
 
 	// When you're done, kill and remove the container
 	if err = pool.Purge(resource); err != nil {
 		log.Fatalf("Could not purge resource: %s", err)
+	}
+
+	if err = pool.Purge(resourceSMTP); err != nil {
+		log.Fatalf("Could not purge SMTP docker container: %s", err)
 	}
 
 	os.Exit(code)
@@ -91,7 +101,8 @@ func TestStaffAcceptInvite(t *testing.T) {
 		},
 	}
 	staffClass := Staff{
-		DBClient: db,
+		DBClient:   db,
+		SMTPClient: smtpClient,
 	}
 	staffMember, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
 	assert.NoError(t, err)

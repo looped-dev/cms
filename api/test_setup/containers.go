@@ -4,9 +4,12 @@ package tests_setup
 import (
 	"context"
 	"fmt"
+	"strconv"
 
+	"github.com/looped-dev/cms/api/emails"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
+	mail "github.com/xhit/go-simple-mail/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -71,4 +74,29 @@ func (t TestContainers) NewMongoContainer(ctx context.Context) (*mongo.Client, *
 	}
 	resource, err := t.NewContainer(runOptions, retryFunction)
 	return db, resource, err
+}
+
+func (t TestContainers) NewMailTestServer(ctx context.Context) (*mail.SMTPClient, *dockertest.Resource, error) {
+	var smtpClient *mail.SMTPClient
+	// resource will be passed in by the caller
+	retryFunction := func(resource *dockertest.Resource) func() error {
+		return func() error {
+			port, err := strconv.Atoi(resource.GetPort("1025/tcp"))
+			if err != nil {
+				return err
+			}
+			smtpClient, err = emails.NewMockSMTPClient("localhost", port)
+			if err != nil {
+				return err
+			}
+			return smtpClient.Noop()
+		}
+	}
+	runOptions := &dockertest.RunOptions{
+		Repository: "mailhog/mailhog",
+		Tag:        "latest",
+		Env:        []string{},
+	}
+	resource, err := t.NewContainer(runOptions, retryFunction)
+	return smtpClient, resource, err
 }
