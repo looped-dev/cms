@@ -17,7 +17,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var db *mongo.Client
+var dbClient *mongo.Client
 var smtpClient *mail.SMTPClient
 
 func TestMain(m *testing.M) {
@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	}
 
 	var resource *dockertest.Resource
-	db, resource, err = testContainer.NewMongoContainer(context.TODO())
+	dbClient, resource, err = testContainer.NewMongoContainer(context.TODO())
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
@@ -63,7 +63,10 @@ func TestStaff_StaffRegister(t *testing.T) {
 		Email:    "johndoe@example.com",
 		Password: "password",
 	}
-	got, err := StaffRegister(db, staffInput)
+	s := Staff{
+		DBClient: dbClient,
+	}
+	got, err := s.StaffRegister(context.TODO(), staffInput)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Email, staffInput.Email)
 	assert.Equal(t, got.Name, staffInput.Name)
@@ -76,7 +79,7 @@ func TestStaffSendInvite(t *testing.T) {
 		Role:  models.StaffRoleEditor,
 	}
 	staffClass := Staff{
-		DBClient:   db,
+		DBClient:   dbClient,
 		SMTPClient: smtpClient,
 	}
 	staffMember, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
@@ -101,7 +104,7 @@ func TestStaffAcceptInvite(t *testing.T) {
 		},
 	}
 	staffClass := Staff{
-		DBClient:   db,
+		DBClient:   dbClient,
 		SMTPClient: smtpClient,
 	}
 	staffMember, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)

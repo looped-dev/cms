@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
@@ -27,7 +28,7 @@ func NewStaff(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *Staff {
 }
 
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
-func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*models.StaffMember, error) {
+func (s Staff) StaffRegister(ctx context.Context, input *model.StaffRegisterInput) (*models.StaffMember, error) {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
@@ -43,7 +44,7 @@ func StaffRegister(client *mongo.Client, input *model.StaffRegisterInput) (*mode
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
 	}
-	result, err := client.Database("cms").Collection("staff").InsertOne(context.TODO(), staff)
+	result, err := s.DBClient.Database(db.DefaultDatabaseName).Collection("staff").InsertOne(context.TODO(), staff)
 	if err != nil {
 		return nil, err
 	}
@@ -105,16 +106,16 @@ func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptIn
 }
 
 // StaffUpdate updates the details of the staff i.e. Name, Email, Role.
-func StaffUpdate(client *mongo.Client, input *model.StaffUpdateInput) (*models.StaffMember, error) {
+func (s Staff) StaffUpdate(ctx context.Context, input *model.StaffUpdateInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffDelete soft deletes the staff from the database by adding a delatedAt field.
-func StaffDelete(client *mongo.Client, input *model.StaffDeleteInput) (*models.StaffMember, error) {
+func (s Staff) StaffDelete(ctx context.Context, input *model.StaffDeleteInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffChangePassword update the staff password.
-func StaffChangePassword(client *mongo.Client, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
+func (s Staff) StaffChangePassword(ctx context.Context, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }

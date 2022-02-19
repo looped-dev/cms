@@ -30,7 +30,8 @@ func (r *mutationResolver) UpdatePage(ctx context.Context, input model.UpdatePos
 }
 
 func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error) {
-	return staff.StaffLogin(r.DB, &input)
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffLogin(ctx, &input)
 }
 
 func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error) {
@@ -44,27 +45,37 @@ func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.St
 }
 
 func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.StaffMember, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffUpdate(ctx, &input)
 }
 
 func (r *mutationResolver) StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.StaffMember, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffDelete(ctx, &input)
 }
 
 func (r *mutationResolver) StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.StaffMember, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffChangePassword(ctx, &input)
 }
 
 func (r *mutationResolver) StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.StaffMember, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffResetPassword(ctx, &input)
 }
 
 func (r *mutationResolver) StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.StaffMember, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffForgotPassword(ctx, &input)
 }
 
 func (r *mutationResolver) StaffLogout(ctx context.Context) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	_, err := staff.StaffLogout(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {

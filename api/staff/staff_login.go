@@ -7,13 +7,12 @@ import (
 	"github.com/looped-dev/cms/api/auth"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func StaffLogin(client *mongo.Client, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
+func (s Staff) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staffMember := &models.StaffMember{}
-	err := client.Database("cms").Collection("staff").FindOne(
+	err := s.DBClient.Database("cms").Collection("staff").FindOne(
 		context.TODO(),
 		models.StaffMember{
 			Email: input.Email,
@@ -39,14 +38,14 @@ func StaffLogin(client *mongo.Client, input *model.StaffLoginInput) (*model.Staf
 }
 
 // StaffLogout invalidates the current logged in staff refresh token.
-func StaffLogout(client *mongo.Client) (*models.StaffMember, error) {
+func (s Staff) StaffLogout(ctx context.Context) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
-func StaffResetPassword(client *mongo.Client, input *model.StaffResetPasswordInput) (*models.StaffMember, error) {
+func (s Staff) StaffResetPassword(ctx context.Context, input *model.StaffResetPasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
-func StaffForgotPassword(client *mongo.Client, input *model.StaffForgotPasswordInput) (*models.StaffMember, error) {
+func (s Staff) StaffForgotPassword(ctx context.Context, input *model.StaffForgotPasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }

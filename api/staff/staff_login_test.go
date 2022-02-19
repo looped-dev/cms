@@ -1,6 +1,7 @@
 package staff
 
 import (
+	"context"
 	"log"
 	"testing"
 
@@ -15,12 +16,16 @@ func TestStaffLogin(t *testing.T) {
 		Email:    "login_test@example.com",
 		Password: "password",
 	}
-
-	if _, err := StaffRegister(db, staffInput); err != nil {
+	s := Staff{
+		DBClient: dbClient,
+	}
+	if _, err := s.StaffRegister(context.TODO(), staffInput); err != nil {
 		log.Fatalf("Unable to create users for testing")
 	}
-
-	_, err := StaffLogin(db, &model.StaffLoginInput{
+	staff := Staff{
+		DBClient: dbClient,
+	}
+	_, err := staff.StaffLogin(context.Background(), &model.StaffLoginInput{
 		Email:    "login_test@example.com",
 		Password: "password",
 	})
