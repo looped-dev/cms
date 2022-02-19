@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
@@ -26,9 +27,15 @@ func run() error {
 	}
 
 	mongoDbConnString := configs.GetConfig("MONGODB_CONNSTRING")
+
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoDbConnString))
 	if err != nil {
 		return fmt.Errorf("Failed to create a db client: %v", err)
+	}
+
+	err = db.CreateIndexes(client, context.Background(), db.DefaultDatabaseName)
+	if err != nil {
+		return err
 	}
 
 	mailServer, err := emails.NewSMTPClient()
