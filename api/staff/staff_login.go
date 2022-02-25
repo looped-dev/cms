@@ -12,12 +12,8 @@ import (
 
 func (s Staff) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staffMember := &models.StaffMember{}
-	err := s.DBClient.Database("cms").Collection("staff").FindOne(
-		context.TODO(),
-		models.StaffMember{
-			Email: input.Email,
-		},
-	).Decode(staffMember)
+	filter := models.StaffMember{Email: input.Email}
+	err := s.DBClient.Database("cms").Collection("staff").FindOne(ctx, filter).Decode(staffMember)
 	if err != nil {
 		return nil, err
 	}
@@ -26,13 +22,20 @@ func (s Staff) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*m
 		return nil, fmt.Errorf("Incorrect password: %v", err)
 	}
 	// create session i.e. JWT Access Token, JWT Refresh Token and JWT ID Token
-	accessToken, err := auth.GenerateStaffAccessToken(staffMember)
+	jwt := auth.JWT{
+		DBClient: s.DBClient,
+	}
+	accessToken, err := jwt.GenerateStaffAccessToken(staffMember)
 	if err != nil {
 		return nil, fmt.Errorf("error generating access token: %v", err)
 	}
+	refreshToken, err := jwt.CreateStaffRefreshTokenSession(s.DBClient, ctx, staffMember)
+	if err != nil {
+		return nil, fmt.Errorf("error generating refresh token: %v", err)
+	}
 	return &model.StaffLoginResponse{
 		AccessToken:  accessToken,
-		RefreshToken: "",
+		RefreshToken: refreshToken,
 		Staff:        staffMember,
 	}, nil
 }

@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/looped-dev/cms/api/models"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // todo: dynamically generate this during setup and store in config
@@ -19,7 +22,16 @@ type StaffJWTClaims struct {
 	jwt.StandardClaims
 }
 
-func GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
+type StaffJWTRefreshTokenClaims struct {
+	models.RefreshToken
+	jwt.StandardClaims
+}
+
+type JWT struct {
+	DBClient *mongo.Client
+}
+
+func (webTokens JWT) GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
 	claims := StaffJWTClaims{
 		ID:            staff.ID.Hex(),
 		Name:          staff.Name,
@@ -37,7 +49,7 @@ func GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
 	return token.SignedString([]byte(signInString))
 }
 
-func VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
+func (webTokens JWT) VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &StaffJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(signInString), nil
 	})
@@ -54,18 +66,35 @@ func VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
 // staff and saves in the database. This allows the option to revoke the token
 // and also tracking usage of refresh tokens. The refresh tokens will be single
 // use and once used, they will be invalidated.
-func CreateStaffRefreshTokenSession(staff *models.StaffMember) {
+func (webTokens JWT) CreateStaffRefreshTokenSession(client *mongo.Client, ctx context.Context, staff *models.StaffMember) (string, error) {
+	src := &StaffRefreshToken{
+		DBClient: client,
+	}
+	refreshTokenData, err := src.CreateStaffRefreshTokenSession(ctx, staff)
+	if err != nil {
+		return "", fmt.Errorf("Error creating new refresh token: %v", err)
+	}
+	claims := &StaffJWTRefreshTokenClaims{
+		RefreshToken: *refreshTokenData,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: int64(refreshTokenData.ExpiresAt.T),
+			Issuer:    "looped-cms",
+			Audience:  "looped-cms-admin",
+			IssuedAt:  time.Now().Unix(),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(signInString))
+}
+
+func (webTokens JWT) GenerateStaffRefreshToken(ctx context.Context, staff *models.StaffMember) (string, error) {
 	panic("Not Implemented")
 }
 
-func GenerateStaffRefreshToken(staff *models.StaffMember) (string, error) {
+func (webTokens JWT) VerifyStaffRefreshToken(ctx context.Context, tokenString string) error {
 	panic("Not Implemented")
 }
 
-func VerifyStaffRefreshToken(tokenString string) error {
-	panic("Not Implemented")
-}
-
-func RevokeStaffRefreshToken(tokenString string) error {
+func (webTokens JWT) RevokeStaffRefreshToken(ctx context.Context, tokenString string) error {
 	panic("Not Implemented")
 }
