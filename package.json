@@ -7,7 +7,8 @@
     "build": "nx build",
     "test": "nx test",
     "postinstall": "ngcc --properties es2015 browser module main",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "nx:ng:add": "nx g ${npm_config_package}:ng-add"
   },
   "private": true,
   "dependencies": {
@@ -19,10 +20,12 @@
     "@angular/platform-browser": "13.2.0",
     "@angular/platform-browser-dynamic": "13.2.0",
     "@angular/router": "13.2.0",
+    "@apollo/client": "^3.5.9",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typescript": "^2.4.5",
     "@graphql-codegen/typescript-apollo-angular": "^3.4.1",
     "@graphql-codegen/typescript-operations": "^2.3.2",
+    "apollo-angular": "^3.0.0",
     "graphql": "^16.3.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.0.0",
