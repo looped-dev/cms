@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@looped-cms/auth": ["libs/auth/src/index.ts"],
       "@looped-cms/graphql": ["libs/graphql/types/graphql.ts"]
     }
   },

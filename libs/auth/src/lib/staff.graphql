@@ -1,0 +1,14 @@
+mutation StaffLogin($input: StaffLoginInput!) {
+  staffLogin(input: $input) {
+    accessToken
+    refreshToken
+    staff {
+      id
+      name
+      email
+      role
+      createdAt
+      updatedAt
+    }
+  }
+}
