@@ -6,7 +6,8 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "postinstall": "ngcc --properties es2015 browser module main"
+    "postinstall": "ngcc --properties es2015 browser module main",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "private": true,
   "dependencies": {
@@ -18,6 +19,11 @@
     "@angular/platform-browser": "13.2.0",
     "@angular/platform-browser-dynamic": "13.2.0",
     "@angular/router": "13.2.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript": "^2.4.5",
+    "@graphql-codegen/typescript-apollo-angular": "^3.4.1",
+    "@graphql-codegen/typescript-operations": "^2.3.2",
+    "graphql": "^16.3.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
@@ -29,8 +35,14 @@
     "@angular-eslint/eslint-plugin": "13.0.1",
     "@angular-eslint/eslint-plugin-template": "13.0.1",
     "@angular-eslint/template-parser": "13.0.1",
+    "@angular/cli": "~13.2.0",
     "@angular/compiler-cli": "13.2.0",
     "@angular/language-service": "13.2.0",
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/typescript": "2.4.5",
+    "@graphql-codegen/typescript-apollo-angular": "3.4.1",
+    "@graphql-codegen/typescript-graphql-files-modules": "2.1.1",
+    "@graphql-codegen/typescript-operations": "2.3.2",
     "@nrwl/angular": "13.8.3",
     "@nrwl/cli": "13.8.3",
     "@nrwl/cypress": "13.8.3",
@@ -59,4 +71,3 @@
     "typescript": "4.5.5"
   }
 }
-
