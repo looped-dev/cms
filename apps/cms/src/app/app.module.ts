@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { APOLLO_OPTIONS } from 'apollo-angular';
-import { InMemoryCache } from '@apollo/client';
+import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
 
 @NgModule({
