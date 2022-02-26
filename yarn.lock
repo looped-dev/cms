@@ -1761,7 +1761,7 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
   integrity sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==
 
-"@graphql-codegen/cli@^2.6.2":
+"@graphql-codegen/cli@2.6.2":
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/cli/-/cli-2.6.2.tgz#a9aa4656141ee0998cae8c7ad7d0bf9ca8e0c9ae"
   integrity sha512-UO75msoVgvLEvfjCezM09cQQqp32+mR8Ma1ACsBpr7nroFvHbgcu2ulx1cMovg4sxDBCsvd9Eq/xOOMpARUxtw==
@@ -1838,7 +1838,7 @@
     "@graphql-tools/utils" "^8.1.1"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-apollo-angular@^3.4.1":
+"@graphql-codegen/typescript-apollo-angular@3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-apollo-angular/-/typescript-apollo-angular-3.4.1.tgz#57ee6d27a582846b35b8b9c40c6912dae9527418"
   integrity sha512-q1vPwZzzxxJwAUmIVoZkFLAq317N26DSBMrP9+V/taC3vGw/6hzw/l+wbQtCppPWt+bfBWAnxLlo3xX3qloCEw==
@@ -1857,7 +1857,7 @@
     "@graphql-codegen/plugin-helpers" "^2.3.2"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript-operations@^2.3.2":
+"@graphql-codegen/typescript-operations@2.3.2":
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-2.3.2.tgz#1a94c352b196030d0bf3701ed38343c8619c94e0"
   integrity sha512-VLB466ffcT25imuq85ANVqVotVaT4T1gJ6FLJsiJkn5U/iMMZa8CvP+l9oSqDlaBotv38LIZX6pdWGNGAn7kDA==
@@ -1868,7 +1868,7 @@
     auto-bind "~4.0.0"
     tslib "~2.3.0"
 
-"@graphql-codegen/typescript@^2.4.5":
+"@graphql-codegen/typescript@2.4.5", "@graphql-codegen/typescript@^2.4.5":
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-2.4.5.tgz#80ca7a343511a27cd587c0b220b0a0dd99a4dc4b"
   integrity sha512-Ytb8phNHKl/v/wxudsMOAV1dmzIbckWHm2J83PLNOvnu9CGEhgsd67vfe3ZoF95VU2BKSG8BXGa6uL9z2xDmuA==
