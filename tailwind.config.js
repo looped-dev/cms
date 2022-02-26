@@ -1,12 +1,8 @@
 module.exports = {
-  // content: [],
+  content: ['./apps/cms/**/*.{html,ts}', './libs/**/*.{html,ts}'],
   mode: 'jit',
   theme: {
     extend: {},
   },
   plugins: [],
-  purge: {
-    enabled: true,
-    content: ['./apps/cms/**/*.{html,ts}'],
-  },
 };
