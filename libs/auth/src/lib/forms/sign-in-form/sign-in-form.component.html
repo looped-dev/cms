@@ -1,17 +1,19 @@
 <div class="form-container">
-  <h4 class="title">Login to Looped CMS</h4>
-  <div class="form-control">
-    <label>Email Address *</label>
-    <input type="email" placeholder="Email" />
-  </div>
-  <div class="form-control">
-    <label>Password *</label>
-    <input type="password" placeholder="Password" />
-  </div>
-  <div class="form-control">
-    <button>
-      <fa-icon [icon]="unlockIcon"></fa-icon>
-      <span>Sign in</span>
-    </button>
-  </div>
+  <form (submit)="onSubmit()" #signInForm="ngForm">
+    <h4 class="title">Login to Looped CMS</h4>
+    <div class="form-control">
+      <label>Email Address *</label>
+      <input type="email" name="email" placeholder="Email" [(ngModel)]="signInFormModel.email" required />
+    </div>
+    <div class="form-control">
+      <label>Password *</label>
+      <input type="password" name="password" placeholder="Password" [(ngModel)]="signInFormModel.password" required />
+    </div>
+    <div class=" form-control">
+      <button [disabled]="!signInForm.valid" type="submit">
+        <fa-icon [icon]="unlockIcon"></fa-icon>
+        <span>Sign in</span>
+      </button>
+    </div>
+  </form>
 </div>

@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SignInFormComponent } from './forms/sign-in-form/sign-in-form.component';
 import { LayoutComponent } from './containers/layout/layout.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -19,7 +20,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, FontAwesomeModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    RouterModule.forChild(routes),
+    FormsModule,
+  ],
   declarations: [SignInFormComponent, LayoutComponent],
 })
 export class AuthModule {}
