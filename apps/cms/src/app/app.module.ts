@@ -6,12 +6,29 @@ import { RouterModule } from '@angular/router';
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
+import { AuthModule } from '@looped-cms/auth';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([], { initialNavigation: 'enabledBlocking' }),
+    RouterModule.forRoot(
+      [
+        {
+          path: '',
+          component: AppComponent,
+          children: [
+            {
+              path: 'auth',
+              loadChildren: () =>
+                import('@looped-cms/auth').then((m) => m.AuthModule),
+            },
+          ],
+        },
+      ],
+      { initialNavigation: 'enabledBlocking' }
+    ),
+    AuthModule,
   ],
   providers: [
     {
