@@ -1,6 +1,13 @@
 <div class="form-container">
   <form (submit)="onSubmit()" #signInForm="ngForm">
     <h4 class="title">Login to Looped CMS</h4>
+    <!-- show error message -->
+    <ng-container *ngIf="errorMessage !== ''">
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    </ng-container>
+
     <div class="form-control">
       <label>Email Address *</label>
       <input type="email" name="email" placeholder="Email" [(ngModel)]="signInFormModel.email" required />

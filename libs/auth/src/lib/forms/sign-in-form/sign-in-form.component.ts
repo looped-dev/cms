@@ -19,6 +19,8 @@ export class SignInFormComponent {
 
   @ViewChild(NgForm) signInForm!: NgForm;
 
+  errorMessage = '';
+
   signInFormModel: SignInFormData = {
     email: '',
     password: '',
@@ -41,7 +43,7 @@ export class SignInFormComponent {
         next: ({ data }) => {
           console.log({ data });
         },
-        error: (error) => console.log(error),
+        error: (error) => (this.errorMessage = error?.message),
       });
   }
 }

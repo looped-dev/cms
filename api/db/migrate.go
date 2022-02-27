@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const DefaultDatabaseName = "looped"
+const DefaultDatabaseName = "cms"
 
 func CreateIndexes(client *mongo.Client, ctx context.Context, dbName string) error {
 	staffIndexes := []mongo.IndexModel{

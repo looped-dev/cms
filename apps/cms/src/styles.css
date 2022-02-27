@@ -2,3 +2,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Common Styles */
+.error-message {
+  @apply block w-full py-4 px-6 font-bold  bg-red-600 text-white rounded-md;
+}

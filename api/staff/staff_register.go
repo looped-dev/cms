@@ -40,11 +40,11 @@ func (s Staff) StaffRegister(ctx context.Context, input *model.StaffRegisterInpu
 		Name:           input.Name,
 		Email:          input.Email,
 		HashedPassword: hashedPassword,
-		EmailVerified:  false,
+		EmailVerified:  true,
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
 	}
-	result, err := s.DBClient.Database(db.DefaultDatabaseName).Collection("staff").InsertOne(context.TODO(), staff)
+	result, err := s.DBClient.Database(db.DefaultDatabaseName).Collection("staff").InsertOne(ctx, staff)
 	if err != nil {
 		return nil, err
 	}

@@ -2,14 +2,13 @@ package staff
 
 import (
 	"context"
-	"log"
 	"testing"
 
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStaffLogin(t *testing.T) {
+func TestStaff_StaffLogin(t *testing.T) {
 	// create a login user for testing
 	staffInput := &model.StaffRegisterInput{
 		Name:     "test",
@@ -19,15 +18,16 @@ func TestStaffLogin(t *testing.T) {
 	s := Staff{
 		DBClient: dbClient,
 	}
-	if _, err := s.StaffRegister(context.TODO(), staffInput); err != nil {
-		log.Fatalf("Unable to create users for testing")
-	}
+	_, err := s.StaffRegister(context.TODO(), staffInput)
+	assert.ErrorIs(t, err, nil, "shouldn't return error when creating staff registered")
+
 	staff := Staff{
 		DBClient: dbClient,
 	}
-	_, err := staff.StaffLogin(context.Background(), &model.StaffLoginInput{
+	staffLogin, err := staff.StaffLogin(context.Background(), &model.StaffLoginInput{
 		Email:    "login_test@example.com",
 		Password: "password",
 	})
 	assert.NoError(t, err)
+	assert.NotNil(t, staffLogin)
 }
