@@ -236,8 +236,6 @@ type QueryResolver interface {
 	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
 }
 type StaffResolver interface {
-	ID(ctx context.Context, obj *models.StaffMember) (string, error)
-
 	Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error)
 }
 
@@ -1208,6 +1206,7 @@ directive @goField(
 scalar Map
 scalar Email
 scalar MongoTime
+scalar MongoID
 `, BuiltIn: false},
 	{Name: "api/schema/image.graphql", Input: `type Image {
   id: ID!
@@ -1468,7 +1467,7 @@ input FacebookCardInput {
 }
 
 type Staff @goModel(model: "github.com/looped-dev/cms/api/models.StaffMember") {
-  id: ID!
+  id: MongoID!
   name: String!
   email: Email!
   emailVerified: Boolean!
@@ -5110,14 +5109,14 @@ func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.Collect
 		Object:     "Staff",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Staff().ID(rctx, obj)
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5129,9 +5128,9 @@ func (ec *executionContext) _Staff_id(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(primitive.ObjectID)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNMongoID2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐObjectID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Staff_name(ctx context.Context, field graphql.CollectedField, obj *models.StaffMember) (ret graphql.Marshaler) {
@@ -8970,25 +8969,15 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Staff")
 		case "id":
-			field := field
-
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Staff_id(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+				return ec._Staff_id(ctx, field, obj)
 			}
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
+			out.Values[i] = innerFunc(ctx)
 
-			})
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "name":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Staff_name(ctx, field, obj)
@@ -9790,6 +9779,21 @@ func (ec *executionContext) marshalNMemberSubscription2ᚖgithubᚗcomᚋlooped�
 		return graphql.Null
 	}
 	return ec._MemberSubscription(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMongoID2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐObjectID(ctx context.Context, v interface{}) (primitive.ObjectID, error) {
+	res, err := model.UnmarshalMongoID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMongoID2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐObjectID(ctx context.Context, sel ast.SelectionSet, v primitive.ObjectID) graphql.Marshaler {
+	res := model.MarshalMongoID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNMongoTime2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐTimestamp(ctx context.Context, v interface{}) (primitive.Timestamp, error) {

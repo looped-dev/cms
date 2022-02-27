@@ -58,5 +58,5 @@ models:
     model: github.com/looped-dev/cms/api/graph/model.Email
   MongoTime:
     model: github.com/looped-dev/cms/api/graph/model.MongoTime
-  # StaffRole:
-  #   model: github.com/looped-dev/cms/api/models.StaffRole
+  MongoID:
+    model: github.com/looped-dev/cms/api/graph/model.MongoID

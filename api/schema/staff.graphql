@@ -22,7 +22,7 @@ enum StaffRole
 }
 
 type Staff @goModel(model: "github.com/looped-dev/cms/api/models.StaffMember") {
-  id: ID!
+  id: MongoID!
   name: String!
   email: Email!
   emailVerified: Boolean!

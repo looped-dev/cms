@@ -2,3 +2,4 @@ scalar Time
 scalar Map
 scalar Email
 scalar MongoTime
+scalar MongoID
