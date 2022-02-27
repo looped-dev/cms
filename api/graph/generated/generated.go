@@ -137,6 +137,7 @@ type ComplexityRoot struct {
 		GetPost      func(childComplexity int, slug string) int
 		GetPostByID  func(childComplexity int, id string) int
 		GetPosts     func(childComplexity int, page *int, perPage *int) int
+		IsSetup      func(childComplexity int) int
 		SiteSettings func(childComplexity int) int
 	}
 
@@ -234,6 +235,7 @@ type QueryResolver interface {
 	GetPostByID(ctx context.Context, id string) (*model.Post, error)
 	GetPageByID(ctx context.Context, id string) (*model.Page, error)
 	SiteSettings(ctx context.Context) (*model.SiteSettings, error)
+	IsSetup(ctx context.Context) (bool, error)
 }
 type StaffResolver interface {
 	Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error)
@@ -825,6 +827,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPosts(childComplexity, args["page"].(*int), args["perPage"].(*int)), true
 
+	case "Query.isSetup":
+		if e.complexity.Query.IsSetup == nil {
+			break
+		}
+
+		return e.complexity.Query.IsSetup(childComplexity), true
+
 	case "Query.siteSettings":
 		if e.complexity.Query.SiteSettings == nil {
 			break
@@ -1379,6 +1388,7 @@ input UpdatePostInput {
   getPostByID(id: String!): Post
   getPageByID(id: String!): Page
   siteSettings: SiteSettings!
+  isSetup: Boolean!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/seo.graphql", Input: `type SEO {
@@ -4390,6 +4400,41 @@ func (ec *executionContext) _Query_siteSettings(ctx context.Context, field graph
 	res := resTmp.(*model.SiteSettings)
 	fc.Result = res
 	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_isSetup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().IsSetup(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8655,6 +8700,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_siteSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "isSetup":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_isSetup(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

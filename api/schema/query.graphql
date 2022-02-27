@@ -5,4 +5,5 @@ type Query {
   getPostByID(id: String!): Post
   getPageByID(id: String!): Page
   siteSettings: SiteSettings!
+  isSetup: Boolean!
 }
