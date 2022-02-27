@@ -9,6 +9,7 @@ import (
 
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/setting"
 	"github.com/looped-dev/cms/api/staff"
 )
 
@@ -38,6 +39,18 @@ func (r *queryResolver) SiteSettings(ctx context.Context) (*model.SiteSettings, 
 
 func (r *queryResolver) IsSetup(ctx context.Context) (bool, error) {
 	staff := staff.NewStaff(r.SMTPClient, r.DB)
+
+	// check if settings exist
+	setting := setting.NewSetting(r.DB)
+	settingExists, err := setting.Exists(ctx)
+	if err != nil {
+		return false, err
+	}
+	if settingExists {
+		return true, nil
+	}
+
+	// check if staff exists
 	return staff.StaffExists(ctx)
 }
 

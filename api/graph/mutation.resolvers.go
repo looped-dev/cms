@@ -10,6 +10,7 @@ import (
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
+	"github.com/looped-dev/cms/api/setting"
 	"github.com/looped-dev/cms/api/staff"
 )
 
@@ -79,7 +80,8 @@ func (r *mutationResolver) StaffLogout(ctx context.Context) (bool, error) {
 }
 
 func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
+	setting := setting.NewSetting(r.DB)
+	return setting.SaveSettings(ctx, input)
 }
 
 func (r *mutationResolver) Setup(ctx context.Context, input model.StaffSetupInput) (*model.SetupResponse, error) {
