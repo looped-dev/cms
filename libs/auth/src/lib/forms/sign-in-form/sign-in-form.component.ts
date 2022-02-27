@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { NgForm } from '@angular/forms';
+import { StaffLoginDocument } from '@looped-cms/graphql';
+import { Apollo } from 'apollo-angular';
 
 type SignInFormData = {
   email: string;
@@ -22,11 +24,24 @@ export class SignInFormComponent {
     password: '',
   };
 
-  constructor() {
-    console.log('Hello World');
-  }
+  constructor(private apollo: Apollo) {}
 
   onSubmit() {
-    console.log(this.signInForm.value);
+    this.apollo
+      .mutate({
+        mutation: StaffLoginDocument,
+        variables: {
+          input: {
+            email: this.signInFormModel.email,
+            password: this.signInFormModel.password,
+          },
+        },
+      })
+      .subscribe({
+        next: ({ data }) => {
+          console.log({ data });
+        },
+        error: (error) => console.log(error),
+      });
   }
 }

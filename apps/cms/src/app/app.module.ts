@@ -3,15 +3,17 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
 import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
 import { AuthModule } from '@looped-cms/auth';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    HttpClientModule,
     RouterModule.forRoot(
       [
         {
@@ -29,6 +31,7 @@ import { AuthModule } from '@looped-cms/auth';
       { initialNavigation: 'enabledBlocking' }
     ),
     AuthModule,
+    ApolloModule,
   ],
   providers: [
     {
@@ -37,7 +40,7 @@ import { AuthModule } from '@looped-cms/auth';
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            uri: 'http://localhost:8080/graphiql',
+            uri: 'http://localhost:8080/query',
           }),
         };
       },
