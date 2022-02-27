@@ -1,0 +1,40 @@
+<div class="form-container">
+  <form (submit)="onSubmit()" #setupSiteForm="ngForm">
+    <h4 class="title">Create your account</h4>
+
+    <!-- show error message -->
+    <ng-container *ngIf="errorMessage !== ''">
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    </ng-container>
+
+    <div class="form-control">
+      <label>Site Title *</label>
+      <input type="text" name="siteTitle" placeholder="Site Title" [(ngModel)]="setupSiteModel.siteTitle" required />
+    </div>
+
+    <div class="form-control">
+      <label>Your Name *</label>
+      <input type="text" name="name" placeholder="Your name" [(ngModel)]="setupSiteModel.name" required />
+    </div>
+
+    <div class="form-control">
+      <label>Email Address *</label>
+      <input type="email" name="email" placeholder="Email" [(ngModel)]="setupSiteModel.email" required />
+    </div>
+
+    <div class="form-control">
+      <label>Password *</label>
+      <input type="password" name="password" placeholder="Password" [(ngModel)]="setupSiteModel.password" required />
+    </div>
+
+    <div class="form-control">
+      <button [disabled]="!setupSiteForm.valid" type="submit">
+        <fa-icon [icon]="saveIcon"></fa-icon>
+        <span>Save</span>
+      </button>
+    </div>
+
+  </form>
+</div>

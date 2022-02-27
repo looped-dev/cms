@@ -9,27 +9,31 @@ import { HttpLink } from 'apollo-angular/http';
 import { AuthModule } from '@looped-cms/auth';
 import { HttpClientModule } from '@angular/common/http';
 
+const routes = [
+  {
+    path: '',
+    component: AppComponent,
+    children: [
+      {
+        path: 'auth',
+        loadChildren: () =>
+          import('@looped-cms/auth').then((m) => m.AuthModule),
+      },
+      {
+        path: 'setup',
+        loadChildren: () =>
+          import('@looped-cms/setup').then((m) => m.SetupModule),
+      },
+    ],
+  },
+];
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(
-      [
-        {
-          path: '',
-          component: AppComponent,
-          children: [
-            {
-              path: 'auth',
-              loadChildren: () =>
-                import('@looped-cms/auth').then((m) => m.AuthModule),
-            },
-          ],
-        },
-      ],
-      { initialNavigation: 'enabledBlocking' }
-    ),
+    RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
     AuthModule,
     ApolloModule,
   ],
