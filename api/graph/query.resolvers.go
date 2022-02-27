@@ -9,6 +9,7 @@ import (
 
 	"github.com/looped-dev/cms/api/graph/generated"
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/staff"
 )
 
 func (r *queryResolver) GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.Post, error) {
@@ -36,7 +37,8 @@ func (r *queryResolver) SiteSettings(ctx context.Context) (*model.SiteSettings, 
 }
 
 func (r *queryResolver) IsSetup(ctx context.Context) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	return staff.StaffExists(ctx)
 }
 
 // Query returns generated.QueryResolver implementation.

@@ -11,6 +11,7 @@ import (
 	"github.com/looped-dev/cms/api/models"
 	"github.com/looped-dev/cms/api/utils"
 	mail "github.com/xhit/go-simple-mail/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -118,4 +119,15 @@ func (s Staff) StaffDelete(ctx context.Context, input *model.StaffDeleteInput) (
 // StaffChangePassword update the staff password.
 func (s Staff) StaffChangePassword(ctx context.Context, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
+}
+
+func (s Staff) StaffExists(ctx context.Context) (bool, error) {
+	count, err := s.DBClient.Database("cms").Collection("staff").CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return false, err
+	}
+	if count < 1 {
+		return false, nil
+	}
+	return true, nil
 }

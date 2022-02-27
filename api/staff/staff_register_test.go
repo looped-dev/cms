@@ -95,7 +95,7 @@ func TestStaffSendInvite(t *testing.T) {
 
 func TestStaffAcceptInvite(t *testing.T) {
 	staffInsert := &models.StaffMember{
-		Email: "johndoe2@example.com",
+		Email: "johndoeinvite@example.com",
 		InviteCode: models.InviteCode{
 			Code: "CODE",
 			Expiry: primitive.Timestamp{
@@ -122,4 +122,25 @@ func TestStaffAcceptInvite(t *testing.T) {
 	assert.Equal(t, staffMember.Email, staffMemberInvite.Email)
 	assert.NotNil(t, staffMember.HashedPassword)
 	assert.Empty(t, staffMemberInvite.InviteCode)
+}
+
+func TestStaff_StaffExistsExists(t *testing.T) {
+	staffInsert := &models.StaffMember{
+		Email: "johndoe_exists@example.com",
+		InviteCode: models.InviteCode{
+			Code: "CODE",
+			Expiry: primitive.Timestamp{
+				T: uint32(time.Now().Add(time.Hour).Unix()),
+			},
+		},
+	}
+	staffClass := Staff{
+		DBClient:   dbClient,
+		SMTPClient: smtpClient,
+	}
+	_, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
+	assert.NoError(t, err)
+	count, err := staffClass.StaffExists(context.TODO())
+	assert.NoError(t, err)
+	assert.True(t, count)
 }
