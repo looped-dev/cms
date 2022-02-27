@@ -82,6 +82,10 @@ func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.S
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) Setup(ctx context.Context, input model.StaffSetupInput) (*model.SetupResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

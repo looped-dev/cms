@@ -13,7 +13,11 @@ require (
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 )
 
-require github.com/golang-migrate/migrate/v4 v4.15.1
+require (
+	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/cors v1.2.0
+	github.com/golang-migrate/migrate/v4 v4.15.1
+)
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
@@ -25,8 +29,6 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-chi/chi/v5 v5.0.7 // indirect
-	github.com/go-chi/cors v1.2.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -40,7 +42,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/lib/pq v1.10.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect

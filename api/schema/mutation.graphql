@@ -14,4 +14,9 @@ type Mutation {
   staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
   staffLogout: Boolean!
   updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
+  """
+  Create initial Staff for the site and Site Name and login the user before
+  redirecting them to the dashboard
+  """
+  setup(input: StaffSetupInput!): SetupResponse!
 }

@@ -108,6 +108,12 @@ type SEOInput struct {
 	Facebook    *FacebookCardInput `json:"facebook" bson:"facebook,omitempty"`
 }
 
+type SetupResponse struct {
+	Staff        *models.StaffMember `json:"staff" bson:"staff,omitempty"`
+	AccessToken  string              `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string              `json:"refreshToken" bson:"refreshToken,omitempty"`
+}
+
 type SiteSettings struct {
 	SiteName string `json:"siteName" bson:"siteName,omitempty"`
 	BaseURL  string `json:"baseURL" bson:"baseURL,omitempty"`
@@ -168,8 +174,8 @@ type StaffLoginInput struct {
 
 type StaffLoginResponse struct {
 	Staff        *models.StaffMember `json:"staff" bson:"staff,omitempty"`
-	AccessToken  string        `json:"accessToken" bson:"accessToken,omitempty"`
-	RefreshToken string        `json:"refreshToken" bson:"refreshToken,omitempty"`
+	AccessToken  string              `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string              `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
 type StaffRegisterInput struct {
@@ -184,6 +190,13 @@ type StaffResetPasswordInput struct {
 	Code            string `json:"code" bson:"code,omitempty"`
 	Password        string `json:"password" bson:"password,omitempty"`
 	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`
+}
+
+type StaffSetupInput struct {
+	SiteName string `json:"siteName" bson:"siteName,omitempty"`
+	Name     string `json:"name" bson:"name,omitempty"`
+	Email    string `json:"email" bson:"email,omitempty"`
+	Password string `json:"password" bson:"password,omitempty"`
 }
 
 type StaffUpdateInput struct {

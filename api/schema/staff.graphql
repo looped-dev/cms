@@ -1,6 +1,10 @@
 enum StaffRole
   @goModel(model: "github.com/looped-dev/cms/api/models.StaffRole") {
   """
+  Has full site access and is the owner of the site and cannot be deleted.
+  """
+  OWNER
+  """
   Trusted staff user who should be able to manage all content and users, as well
   as site settings and options.
   """
@@ -82,4 +86,17 @@ input StaffResetPasswordInput {
 
 input StaffForgotPasswordInput {
   email: Email!
+}
+
+input StaffSetupInput {
+  siteName: String!
+  name: String!
+  email: Email!
+  password: String!
+}
+
+type SetupResponse {
+  staff: Staff!
+  accessToken: String!
+  refreshToken: String!
 }
