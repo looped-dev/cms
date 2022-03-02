@@ -76,11 +76,11 @@ func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
 	isDBFound := false
 	for _, name := range listOfDatabases {
 		if name == db.DefaultDatabaseName {
-			isDBFound = false
+			isDBFound = true
 			break
 		}
 	}
-	return isDBFound, nil
+	return !isDBFound, nil
 }
 
 // CreateSettingCollection creates a capped settings collection in the database
@@ -90,9 +90,11 @@ func (s *Setup) CreateSettingCollection(w io.ReadWriter, ctx context.Context) er
 	fmt.Fprintf(w, "🔨 creating setting collection \n")
 	boolean := true
 	maxDocuments := int64(1)
+	cappedSize := int64(4096)
 	settingsCollectionOptions := options.CreateCollectionOptions{
 		Capped:       &boolean,
 		MaxDocuments: &maxDocuments,
+		SizeInBytes:  &cappedSize,
 	}
 	err := s.DBClient.Database("cms").CreateCollection(ctx, setting.SettingsCollectionName, &settingsCollectionOptions)
 	if err != nil {
