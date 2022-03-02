@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"io"
 
 	_ "github.com/golang-migrate/migrate/v4/database/mongodb"
 	_ "github.com/golang-migrate/migrate/v4/source/github"
@@ -12,16 +14,34 @@ import (
 
 const DefaultDatabaseName = "cms"
 
-func CreateIndexes(client *mongo.Client, ctx context.Context, dbName string) error {
-	staffIndexes := []mongo.IndexModel{
+type Indexes struct {
+	dbClient *mongo.Client
+}
+
+func NewIndexes(dbClient *mongo.Client) *Indexes {
+	return &Indexes{
+		dbClient: dbClient,
+	}
+}
+
+func (i Indexes) StaffCollectionIndexes(w io.ReadWriter, ctx context.Context) error {
+	fmt.Fprintf(w, "🔨 creating indexes for staff collection \n")
+	staffCollectionIndexes := []mongo.IndexModel{
 		{
 			Keys:    bson.D{{Key: "email", Value: 1}},
 			Options: options.Index().SetUnique(true),
 		},
+		// add necessary indexes for staff here here
 	}
-	_, err := client.Database(dbName).Collection("staff").Indexes().CreateMany(ctx, staffIndexes)
+	// create indexes for staff collection
+	_, err := i.dbClient.Database(DefaultDatabaseName).
+		Collection("staff").
+		Indexes().
+		CreateMany(ctx, staffCollectionIndexes)
 	if err != nil {
-		return err
+		fmt.Fprintf(w, "❌ Error creating indexes for staff collection: %v \n", err)
+		return fmt.Errorf("Error creating staff collection indexes: %v", err)
 	}
+	fmt.Fprintf(w, "✅ Created indexes for staff collection successfully! \n")
 	return nil
 }

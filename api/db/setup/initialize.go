@@ -6,8 +6,10 @@ import (
 	"io"
 
 	"github.com/looped-dev/cms/api/db"
+	"github.com/looped-dev/cms/api/setting"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewSetup(dbClient *mongo.Client) *Setup {
@@ -36,7 +38,14 @@ func (s *Setup) Initialize(w io.ReadWriter, ctx context.Context) error {
 	// Checklist:
 	// 1. Create the database
 	// 2. Create the indexes
+	indexes := db.NewIndexes(s.DBClient)
+	if err := indexes.StaffCollectionIndexes(w, ctx); err != nil {
+		return err
+	}
 	// 3. Create capped collection for settings
+	if err := s.CreateSettingCollection(w, ctx); err != nil {
+		return err
+	}
 	fmt.Fprintf(w, "🔨 Creating database: %s \n", db.DefaultDatabaseName)
 	return nil
 }
@@ -72,4 +81,23 @@ func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
 		}
 	}
 	return isDBFound, nil
+}
+
+// CreateSettingCollection creates a capped settings collection in the database
+// that only stores a single collection.
+func (s *Setup) CreateSettingCollection(w io.ReadWriter, ctx context.Context) error {
+	fmt.Fprintf(w, "🔨 creating setting collection \n")
+	boolean := true
+	maxDocuments := int64(1)
+	settingsCollectionOptions := options.CreateCollectionOptions{
+		Capped:       &boolean,
+		MaxDocuments: &maxDocuments,
+	}
+	err := s.DBClient.Database("cms").CreateCollection(ctx, setting.SettingsCollectionName, &settingsCollectionOptions)
+	if err != nil {
+		fmt.Fprintf(w, "❌ Error creating capped collection: %v", err)
+		return fmt.Errorf("Error creating settings capped collection: %v", err)
+	}
+	fmt.Fprintf(w, "✅ Setting collection created! \n")
+	return nil
 }

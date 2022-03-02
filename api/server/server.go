@@ -11,7 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"github.com/looped-dev/cms/api/db"
+	"github.com/looped-dev/cms/api/db/setup"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
@@ -22,7 +22,7 @@ import (
 
 const defaultPort = "8080"
 
-func run() error {
+func run(ctx context.Context) error {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
@@ -30,15 +30,14 @@ func run() error {
 
 	mongoDbConnString := configs.GetConfig("MONGODB_CONNSTRING")
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoDbConnString))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoDbConnString))
 	if err != nil {
 		return fmt.Errorf("Failed to create a db client: %v", err)
 	}
 
-	err = db.CreateIndexes(client, context.Background(), db.DefaultDatabaseName)
-	if err != nil {
-		return err
-	}
+	// if server is new, run initial setup
+	setupInstance := setup.NewSetup(client)
+	setupInstance.Initialize(os.Stdout, ctx)
 
 	mailServer, err := emails.NewSMTPClient()
 	if err != nil {
@@ -46,7 +45,7 @@ func run() error {
 	}
 
 	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
+		if err := client.Disconnect(ctx); err != nil {
 			log.Printf("Failed to close the db connection: %v", err)
 		}
 	}()
@@ -82,7 +81,7 @@ func run() error {
 }
 
 func main() {
-	if err := run(); err != nil {
+	if err := run(context.TODO()); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
