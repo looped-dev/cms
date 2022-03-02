@@ -11,7 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"github.com/looped-dev/cms/api/db/setup"
+	s "github.com/looped-dev/cms/api/db/setup"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
@@ -36,8 +36,10 @@ func run(ctx context.Context) error {
 	}
 
 	// if server is new, run initial setup
-	setupInstance := setup.NewSetup(client)
-	setupInstance.Initialize(os.Stdout, ctx)
+	setup := s.NewSetup(client)
+	if err := setup.Initialize(os.Stdout, ctx); err != nil {
+		return err
+	}
 
 	mailServer, err := emails.NewSMTPClient()
 	if err != nil {
