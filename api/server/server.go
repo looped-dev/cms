@@ -11,7 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	s "github.com/looped-dev/cms/api/db/setup"
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
@@ -36,7 +36,7 @@ func run(ctx context.Context) error {
 	}
 
 	// if server is new, run initial setup
-	setup := s.NewSetup(client)
+	setup := db.NewSetup(client)
 	if err := setup.Initialize(os.Stdout, ctx); err != nil {
 		return err
 	}

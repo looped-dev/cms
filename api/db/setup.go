@@ -1,11 +1,10 @@
-package setup
+package db
 
 import (
 	"context"
 	"fmt"
 	"io"
 
-	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/setting"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,7 +37,7 @@ func (s *Setup) Initialize(w io.ReadWriter, ctx context.Context) error {
 	// Checklist:
 	// 1. Create the database
 	// 2. Create the indexes
-	indexes := db.NewIndexes(s.DBClient)
+	indexes := NewIndexes(s.DBClient)
 	if err := indexes.StaffCollectionIndexes(w, ctx); err != nil {
 		return err
 	}
@@ -46,7 +45,7 @@ func (s *Setup) Initialize(w io.ReadWriter, ctx context.Context) error {
 	if err := s.CreateSettingCollection(w, ctx); err != nil {
 		return err
 	}
-	fmt.Fprintf(w, "🔨 Creating database: %s \n", db.DefaultDatabaseName)
+	fmt.Fprintf(w, "🔨 Creating database: %s \n", DefaultDatabaseName)
 	return nil
 }
 
@@ -75,7 +74,7 @@ func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
 	// check if the database being used by the CMS exists, if exists, do not setup
 	isDBFound := false
 	for _, name := range listOfDatabases {
-		if name == db.DefaultDatabaseName {
+		if name == DefaultDatabaseName {
 			isDBFound = true
 			break
 		}
