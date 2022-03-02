@@ -2388,6 +2388,13 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
   integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
 
+"@ngrx/data@^13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@ngrx/data/-/data-13.0.2.tgz#f9ef155bf6fdd874ce6b82a76ce5f2f2cb09a0de"
+  integrity sha512-DpPxmtmG9AprXABmreXH7ilHQDGawHFJyNUOR/WS+dstamtFO0WMIr4BhNYRdDGBWqcXWNyuEj14ipjKCTfdKw==
+  dependencies:
+    tslib "^2.0.0"
+
 "@ngtools/webpack@13.2.1":
   version "13.2.1"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-13.2.1.tgz#20887a22ecde77d3f022f7fdace8aead2e425bab"
