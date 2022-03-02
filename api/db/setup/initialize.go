@@ -84,7 +84,8 @@ func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
 }
 
 // CreateSettingCollection creates a capped settings collection in the database
-// that only stores a single collection.
+// that only stores a single document. This is ideal for storing settings as
+// you only want a single document in the collection for the CMSs settings.
 func (s *Setup) CreateSettingCollection(w io.ReadWriter, ctx context.Context) error {
 	fmt.Fprintf(w, "🔨 creating setting collection \n")
 	boolean := true

@@ -7,7 +7,6 @@ import (
 	"github.com/looped-dev/cms/api/graph/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const SettingsCollectionName = "settings"
@@ -56,16 +55,4 @@ func (setting *Setting) Exists(ctx context.Context) (bool, error) {
 // ensures only a single record will exist in the database.
 func (setting *Setting) SaveSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
 	panic("not implemented!")
-}
-
-// CreateSettingCollection creates a capped settings collection in the database
-// that only stores a single collection.
-func (setting *Setting) CreateSettingCollection(ctx context.Context) error {
-	boolean := true
-	maxDocuments := int64(1)
-	return setting.DBClient.Database("cms").
-		CreateCollection(ctx, SettingsCollectionName, &options.CreateCollectionOptions{
-			Capped:       &boolean,
-			MaxDocuments: &maxDocuments,
-		})
 }
