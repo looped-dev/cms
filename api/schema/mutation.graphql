@@ -1,19 +1,4 @@
 type Mutation {
-  updatePostStatus(input: UpdatePostStatusInput!): Post
-  updatePost(input: UpdatePostInput!): Post
-  updatePageStatus(input: UpdatePostStatusInput!): Page
-  updatePage(input: UpdatePostInput!): Page
-  # Staff Users
-  staffLogin(input: StaffLoginInput!): StaffLoginResponse!
-  staffInvite(input: StaffInviteInput!): Staff!
-  staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
-  staffUpdate(input: StaffUpdateInput!): Staff!
-  staffDelete(input: StaffDeleteInput!): Staff!
-  staffChangePassword(input: StaffChangePasswordInput!): Staff!
-  staffResetPassword(input: StaffResetPasswordInput!): Staff!
-  staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
-  staffLogout: Boolean!
-  updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
   """
   Create initial Staff for the site and Site Name and login the user before
   redirecting them to the dashboard

@@ -9,3 +9,11 @@ input SiteSettingsInput {
   baseURL: String!
   seo: SEOInput!
 }
+
+extend type Mutation {
+  updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
+}
+
+extend type Query {
+  settings: SiteSettings!
+}

@@ -34,3 +34,13 @@ input UpdatePageInput {
   postAccess: [ID!]
   seo: SEOInput
 }
+
+extend type Mutation {
+  updatePageStatus(input: UpdatePageStatusInput!): Page
+  updatePage(input: UpdatePageInput!): Page
+}
+
+extend type Query {
+  getPage(slug: String!): Page
+  getPageByID(id: String!): Page
+}

@@ -100,3 +100,15 @@ type SetupResponse {
   accessToken: String!
   refreshToken: String!
 }
+
+extend type Mutation {
+  staffLogin(input: StaffLoginInput!): StaffLoginResponse!
+  staffInvite(input: StaffInviteInput!): Staff!
+  staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
+  staffUpdate(input: StaffUpdateInput!): Staff!
+  staffDelete(input: StaffDeleteInput!): Staff!
+  staffChangePassword(input: StaffChangePasswordInput!): Staff!
+  staffResetPassword(input: StaffResetPasswordInput!): Staff!
+  staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
+  staffLogout: Boolean!
+}

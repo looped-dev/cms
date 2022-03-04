@@ -1,9 +1,3 @@
 type Query {
-  getPosts(page: Int, perPage: Int): [Post!]
-  getPost(slug: String!): Post
-  getPage(slug: String!): Page
-  getPostByID(id: String!): Post
-  getPageByID(id: String!): Page
-  siteSettings: SiteSettings!
   isSetup: Boolean!
 }

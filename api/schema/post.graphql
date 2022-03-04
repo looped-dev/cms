@@ -48,3 +48,14 @@ input UpdatePostInput {
   postAccess: [ID!]
   seo: SEOInput
 }
+
+extend type Mutation {
+  updatePostStatus(input: UpdatePostStatusInput!): Post
+  updatePost(input: UpdatePostInput!): Post
+}
+
+extend type Query {
+  getPosts(page: Int, perPage: Int): [Post!]
+  getPost(slug: String!): Post
+  getPostByID(id: String!): Post
+}

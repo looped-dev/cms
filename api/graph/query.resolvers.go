@@ -13,30 +13,6 @@ import (
 	"github.com/looped-dev/cms/api/staff"
 )
 
-func (r *queryResolver) GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) GetPost(ctx context.Context, slug string) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) GetPage(ctx context.Context, slug string) (*model.Page, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) GetPostByID(ctx context.Context, id string) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*model.Page, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) SiteSettings(ctx context.Context) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *queryResolver) IsSetup(ctx context.Context) (bool, error) {
 	staff := staff.NewStaff(r.SMTPClient, r.DB)
 
@@ -58,3 +34,13 @@ func (r *queryResolver) IsSetup(ctx context.Context) (bool, error) {
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) SiteSettings(ctx context.Context) (*model.SiteSettings, error) {
+	panic(fmt.Errorf("not implemented"))
+}
