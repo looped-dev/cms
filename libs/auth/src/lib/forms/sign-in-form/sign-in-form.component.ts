@@ -3,6 +3,7 @@ import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { NgForm } from '@angular/forms';
 import { StaffLoginDocument } from '@looped-cms/graphql';
 import { Apollo } from 'apollo-angular';
+import { SessionService } from '../../state/state/session.service';
 
 type SignInFormData = {
   email: string;
@@ -26,21 +27,13 @@ export class SignInFormComponent {
     password: '',
   };
 
-  constructor(private apollo: Apollo) {}
+  constructor(private sessionService: SessionService) {}
 
   onSubmit() {
-    this.apollo
-      .mutate({
-        mutation: StaffLoginDocument,
-        variables: {
-          input: {
-            email: this.signInFormModel.email,
-            password: this.signInFormModel.password,
-          },
-        },
-      })
+    this.sessionService
+      .login(this.signInFormModel.email, this.signInFormModel.password)
       .subscribe({
-        next: ({ data }) => {
+        next: (data) => {
           console.log({ data });
         },
         error: (error) => (this.errorMessage = error?.message),

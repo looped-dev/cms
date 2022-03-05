@@ -4,6 +4,9 @@
 
 export const environment = {
   production: false,
+  graphql: {
+    endpoint: 'http://localhost:8080/query',
+  },
 };
 
 /*

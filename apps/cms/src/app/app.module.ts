@@ -8,6 +8,9 @@ import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
 import { AuthModule } from '@looped-cms/auth';
 import { HttpClientModule } from '@angular/common/http';
+import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
+import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
+import { environment } from '../environments/environment';
 
 const routes: Routes = [
   {
@@ -36,6 +39,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
     AuthModule,
     ApolloModule,
+    environment.production ? [] : AkitaNgDevtools.forRoot(),
+    AkitaNgRouterStoreModule,
   ],
   providers: [
     {
@@ -44,7 +49,7 @@ const routes: Routes = [
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            uri: 'http://localhost:8080/query',
+            uri: environment.graphql.endpoint,
           }),
         };
       },
