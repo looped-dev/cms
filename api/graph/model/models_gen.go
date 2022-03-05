@@ -178,6 +178,16 @@ type StaffLoginResponse struct {
 	RefreshToken string              `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
+type StaffRefreshTokenInput struct {
+	AccessToken  string `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string `json:"refreshToken" bson:"refreshToken,omitempty"`
+}
+
+type StaffRefreshTokenResponse struct {
+	AccessToken  string `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string `json:"refreshToken" bson:"refreshToken,omitempty"`
+}
+
 type StaffRegisterInput struct {
 	Name     string           `json:"name" bson:"name,omitempty"`
 	Email    string           `json:"email" bson:"email,omitempty"`

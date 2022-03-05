@@ -62,6 +62,10 @@ func (r *mutationResolver) StaffLogout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+func (r *mutationResolver) StaffRefreshToken(ctx context.Context, input model.StaffRefreshTokenInput) (*model.StaffLoginResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *staffResolver) Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error) {
 	panic(fmt.Errorf("not implemented"))
 }

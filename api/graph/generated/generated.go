@@ -94,6 +94,7 @@ type ComplexityRoot struct {
 		StaffInvite         func(childComplexity int, input model.StaffInviteInput) int
 		StaffLogin          func(childComplexity int, input model.StaffLoginInput) int
 		StaffLogout         func(childComplexity int) int
+		StaffRefreshToken   func(childComplexity int, input model.StaffRefreshTokenInput) int
 		StaffResetPassword  func(childComplexity int, input model.StaffResetPasswordInput) int
 		StaffUpdate         func(childComplexity int, input model.StaffUpdateInput) int
 		UpdatePage          func(childComplexity int, input model.UpdatePageInput) int
@@ -191,6 +192,11 @@ type ComplexityRoot struct {
 		Staff        func(childComplexity int) int
 	}
 
+	StaffRefreshTokenResponse struct {
+		AccessToken  func(childComplexity int) int
+		RefreshToken func(childComplexity int) int
+	}
+
 	Tag struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -227,6 +233,7 @@ type MutationResolver interface {
 	StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.StaffMember, error)
 	StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.StaffMember, error)
 	StaffLogout(ctx context.Context) (bool, error)
+	StaffRefreshToken(ctx context.Context, input model.StaffRefreshTokenInput) (*model.StaffLoginResponse, error)
 }
 type QueryResolver interface {
 	IsSetup(ctx context.Context) (bool, error)
@@ -528,6 +535,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.StaffLogout(childComplexity), true
+
+	case "Mutation.staffRefreshToken":
+		if e.complexity.Mutation.StaffRefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_staffRefreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StaffRefreshToken(childComplexity, args["input"].(model.StaffRefreshTokenInput)), true
 
 	case "Mutation.staffResetPassword":
 		if e.complexity.Mutation.StaffResetPassword == nil {
@@ -1043,6 +1062,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.StaffLoginResponse.Staff(childComplexity), true
+
+	case "StaffRefreshTokenResponse.accessToken":
+		if e.complexity.StaffRefreshTokenResponse.AccessToken == nil {
+			break
+		}
+
+		return e.complexity.StaffRefreshTokenResponse.AccessToken(childComplexity), true
+
+	case "StaffRefreshTokenResponse.refreshToken":
+		if e.complexity.StaffRefreshTokenResponse.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.StaffRefreshTokenResponse.RefreshToken(childComplexity), true
 
 	case "Tag.createdAt":
 		if e.complexity.Tag.CreatedAt == nil {
@@ -1564,6 +1597,16 @@ type SetupResponse {
   refreshToken: String!
 }
 
+type StaffRefreshTokenResponse {
+  accessToken: String!
+  refreshToken: String!
+}
+
+input StaffRefreshTokenInput {
+  accessToken: String!
+  refreshToken: String!
+}
+
 extend type Mutation {
   staffLogin(input: StaffLoginInput!): StaffLoginResponse!
   staffInvite(input: StaffInviteInput!): Staff!
@@ -1574,6 +1617,7 @@ extend type Mutation {
   staffResetPassword(input: StaffResetPasswordInput!): Staff!
   staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
   staffLogout: Boolean!
+  staffRefreshToken(input: StaffRefreshTokenInput!): StaffLoginResponse!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/tags.graphql", Input: `type Tag {
@@ -1690,6 +1734,21 @@ func (ec *executionContext) field_Mutation_staffLogin_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNStaffLoginInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_staffRefreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.StaffRefreshTokenInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNStaffRefreshTokenInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRefreshTokenInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3441,6 +3500,48 @@ func (ec *executionContext) _Mutation_staffLogout(ctx context.Context, field gra
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_staffRefreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_staffRefreshToken_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().StaffRefreshToken(rctx, args["input"].(model.StaffRefreshTokenInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.StaffLoginResponse)
+	fc.Result = res
+	return ec.marshalNStaffLoginResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffLoginResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Page_id(ctx context.Context, field graphql.CollectedField, obj *model.Page) (ret graphql.Marshaler) {
@@ -5513,6 +5614,76 @@ func (ec *executionContext) _StaffLoginResponse_refreshToken(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _StaffRefreshTokenResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.StaffRefreshTokenResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffRefreshTokenResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffRefreshTokenResponse_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.StaffRefreshTokenResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffRefreshTokenResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Tag_id(ctx context.Context, field graphql.CollectedField, obj *model.Tag) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7424,6 +7595,37 @@ func (ec *executionContext) unmarshalInputStaffLoginInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputStaffRefreshTokenInput(ctx context.Context, obj interface{}) (model.StaffRefreshTokenInput, error) {
+	var it model.StaffRefreshTokenInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "accessToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accessToken"))
+			it.AccessToken, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "refreshToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
+			it.RefreshToken, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputStaffRegisterInput(ctx context.Context, obj interface{}) (model.StaffRegisterInput, error) {
 	var it model.StaffRegisterInput
 	asMap := map[string]interface{}{}
@@ -8339,6 +8541,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "staffRefreshToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_staffRefreshToken(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9198,6 +9410,47 @@ func (ec *executionContext) _StaffLoginResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var staffRefreshTokenResponseImplementors = []string{"StaffRefreshTokenResponse"}
+
+func (ec *executionContext) _StaffRefreshTokenResponse(ctx context.Context, sel ast.SelectionSet, obj *model.StaffRefreshTokenResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, staffRefreshTokenResponseImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StaffRefreshTokenResponse")
+		case "accessToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._StaffRefreshTokenResponse_accessToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._StaffRefreshTokenResponse_refreshToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var tagImplementors = []string{"Tag"}
 
 func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj *model.Tag) graphql.Marshaler {
@@ -10023,6 +10276,11 @@ func (ec *executionContext) marshalNStaffLoginResponse2ᚖgithubᚗcomᚋlooped�
 		return graphql.Null
 	}
 	return ec._StaffLoginResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNStaffRefreshTokenInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffRefreshTokenInput(ctx context.Context, v interface{}) (model.StaffRefreshTokenInput, error) {
+	res, err := ec.unmarshalInputStaffRefreshTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNStaffResetPasswordInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffResetPasswordInput(ctx context.Context, v interface{}) (model.StaffResetPasswordInput, error) {
