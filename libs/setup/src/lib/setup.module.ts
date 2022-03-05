@@ -25,7 +25,12 @@ export const setupRoutes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule, FormsModule, FontAwesomeModule],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(setupRoutes),
+    FormsModule,
+    FontAwesomeModule,
+  ],
   declarations: [LayoutComponent, StepOneComponent, StepTwoComponent],
 })
 export class SetupModule {}
