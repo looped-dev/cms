@@ -37,6 +37,19 @@ type Image struct {
 	Sizes       *Sizes  `json:"sizes" bson:"sizes,omitempty"`
 }
 
+type InitialSetupInput struct {
+	SiteName string `json:"siteName" bson:"siteName,omitempty"`
+	Name     string `json:"name" bson:"name,omitempty"`
+	Email    string `json:"email" bson:"email,omitempty"`
+	Password string `json:"password" bson:"password,omitempty"`
+}
+
+type InitialSetupResponse struct {
+	Staff        *models.StaffMember `json:"staff" bson:"staff,omitempty"`
+	AccessToken  string              `json:"accessToken" bson:"accessToken,omitempty"`
+	RefreshToken string              `json:"refreshToken" bson:"refreshToken,omitempty"`
+}
+
 type Member struct {
 	ID    string `json:"id" bson:"_id,omitempty"`
 	Name  string `json:"name" bson:"name,omitempty"`
@@ -106,12 +119,6 @@ type SEOInput struct {
 	Image       *string            `json:"image" bson:"image,omitempty"`
 	Twitter     *TwitterCardInput  `json:"twitter" bson:"twitter,omitempty"`
 	Facebook    *FacebookCardInput `json:"facebook" bson:"facebook,omitempty"`
-}
-
-type SetupResponse struct {
-	Staff        *models.StaffMember `json:"staff" bson:"staff,omitempty"`
-	AccessToken  string              `json:"accessToken" bson:"accessToken,omitempty"`
-	RefreshToken string              `json:"refreshToken" bson:"refreshToken,omitempty"`
 }
 
 type SiteSettings struct {
@@ -200,13 +207,6 @@ type StaffResetPasswordInput struct {
 	Code            string `json:"code" bson:"code,omitempty"`
 	Password        string `json:"password" bson:"password,omitempty"`
 	ConfirmPassword string `json:"confirmPassword" bson:"confirmPassword,omitempty"`
-}
-
-type StaffSetupInput struct {
-	SiteName string `json:"siteName" bson:"siteName,omitempty"`
-	Name     string `json:"name" bson:"name,omitempty"`
-	Email    string `json:"email" bson:"email,omitempty"`
-	Password string `json:"password" bson:"password,omitempty"`
 }
 
 type StaffUpdateInput struct {

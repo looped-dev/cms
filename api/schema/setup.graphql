@@ -1,0 +1,12 @@
+type InitialSetupResponse {
+  staff: Staff!
+  accessToken: String!
+  refreshToken: String!
+}
+
+input InitialSetupInput {
+  siteName: String!
+  name: String!
+  email: Email!
+  password: String!
+}

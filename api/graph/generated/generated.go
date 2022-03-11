@@ -65,6 +65,12 @@ type ComplexityRoot struct {
 		URL         func(childComplexity int) int
 	}
 
+	InitialSetupResponse struct {
+		AccessToken  func(childComplexity int) int
+		RefreshToken func(childComplexity int) int
+		Staff        func(childComplexity int) int
+	}
+
 	Member struct {
 		CreatedAt       func(childComplexity int) int
 		Email           func(childComplexity int) int
@@ -86,7 +92,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Setup               func(childComplexity int, input model.StaffSetupInput) int
+		Setup               func(childComplexity int, input model.InitialSetupInput) int
 		StaffAcceptInvite   func(childComplexity int, input model.StaffAcceptInviteInput) int
 		StaffChangePassword func(childComplexity int, input model.StaffChangePasswordInput) int
 		StaffDelete         func(childComplexity int, input model.StaffDeleteInput) int
@@ -138,7 +144,7 @@ type ComplexityRoot struct {
 		GetPost     func(childComplexity int, slug string) int
 		GetPostByID func(childComplexity int, id string) int
 		GetPosts    func(childComplexity int, page *int, perPage *int) int
-		IsSetup     func(childComplexity int) int
+		IsSiteSetup func(childComplexity int) int
 		Settings    func(childComplexity int) int
 	}
 
@@ -148,12 +154,6 @@ type ComplexityRoot struct {
 		Image       func(childComplexity int) int
 		Title       func(childComplexity int) int
 		Twitter     func(childComplexity int) int
-	}
-
-	SetupResponse struct {
-		AccessToken  func(childComplexity int) int
-		RefreshToken func(childComplexity int) int
-		Staff        func(childComplexity int) int
 	}
 
 	SiteSettings struct {
@@ -218,7 +218,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	Setup(ctx context.Context, input model.StaffSetupInput) (*model.SetupResponse, error)
+	Setup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error)
 	UpdatePageStatus(ctx context.Context, input model.UpdatePageStatusInput) (*model.Page, error)
 	UpdatePage(ctx context.Context, input model.UpdatePageInput) (*model.Page, error)
 	UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error)
@@ -236,7 +236,7 @@ type MutationResolver interface {
 	StaffRefreshToken(ctx context.Context, input model.StaffRefreshTokenInput) (*model.StaffLoginResponse, error)
 }
 type QueryResolver interface {
-	IsSetup(ctx context.Context) (bool, error)
+	IsSiteSetup(ctx context.Context) (bool, error)
 	GetPage(ctx context.Context, slug string) (*model.Page, error)
 	GetPageByID(ctx context.Context, id string) (*model.Page, error)
 	GetPosts(ctx context.Context, page *int, perPage *int) ([]*model.Post, error)
@@ -347,6 +347,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Image.URL(childComplexity), true
 
+	case "InitialSetupResponse.accessToken":
+		if e.complexity.InitialSetupResponse.AccessToken == nil {
+			break
+		}
+
+		return e.complexity.InitialSetupResponse.AccessToken(childComplexity), true
+
+	case "InitialSetupResponse.refreshToken":
+		if e.complexity.InitialSetupResponse.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.InitialSetupResponse.RefreshToken(childComplexity), true
+
+	case "InitialSetupResponse.staff":
+		if e.complexity.InitialSetupResponse.Staff == nil {
+			break
+		}
+
+		return e.complexity.InitialSetupResponse.Staff(childComplexity), true
+
 	case "Member.createdAt":
 		if e.complexity.Member.CreatedAt == nil {
 			break
@@ -455,7 +476,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Setup(childComplexity, args["input"].(model.StaffSetupInput)), true
+		return e.complexity.Mutation.Setup(childComplexity, args["input"].(model.InitialSetupInput)), true
 
 	case "Mutation.staffAcceptInvite":
 		if e.complexity.Mutation.StaffAcceptInvite == nil {
@@ -846,12 +867,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPosts(childComplexity, args["page"].(*int), args["perPage"].(*int)), true
 
-	case "Query.isSetup":
-		if e.complexity.Query.IsSetup == nil {
+	case "Query.isSiteSetup":
+		if e.complexity.Query.IsSiteSetup == nil {
 			break
 		}
 
-		return e.complexity.Query.IsSetup(childComplexity), true
+		return e.complexity.Query.IsSiteSetup(childComplexity), true
 
 	case "Query.settings":
 		if e.complexity.Query.Settings == nil {
@@ -894,27 +915,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SEO.Twitter(childComplexity), true
-
-	case "SetupResponse.accessToken":
-		if e.complexity.SetupResponse.AccessToken == nil {
-			break
-		}
-
-		return e.complexity.SetupResponse.AccessToken(childComplexity), true
-
-	case "SetupResponse.refreshToken":
-		if e.complexity.SetupResponse.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.SetupResponse.RefreshToken(childComplexity), true
-
-	case "SetupResponse.staff":
-		if e.complexity.SetupResponse.Staff == nil {
-			break
-		}
-
-		return e.complexity.SetupResponse.Staff(childComplexity), true
 
 	case "SiteSettings.baseURL":
 		if e.complexity.SiteSettings.BaseURL == nil {
@@ -1308,7 +1308,7 @@ type MemberSubscription {
   Create initial Staff for the site and Site Name and login the user before
   redirecting them to the dashboard
   """
-  setup(input: StaffSetupInput!): SetupResponse!
+  setup(input: InitialSetupInput!): InitialSetupResponse!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/page.graphql", Input: `type Page {
@@ -1421,7 +1421,7 @@ extend type Query {
 }
 `, BuiltIn: false},
 	{Name: "api/schema/query.graphql", Input: `type Query {
-  isSetup: Boolean!
+  isSiteSetup: Boolean!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/seo.graphql", Input: `type SEO {
@@ -1458,6 +1458,19 @@ extend type Mutation {
 
 extend type Query {
   settings: SiteSettings!
+}
+`, BuiltIn: false},
+	{Name: "api/schema/setup.graphql", Input: `type InitialSetupResponse {
+  staff: Staff!
+  accessToken: String!
+  refreshToken: String!
+}
+
+input InitialSetupInput {
+  siteName: String!
+  name: String!
+  email: Email!
+  password: String!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/social.graphql", Input: `type TwitterCard {
@@ -1584,19 +1597,6 @@ input StaffForgotPasswordInput {
   email: Email!
 }
 
-input StaffSetupInput {
-  siteName: String!
-  name: String!
-  email: Email!
-  password: String!
-}
-
-type SetupResponse {
-  staff: Staff!
-  accessToken: String!
-  refreshToken: String!
-}
-
 type StaffRefreshTokenResponse {
   accessToken: String!
   refreshToken: String!
@@ -1640,10 +1640,10 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_setup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.StaffSetupInput
+	var arg0 model.InitialSetupInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNStaffSetupInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffSetupInput(ctx, tmp)
+		arg0, err = ec.unmarshalNInitialSetupInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐInitialSetupInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2407,6 +2407,111 @@ func (ec *executionContext) _Image_sizes(ctx context.Context, field graphql.Coll
 	return ec.marshalOSizes2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSizes(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _InitialSetupResponse_staff(ctx context.Context, field graphql.CollectedField, obj *model.InitialSetupResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InitialSetupResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Staff, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.StaffMember)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffMember(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InitialSetupResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.InitialSetupResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InitialSetupResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InitialSetupResponse_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.InitialSetupResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InitialSetupResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Member_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2916,7 +3021,7 @@ func (ec *executionContext) _Mutation_setup(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Setup(rctx, args["input"].(model.StaffSetupInput))
+		return ec.resolvers.Mutation().Setup(rctx, args["input"].(model.InitialSetupInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2928,9 +3033,9 @@ func (ec *executionContext) _Mutation_setup(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SetupResponse)
+	res := resTmp.(*model.InitialSetupResponse)
 	fc.Result = res
-	return ec.marshalNSetupResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSetupResponse(ctx, field.Selections, res)
+	return ec.marshalNInitialSetupResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐInitialSetupResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updatePageStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4293,7 +4398,7 @@ func (ec *executionContext) _Post_updatedAt(ctx context.Context, field graphql.C
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_isSetup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_isSiteSetup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4311,7 +4416,7 @@ func (ec *executionContext) _Query_isSetup(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().IsSetup(rctx)
+		return ec.resolvers.Query().IsSiteSetup(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4787,111 +4892,6 @@ func (ec *executionContext) _SEO_facebook(ctx context.Context, field graphql.Col
 	res := resTmp.(*model.FacebookCard)
 	fc.Result = res
 	return ec.marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _SetupResponse_staff(ctx context.Context, field graphql.CollectedField, obj *model.SetupResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SetupResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Staff, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.StaffMember)
-	fc.Result = res
-	return ec.marshalNStaff2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffMember(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _SetupResponse_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.SetupResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SetupResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _SetupResponse_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.SetupResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SetupResponse",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SiteSettings_siteName(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
@@ -7299,6 +7299,53 @@ func (ec *executionContext) unmarshalInputFacebookCardInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputInitialSetupInput(ctx context.Context, obj interface{}) (model.InitialSetupInput, error) {
+	var it model.InitialSetupInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "siteName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteName"))
+			it.SiteName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj interface{}) (model.SEOInput, error) {
 	var it model.SEOInput
 	asMap := map[string]interface{}{}
@@ -7711,53 +7758,6 @@ func (ec *executionContext) unmarshalInputStaffResetPasswordInput(ctx context.Co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("confirmPassword"))
 			it.ConfirmPassword, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputStaffSetupInput(ctx context.Context, obj interface{}) (model.StaffSetupInput, error) {
-	var it model.StaffSetupInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "siteName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteName"))
-			it.SiteName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "email":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			it.Email, err = ec.unmarshalNEmail2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "password":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-			it.Password, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8197,6 +8197,57 @@ func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = innerFunc(ctx)
 
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var initialSetupResponseImplementors = []string{"InitialSetupResponse"}
+
+func (ec *executionContext) _InitialSetupResponse(ctx context.Context, sel ast.SelectionSet, obj *model.InitialSetupResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, initialSetupResponseImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InitialSetupResponse")
+		case "staff":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._InitialSetupResponse_staff(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accessToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._InitialSetupResponse_accessToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshToken":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._InitialSetupResponse_refreshToken(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8822,7 +8873,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "isSetup":
+		case "isSiteSetup":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -8831,7 +8882,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_isSetup(ctx, field)
+				res = ec._Query_isSiteSetup(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -9038,57 +9089,6 @@ func (ec *executionContext) _SEO(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var setupResponseImplementors = []string{"SetupResponse"}
-
-func (ec *executionContext) _SetupResponse(ctx context.Context, sel ast.SelectionSet, obj *model.SetupResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, setupResponseImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("SetupResponse")
-		case "staff":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._SetupResponse_staff(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "accessToken":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._SetupResponse_accessToken(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshToken":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._SetupResponse_refreshToken(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10053,6 +10053,25 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInitialSetupInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐInitialSetupInput(ctx context.Context, v interface{}) (model.InitialSetupInput, error) {
+	res, err := ec.unmarshalInputInitialSetupInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInitialSetupResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐInitialSetupResponse(ctx context.Context, sel ast.SelectionSet, v model.InitialSetupResponse) graphql.Marshaler {
+	return ec._InitialSetupResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNInitialSetupResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐInitialSetupResponse(ctx context.Context, sel ast.SelectionSet, v *model.InitialSetupResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._InitialSetupResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10187,20 +10206,6 @@ func (ec *executionContext) unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNSetupResponse2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSetupResponse(ctx context.Context, sel ast.SelectionSet, v model.SetupResponse) graphql.Marshaler {
-	return ec._SetupResponse(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNSetupResponse2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSetupResponse(ctx context.Context, sel ast.SelectionSet, v *model.SetupResponse) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._SetupResponse(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNSiteSettings2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx context.Context, sel ast.SelectionSet, v model.SiteSettings) graphql.Marshaler {
 	return ec._SiteSettings(ctx, sel, &v)
 }
@@ -10302,11 +10307,6 @@ func (ec *executionContext) marshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcms�
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNStaffSetupInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffSetupInput(ctx context.Context, v interface{}) (model.StaffSetupInput, error) {
-	res, err := ec.unmarshalInputStaffSetupInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNStaffUpdateInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐStaffUpdateInput(ctx context.Context, v interface{}) (model.StaffUpdateInput, error) {

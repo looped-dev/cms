@@ -3,5 +3,5 @@ type Mutation {
   Create initial Staff for the site and Site Name and login the user before
   redirecting them to the dashboard
   """
-  setup(input: StaffSetupInput!): SetupResponse!
+  setup(input: InitialSetupInput!): InitialSetupResponse!
 }
