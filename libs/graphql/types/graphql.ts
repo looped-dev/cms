@@ -3,9 +3,15 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -15,12 +21,12 @@ export type Scalars = {
   Float: number;
   Email: any;
   Map: any;
+  MongoID: any;
   MongoTime: any;
   Time: any;
 };
 
 export type FacebookCard = {
-  __typename?: 'FacebookCard';
   description?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
@@ -37,7 +43,6 @@ export type FacebookCardInput = {
 };
 
 export type Image = {
-  __typename?: 'Image';
   alt?: Maybe<Scalars['String']>;
   caption?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -47,8 +52,20 @@ export type Image = {
   url: Scalars['String'];
 };
 
+export type InitialSetupInput = {
+  email: Scalars['Email'];
+  name: Scalars['String'];
+  password: Scalars['String'];
+  siteName: Scalars['String'];
+};
+
+export type InitialSetupResponse = {
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+  staff: Staff;
+};
+
 export type Member = {
-  __typename?: 'Member';
   createdAt: Scalars['Time'];
   email: Scalars['Email'];
   id: Scalars['ID'];
@@ -62,7 +79,6 @@ export type Member = {
 };
 
 export type MemberSubscription = {
-  __typename?: 'MemberSubscription';
   createdAt: Scalars['Time'];
   description: Scalars['String'];
   id: Scalars['ID'];
@@ -73,7 +89,11 @@ export type MemberSubscription = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  /**
+   * Create initial Staff for the site and Site Name and login the user before
+   * redirecting them to the dashboard
+   */
+  initialSetup: InitialSetupResponse;
   staffAcceptInvite: Staff;
   staffChangePassword: Staff;
   staffDelete: Staff;
@@ -81,6 +101,7 @@ export type Mutation = {
   staffInvite: Staff;
   staffLogin: StaffLoginResponse;
   staffLogout: Scalars['Boolean'];
+  staffRefreshToken: StaffLoginResponse;
   staffResetPassword: Staff;
   staffUpdate: Staff;
   updatePage?: Maybe<Page>;
@@ -90,73 +111,67 @@ export type Mutation = {
   updateSiteSettings: SiteSettings;
 };
 
+export type MutationInitialSetupArgs = {
+  input: InitialSetupInput;
+};
 
 export type MutationStaffAcceptInviteArgs = {
   input: StaffAcceptInviteInput;
 };
 
-
 export type MutationStaffChangePasswordArgs = {
   input: StaffChangePasswordInput;
 };
-
 
 export type MutationStaffDeleteArgs = {
   input: StaffDeleteInput;
 };
 
-
 export type MutationStaffForgotPasswordArgs = {
   input: StaffForgotPasswordInput;
 };
-
 
 export type MutationStaffInviteArgs = {
   input: StaffInviteInput;
 };
 
-
 export type MutationStaffLoginArgs = {
   input: StaffLoginInput;
 };
 
+export type MutationStaffRefreshTokenArgs = {
+  input: StaffRefreshTokenInput;
+};
 
 export type MutationStaffResetPasswordArgs = {
   input: StaffResetPasswordInput;
 };
 
-
 export type MutationStaffUpdateArgs = {
   input: StaffUpdateInput;
 };
 
-
 export type MutationUpdatePageArgs = {
-  input: UpdatePostInput;
+  input: UpdatePageInput;
 };
-
 
 export type MutationUpdatePageStatusArgs = {
-  input: UpdatePostStatusInput;
+  input: UpdatePageStatusInput;
 };
-
 
 export type MutationUpdatePostArgs = {
   input: UpdatePostInput;
 };
 
-
 export type MutationUpdatePostStatusArgs = {
   input: UpdatePostStatusInput;
 };
-
 
 export type MutationUpdateSiteSettingsArgs = {
   input: SiteSettingsInput;
 };
 
 export type Page = {
-  __typename?: 'Page';
   content: Scalars['String'];
   createdAt: Scalars['Time'];
   excerpt?: Maybe<Scalars['String']>;
@@ -171,7 +186,6 @@ export type Page = {
 };
 
 export type Post = {
-  __typename?: 'Post';
   content: Scalars['String'];
   createdAt: Scalars['Time'];
   excerpt?: Maybe<Scalars['String']>;
@@ -196,39 +210,34 @@ export enum PostOrPageStatus {
   Pending = 'PENDING',
   Published = 'PUBLISHED',
   Scheduled = 'SCHEDULED',
-  Trashed = 'TRASHED'
+  Trashed = 'TRASHED',
 }
 
 export type Query = {
-  __typename?: 'Query';
   getPage?: Maybe<Page>;
   getPageByID?: Maybe<Page>;
   getPost?: Maybe<Post>;
   getPostByID?: Maybe<Post>;
   getPosts?: Maybe<Array<Post>>;
-  siteSettings: SiteSettings;
+  isSiteSetup: Scalars['Boolean'];
+  settings: SiteSettings;
 };
-
 
 export type QueryGetPageArgs = {
   slug: Scalars['String'];
 };
 
-
 export type QueryGetPageByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type QueryGetPostArgs = {
   slug: Scalars['String'];
 };
 
-
 export type QueryGetPostByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type QueryGetPostsArgs = {
   page?: InputMaybe<Scalars['Int']>;
@@ -236,7 +245,6 @@ export type QueryGetPostsArgs = {
 };
 
 export type Seo = {
-  __typename?: 'SEO';
   description?: Maybe<Scalars['String']>;
   facebook?: Maybe<FacebookCard>;
   image?: Maybe<Scalars['String']>;
@@ -253,7 +261,6 @@ export type SeoInput = {
 };
 
 export type SiteSettings = {
-  __typename?: 'SiteSettings';
   baseURL: Scalars['String'];
   seo: Seo;
   siteName: Scalars['String'];
@@ -266,14 +273,12 @@ export type SiteSettingsInput = {
 };
 
 export type Size = {
-  __typename?: 'Size';
   height: Scalars['Int'];
   url: Scalars['String'];
   width: Scalars['Int'];
 };
 
 export type Sizes = {
-  __typename?: 'Sizes';
   full?: Maybe<Size>;
   large?: Maybe<Size>;
   medium?: Maybe<Size>;
@@ -282,11 +287,10 @@ export type Sizes = {
 };
 
 export type Staff = {
-  __typename?: 'Staff';
   createdAt: Scalars['MongoTime'];
   email: Scalars['Email'];
   emailVerified: Scalars['Boolean'];
-  id: Scalars['ID'];
+  id: Scalars['MongoID'];
   name: Scalars['String'];
   role: StaffRole;
   updatedAt: Scalars['MongoTime'];
@@ -325,10 +329,19 @@ export type StaffLoginInput = {
 };
 
 export type StaffLoginResponse = {
-  __typename?: 'StaffLoginResponse';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
   staff: Staff;
+};
+
+export type StaffRefreshTokenInput = {
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+};
+
+export type StaffRefreshTokenResponse = {
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
 };
 
 export type StaffRegisterInput = {
@@ -360,7 +373,9 @@ export enum StaffRole {
    * Can invite and manage other Authors and Contributors, as well as edit and
    * publish any posts on the site.
    */
-  Editor = 'EDITOR'
+  Editor = 'EDITOR',
+  /** Has full site access and is the owner of the site and cannot be deleted. */
+  Owner = 'OWNER',
 }
 
 export type StaffUpdateInput = {
@@ -369,7 +384,6 @@ export type StaffUpdateInput = {
 };
 
 export type Tag = {
-  __typename?: 'Tag';
   createdAt: Scalars['Time'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -380,7 +394,6 @@ export type Tag = {
 };
 
 export type TwitterCard = {
-  __typename?: 'TwitterCard';
   card?: Maybe<Scalars['String']>;
   creator?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -436,33 +449,108 @@ export type StaffLoginMutationVariables = Exact<{
   input: StaffLoginInput;
 }>;
 
+export type StaffLoginMutation = {
+  staffLogin: {
+    accessToken: string;
+    refreshToken: string;
+    staff: {
+      id: any;
+      name: string;
+      email: any;
+      role: StaffRole;
+      createdAt: any;
+      updatedAt: any;
+    };
+  };
+};
 
-export type StaffLoginMutation = { __typename?: 'Mutation', staffLogin: { __typename?: 'StaffLoginResponse', accessToken: string, refreshToken: string, staff: { __typename?: 'Staff', id: string, name: string, email: any, role: StaffRole, createdAt: any, updatedAt: any } } };
+export type SetupSiteMutationVariables = Exact<{
+  input: InitialSetupInput;
+}>;
+
+export type SetupSiteMutation = {
+  initialSetup: {
+    refreshToken: string;
+    accessToken: string;
+    staff: { id: any };
+  };
+};
+
+export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never }>;
+
+export type IsSiteSetupQuery = { isSiteSetup: boolean };
 
 export const StaffLoginDocument = gql`
-    mutation StaffLogin($input: StaffLoginInput!) {
-  staffLogin(input: $input) {
-    accessToken
-    refreshToken
-    staff {
-      id
-      name
-      email
-      role
-      createdAt
-      updatedAt
+  mutation StaffLogin($input: StaffLoginInput!) {
+    staffLogin(input: $input) {
+      accessToken
+      refreshToken
+      staff {
+        id
+        name
+        email
+        role
+        createdAt
+        updatedAt
+      }
     }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class StaffLoginGQL extends Apollo.Mutation<
+  StaffLoginMutation,
+  StaffLoginMutationVariables
+> {
+  document = StaffLoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class StaffLoginGQL extends Apollo.Mutation<StaffLoginMutation, StaffLoginMutationVariables> {
-    document = StaffLoginDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+export const SetupSiteDocument = gql`
+  mutation SetupSite($input: InitialSetupInput!) {
+    initialSetup(input: $input) {
+      staff {
+        id
+      }
+      refreshToken
+      accessToken
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SetupSiteGQL extends Apollo.Mutation<
+  SetupSiteMutation,
+  SetupSiteMutationVariables
+> {
+  document = SetupSiteDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const IsSiteSetupDocument = gql`
+  query isSiteSetup {
+    isSiteSetup
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class IsSiteSetupGQL extends Apollo.Query<
+  IsSiteSetupQuery,
+  IsSiteSetupQueryVariables
+> {
+  document = IsSiteSetupDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
