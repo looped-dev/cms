@@ -36,7 +36,7 @@ func run(ctx context.Context) error {
 	}
 
 	// if server is new, run initial setup
-	setup := db.NewSetup(client)
+	setup := db.NewSetupRepository(client)
 	if err := setup.Initialize(os.Stdout, ctx); err != nil {
 		return err
 	}

@@ -11,19 +11,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewSetup(dbClient *mongo.Client) *Setup {
-	return &Setup{
+func NewSetupRepository(dbClient *mongo.Client) *SetupRepository {
+	return &SetupRepository{
 		DBClient: dbClient,
 	}
 }
 
-// Setup the database with the default values and indexes
-type Setup struct {
+// SetupRepository the database with the default values and indexes
+type SetupRepository struct {
 	DBClient *mongo.Client
 }
 
 // Initialize the database with the default values and indexes
-func (s *Setup) Initialize(w io.ReadWriter, ctx context.Context) error {
+func (s *SetupRepository) Initialize(w io.ReadWriter, ctx context.Context) error {
 	shouldSetupDatabse, err := s.ShouldSetupDB(ctx)
 	if err != nil {
 		return fmt.Errorf("Error checking whether database exists: %v", err)
@@ -50,18 +50,18 @@ func (s *Setup) Initialize(w io.ReadWriter, ctx context.Context) error {
 }
 
 // CreateIndexes creates the indexes for the database
-func (s *Setup) CreateIndexes() error {
+func (s *SetupRepository) CreateIndexes() error {
 	return nil
 }
 
 // CreateInitialStaffMember creates the initial Staff Member for the CMS, the
 // initial user is going to be setup via the API
-func (s *Setup) CreateInitialStaffMember() error {
+func (s *SetupRepository) CreateInitialStaffMember() error {
 	return nil
 }
 
 // if database doesn't exist create collection and add necessary indexes
-func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
+func (s *SetupRepository) ShouldSetupDB(ctx context.Context) (bool, error) {
 	client := s.DBClient
 	listOfDatabases, err := client.ListDatabaseNames(ctx, bson.M{})
 	if err != nil {
@@ -85,7 +85,7 @@ func (s *Setup) ShouldSetupDB(ctx context.Context) (bool, error) {
 // CreateSettingCollection creates a capped settings collection in the database
 // that only stores a single document. This is ideal for storing settings as
 // you only want a single document in the collection for the CMSs settings.
-func (s *Setup) CreateSettingCollection(w io.ReadWriter, ctx context.Context) error {
+func (s *SetupRepository) CreateSettingCollection(w io.ReadWriter, ctx context.Context) error {
 	fmt.Fprintf(w, "🔨 creating setting collection \n")
 	boolean := true
 	maxDocuments := int64(1)
