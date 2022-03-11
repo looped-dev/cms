@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s Staff) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
+func (s StaffRepository) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staffMember := &models.StaffMember{}
 	filter := models.StaffMember{Email: input.Email}
 	err := s.DBClient.Database("cms").Collection("staff").FindOne(ctx, filter).Decode(staffMember)
@@ -50,14 +50,14 @@ func (s Staff) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*m
 }
 
 // StaffLogout invalidates the current logged in staff refresh token.
-func (s Staff) StaffLogout(ctx context.Context) (*models.StaffMember, error) {
+func (s StaffRepository) StaffLogout(ctx context.Context) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
-func (s Staff) StaffResetPassword(ctx context.Context, input *model.StaffResetPasswordInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffResetPassword(ctx context.Context, input *model.StaffResetPasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
-func (s Staff) StaffForgotPassword(ctx context.Context, input *model.StaffForgotPasswordInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffForgotPassword(ctx context.Context, input *model.StaffForgotPasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }

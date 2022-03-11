@@ -37,7 +37,7 @@ func (s *SetupRepository) Initialize(w io.ReadWriter, ctx context.Context) error
 	// Checklist:
 	// 1. Create the database
 	// 2. Create the indexes
-	indexes := NewIndexes(s.DBClient)
+	indexes := NewIndexesRepository(s.DBClient)
 	if err := indexes.StaffCollectionIndexes(w, ctx); err != nil {
 		return err
 	}

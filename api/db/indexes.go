@@ -14,17 +14,17 @@ import (
 
 const DefaultDatabaseName = "cms"
 
-type Indexes struct {
+type IndexesRepository struct {
 	dbClient *mongo.Client
 }
 
-func NewIndexes(dbClient *mongo.Client) *Indexes {
-	return &Indexes{
+func NewIndexesRepository(dbClient *mongo.Client) *IndexesRepository {
+	return &IndexesRepository{
 		dbClient: dbClient,
 	}
 }
 
-func (i Indexes) StaffCollectionIndexes(w io.ReadWriter, ctx context.Context) error {
+func (i IndexesRepository) StaffCollectionIndexes(w io.ReadWriter, ctx context.Context) error {
 	fmt.Fprintf(w, "🔨 creating indexes for staff collection \n")
 	staffCollectionIndexes := []mongo.IndexModel{
 		{

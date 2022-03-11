@@ -12,7 +12,7 @@ import (
 )
 
 func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
-	setting := setting.NewSetting(r.DB)
+	setting := setting.NewSettingRepository(r.DB)
 	return setting.SaveSettings(ctx, input)
 }
 

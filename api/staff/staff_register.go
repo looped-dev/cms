@@ -16,20 +16,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Staff struct {
+type StaffRepository struct {
 	SMTPClient *mail.SMTPClient
 	DBClient   *mongo.Client
 }
 
-func NewStaff(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *Staff {
-	return &Staff{
+func NewStaffRepository(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *StaffRepository {
+	return &StaffRepository{
 		SMTPClient: smtpClient,
 		DBClient:   dbClient,
 	}
 }
 
 // StaffRegister creates a new staff (admin users) and returns the Staff object.
-func (s Staff) StaffRegister(ctx context.Context, input *model.StaffRegisterInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRegisterInput) (*models.StaffMember, error) {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (s Staff) StaffRegister(ctx context.Context, input *model.StaffRegisterInpu
 
 // StaffSendInvite creates a new staff, with a specific role and creates an invite
 // code and sends an email to the staff member.
-func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffSendInvite(ctx context.Context, input *model.StaffInviteInput) (*models.StaffMember, error) {
 	code := utils.GenerateInviteCode()
 	staffMember := &models.StaffMember{
 		Email: input.Email,
@@ -87,7 +87,7 @@ func (s Staff) StaffSendInvite(ctx context.Context, input *model.StaffInviteInpu
 
 // StaffAcceptInvite verify invite code and set the new staff password and email
 // as verified.
-func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.StaffMember, error) {
 	if input.ConfirmPassword != input.Password {
 		return nil, fmt.Errorf("Password and confirm password do not match")
 	}
@@ -107,21 +107,21 @@ func (s Staff) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptIn
 }
 
 // StaffUpdate updates the details of the staff i.e. Name, Email, Role.
-func (s Staff) StaffUpdate(ctx context.Context, input *model.StaffUpdateInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffUpdate(ctx context.Context, input *model.StaffUpdateInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffDelete soft deletes the staff from the database by adding a delatedAt field.
-func (s Staff) StaffDelete(ctx context.Context, input *model.StaffDeleteInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffDelete(ctx context.Context, input *model.StaffDeleteInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
 // StaffChangePassword update the staff password.
-func (s Staff) StaffChangePassword(ctx context.Context, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
+func (s StaffRepository) StaffChangePassword(ctx context.Context, input *model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	panic("not implemented")
 }
 
-func (s Staff) StaffExists(ctx context.Context) (bool, error) {
+func (s StaffRepository) StaffExists(ctx context.Context) (bool, error) {
 	count, err := s.DBClient.Database("cms").Collection("staff").CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return false, err

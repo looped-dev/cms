@@ -63,7 +63,7 @@ func TestStaff_StaffRegister(t *testing.T) {
 		Email:    "johndoe@example.com",
 		Password: "password",
 	}
-	s := Staff{
+	s := StaffRepository{
 		DBClient: dbClient,
 	}
 	got, err := s.StaffRegister(context.TODO(), staffInput)
@@ -78,7 +78,7 @@ func TestStaffSendInvite(t *testing.T) {
 		Email: "johninvite@example.com",
 		Role:  models.StaffRoleEditor,
 	}
-	staffClass := Staff{
+	staffClass := StaffRepository{
 		DBClient:   dbClient,
 		SMTPClient: smtpClient,
 	}
@@ -103,7 +103,7 @@ func TestStaffAcceptInvite(t *testing.T) {
 			},
 		},
 	}
-	staffClass := Staff{
+	staffClass := StaffRepository{
 		DBClient:   dbClient,
 		SMTPClient: smtpClient,
 	}
@@ -134,7 +134,7 @@ func TestStaff_StaffExistsExists(t *testing.T) {
 			},
 		},
 	}
-	staffClass := Staff{
+	staffClass := StaffRepository{
 		DBClient:   dbClient,
 		SMTPClient: smtpClient,
 	}

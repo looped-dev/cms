@@ -12,10 +12,10 @@ import (
 )
 
 func (r *queryResolver) IsSiteSetup(ctx context.Context) (bool, error) {
-	staff := staff.NewStaff(r.SMTPClient, r.DB)
+	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 
 	// check if settings exist
-	setting := setting.NewSetting(r.DB)
+	setting := setting.NewSettingRepository(r.DB)
 	settingExists, err := setting.Exists(ctx)
 	if err != nil {
 		return false, err

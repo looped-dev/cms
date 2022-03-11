@@ -15,13 +15,13 @@ func TestStaff_StaffLogin(t *testing.T) {
 		Email:    "login_test@example.com",
 		Password: "password",
 	}
-	s := Staff{
+	s := StaffRepository{
 		DBClient: dbClient,
 	}
 	_, err := s.StaffRegister(context.TODO(), staffInput)
 	assert.ErrorIs(t, err, nil, "shouldn't return error when creating staff registered")
 
-	staff := Staff{
+	staff := StaffRepository{
 		DBClient: dbClient,
 	}
 	staffLogin, err := staff.StaffLogin(context.Background(), &model.StaffLoginInput{

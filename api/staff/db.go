@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s Staff) addNewStaffToDB(ctx context.Context, staffMember *models.StaffMember) (*models.StaffMember, error) {
+func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *models.StaffMember) (*models.StaffMember, error) {
 	createdAt := primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
@@ -26,7 +26,7 @@ func (s Staff) addNewStaffToDB(ctx context.Context, staffMember *models.StaffMem
 	return staffMember, err
 }
 
-func (s Staff) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
+func (s StaffRepository) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
 	staffMember := &models.StaffMember{}
 	err := s.DBClient.Database("cms").Collection("staff").FindOne(
 		ctx,
@@ -38,7 +38,7 @@ func (s Staff) fetchStaffFromDB(ctx context.Context, email string) (*models.Staf
 	return staffMember, nil
 }
 
-func (s Staff) updateStaffInDB(ctx context.Context, staffMember *models.StaffMember, input *model.StaffAcceptInviteInput) error {
+func (s StaffRepository) updateStaffInDB(ctx context.Context, staffMember *models.StaffMember, input *model.StaffAcceptInviteInput) error {
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		return fmt.Errorf("Error hashing password: %v", err)

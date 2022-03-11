@@ -11,19 +11,19 @@ import (
 
 const SettingsCollectionName = "settings"
 
-func NewSetting(dbClient *mongo.Client) *Setting {
-	return &Setting{
+func NewSettingRepository(dbClient *mongo.Client) *SettingRepository {
+	return &SettingRepository{
 		DBClient: dbClient,
 	}
 }
 
-type Setting struct {
+type SettingRepository struct {
 	DBClient *mongo.Client
 }
 
 // Details fetch the settings of the current settings from the database, returns
 // nil if none is found.
-func (setting *Setting) Details(ctx context.Context) (*model.SiteSettings, error) {
+func (setting *SettingRepository) Details(ctx context.Context) (*model.SiteSettings, error) {
 	settings := &model.SiteSettings{}
 	// TODO: figure out out to fetch the first record
 	err := setting.DBClient.Database("cms").
@@ -40,7 +40,7 @@ func (setting *Setting) Details(ctx context.Context) (*model.SiteSettings, error
 }
 
 // Exists checks whether settings have been set in the database
-func (setting *Setting) Exists(ctx context.Context) (bool, error) {
+func (setting *SettingRepository) Exists(ctx context.Context) (bool, error) {
 	count, err := setting.DBClient.Database("cms").
 		Collection(SettingsCollectionName).
 		CountDocuments(ctx, bson.M{})
@@ -53,6 +53,6 @@ func (setting *Setting) Exists(ctx context.Context) (bool, error) {
 // SaveSettings saves the settings to the database. If the settings already, it
 // updates existing settings, otherwise it creates a new settings. Also, it
 // ensures only a single record will exist in the database.
-func (setting *Setting) SaveSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
+func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
 	panic("not implemented!")
 }
