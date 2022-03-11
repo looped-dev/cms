@@ -92,7 +92,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Setup               func(childComplexity int, input model.InitialSetupInput) int
+		InitialSetup        func(childComplexity int, input model.InitialSetupInput) int
 		StaffAcceptInvite   func(childComplexity int, input model.StaffAcceptInviteInput) int
 		StaffChangePassword func(childComplexity int, input model.StaffChangePasswordInput) int
 		StaffDelete         func(childComplexity int, input model.StaffDeleteInput) int
@@ -218,7 +218,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	Setup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error)
+	InitialSetup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error)
 	UpdatePageStatus(ctx context.Context, input model.UpdatePageStatusInput) (*model.Page, error)
 	UpdatePage(ctx context.Context, input model.UpdatePageInput) (*model.Page, error)
 	UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error)
@@ -466,17 +466,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MemberSubscription.UpdatedAt(childComplexity), true
 
-	case "Mutation.setup":
-		if e.complexity.Mutation.Setup == nil {
+	case "Mutation.initialSetup":
+		if e.complexity.Mutation.InitialSetup == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_setup_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_initialSetup_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Setup(childComplexity, args["input"].(model.InitialSetupInput)), true
+		return e.complexity.Mutation.InitialSetup(childComplexity, args["input"].(model.InitialSetupInput)), true
 
 	case "Mutation.staffAcceptInvite":
 		if e.complexity.Mutation.StaffAcceptInvite == nil {
@@ -1308,7 +1308,7 @@ type MemberSubscription {
   Create initial Staff for the site and Site Name and login the user before
   redirecting them to the dashboard
   """
-  setup(input: InitialSetupInput!): InitialSetupResponse!
+  initialSetup(input: InitialSetupInput!): InitialSetupResponse!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/page.graphql", Input: `type Page {
@@ -1637,7 +1637,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_setup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_initialSetup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.InitialSetupInput
@@ -2996,7 +2996,7 @@ func (ec *executionContext) _MemberSubscription_updatedAt(ctx context.Context, f
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_setup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_initialSetup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3013,7 +3013,7 @@ func (ec *executionContext) _Mutation_setup(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_setup_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_initialSetup_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3021,7 +3021,7 @@ func (ec *executionContext) _Mutation_setup(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Setup(rctx, args["input"].(model.InitialSetupInput))
+		return ec.resolvers.Mutation().InitialSetup(rctx, args["input"].(model.InitialSetupInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8454,9 +8454,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "setup":
+		case "initialSetup":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_setup(ctx, field)
+				return ec._Mutation_initialSetup(ctx, field)
 			}
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)

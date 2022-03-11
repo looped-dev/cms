@@ -11,7 +11,7 @@ import (
 	"github.com/looped-dev/cms/api/graph/model"
 )
 
-func (r *mutationResolver) Setup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error) {
+func (r *mutationResolver) InitialSetup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
