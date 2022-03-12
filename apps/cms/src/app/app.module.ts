@@ -11,6 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { environment } from '../environments/environment';
+import { CanViewSetupGuard } from '@looped-cms/setup';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const routes: Routes = [
   {
@@ -26,6 +28,7 @@ const routes: Routes = [
         path: 'setup',
         loadChildren: () =>
           import('@looped-cms/setup').then((m) => m.SetupModule),
+        canActivate: [CanViewSetupGuard],
       },
     ],
   },
@@ -41,6 +44,7 @@ const routes: Routes = [
     ApolloModule,
     environment.production ? [] : AkitaNgDevtools.forRoot(),
     AkitaNgRouterStoreModule,
+    FontAwesomeModule,
   ],
   providers: [
     {

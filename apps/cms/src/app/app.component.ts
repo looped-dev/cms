@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { SetupRegisterService } from '@looped-cms/setup';
+import { delay, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'looped-cms-root',
@@ -6,5 +10,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'cms';
+  loadingIcon = faSpinner;
+
+  isSetup$: Observable<boolean> = this.setupRegisterService.isSiteSetup().pipe(
+    delay(1000),
+    tap((result) => {
+      if (result) {
+        this.router.navigate(['/setup']);
+      }
+    })
+  );
+
+  constructor(
+    private setupRegisterService: SetupRegisterService,
+    private router: Router
+  ) {}
 }

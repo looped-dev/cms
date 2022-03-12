@@ -1,3 +1,15 @@
 <div class="h-screen w-screen">
-  <router-outlet></router-outlet>
+  <ng-container *ngIf="isSetup$ | async; else showLoading">
+    <router-outlet></router-outlet>
+  </ng-container>
+  <ng-template #showLoading>
+    <div class="flex justify-center items-center h-screen w-screen">
+      <div class="text-center">
+        <div class="inline-block align-middle justify-center">
+          <fa-icon [icon]="loadingIcon" size="3x" [spin]="true"></fa-icon>
+          <span class="text-4xl p-2 font-bold">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </div>

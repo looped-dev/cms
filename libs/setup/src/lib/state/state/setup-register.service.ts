@@ -30,16 +30,10 @@ export class SetupRegisterService {
       .pipe(map((result) => result.data?.initialSetup));
   }
 
-  isSiteSetup(): Observable<IsSiteSetupQuery['isSiteSetup'] | undefined> {
-    return this.apollo
+  isSiteSetup = () =>
+    this.apollo
       .query<IsSiteSetupQuery>({
         query: IsSiteSetupDocument,
       })
-      .pipe(
-        map((result) => result.data?.isSiteSetup),
-        tap((isSiteSetup) =>
-          this.setupRegisterStore.update({ isSetup: isSiteSetup })
-        )
-      );
-  }
+      .pipe(map((result) => result.data?.isSiteSetup));
 }
