@@ -13,9 +13,8 @@ export class AppComponent {
   loadingIcon = faSpinner;
 
   isSetup$: Observable<boolean> = this.setupRegisterService.isSiteSetup().pipe(
-    delay(1000),
-    tap((result) => {
-      if (result) {
+    tap((isSetup) => {
+      if (!isSetup) {
         this.router.navigate(['/setup']);
       }
     })

@@ -1,15 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { delay, Observable, tap } from 'rxjs';
+import { SetupRegisterService } from '../../state/state/setup-register.service';
 
 @Component({
   selector: 'looped-cms-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  styleUrls: ['./layout.component.scss'],
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent {
+  loadingIcon = faSpinner;
 
-  constructor() { }
+  isSetup$: Observable<boolean> = this.setupRegisterService.isSiteSetup().pipe(
+    tap((isSetup) => {
+      // if cms is setup, then redirect to the home page
+      if (isSetup) {
+        this.router.navigate(['/']);
+      }
+    })
+  );
 
-  ngOnInit(): void {
-  }
-
+  constructor(
+    private setupRegisterService: SetupRegisterService,
+    private router: Router
+  ) {}
 }

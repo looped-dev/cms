@@ -24,13 +24,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('@looped-cms/auth').then((m) => m.AuthModule),
       },
-      {
-        path: 'setup',
-        loadChildren: () =>
-          import('@looped-cms/setup').then((m) => m.SetupModule),
-        canActivate: [CanViewSetupGuard],
-      },
     ],
+  },
+  {
+    path: 'setup',
+    loadChildren: () => import('@looped-cms/setup').then((m) => m.SetupModule),
+    canActivate: [CanViewSetupGuard],
   },
 ];
 
