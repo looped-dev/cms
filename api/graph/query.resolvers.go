@@ -20,10 +20,10 @@ func (r *queryResolver) IsSiteSetup(ctx context.Context) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if settingExists {
-		return true, nil
+	// if settings do not exist, no need to check if staff exist
+	if !settingExists {
+		return false, nil
 	}
-
 	// check if staff exists
 	return staff.StaffExists(ctx)
 }
