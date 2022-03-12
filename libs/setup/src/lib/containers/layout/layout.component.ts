@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { delay, Observable, tap } from 'rxjs';
-import { SetupRegisterService } from '../../state/state/setup-register.service';
+import { Observable, tap } from 'rxjs';
+import { SetupRegisterService } from '../../state/setup-register.service';
 
 @Component({
   selector: 'looped-cms-layout',
