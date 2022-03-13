@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/looped-dev/cms/api/setting"
+	"github.com/looped-dev/cms/api/constants"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -95,7 +95,7 @@ func (s *SetupRepository) CreateSettingCollection(w io.ReadWriter, ctx context.C
 		MaxDocuments: &maxDocuments,
 		SizeInBytes:  &cappedSize,
 	}
-	err := s.DBClient.Database("cms").CreateCollection(ctx, setting.SettingsCollectionName, &settingsCollectionOptions)
+	err := s.DBClient.Database("cms").CreateCollection(ctx, constants.SettingsCollectionName, &settingsCollectionOptions)
 	if err != nil {
 		fmt.Fprintf(w, "❌ Error creating capped collection: %v", err)
 		return fmt.Errorf("Error creating settings capped collection: %v", err)
