@@ -43,11 +43,14 @@ func (setting *SettingRepository) Details(ctx context.Context) (*model.SiteSetti
 func (setting *SettingRepository) Exists(ctx context.Context) (bool, error) {
 	count, err := setting.DBClient.Database("cms").
 		Collection(SettingsCollectionName).
-		CountDocuments(ctx, bson.M{})
+		// count all documents, it should return 1 record as the collection is
+		// capped to a single collection.
+		CountDocuments(ctx, bson.D{})
 	if err != nil {
 		return false, err
 	}
-	return count == 0, nil
+	// should only have a single document, as it is a capped collection
+	return count == 1, nil
 }
 
 // SaveSettings saves the settings to the database. If the settings already, it
