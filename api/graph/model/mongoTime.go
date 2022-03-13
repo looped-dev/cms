@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -31,7 +32,7 @@ func UnmarshalMongoTime(value interface{}) (primitive.Timestamp, error) {
 func MarshalMongoTime(timestamp primitive.Timestamp) graphql.Marshaler {
 	return graphql.WriterFunc(func(writer io.Writer) {
 		timeValue := time.Unix(int64(timestamp.T), 0)
-		_, err := writer.Write([]byte(timeValue.Format(time.RFC3339)))
+		_, err := writer.Write([]byte(strconv.Quote(timeValue.Format(time.RFC3339))))
 		if err != nil {
 			log.Printf("%v", err)
 		}

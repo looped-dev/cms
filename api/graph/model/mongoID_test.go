@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,5 +25,5 @@ func TestUnMarshalMongoID(t *testing.T) {
 	buffer := &bytes.Buffer{}
 	objectID := primitive.NewObjectID()
 	MarshalMongoID(objectID).MarshalGQL(buffer)
-	assert.Equal(t, objectID.Hex(), buffer.String())
+	assert.Equal(t, strconv.Quote(objectID.Hex()), buffer.String())
 }

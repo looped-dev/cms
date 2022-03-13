@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,5 +28,5 @@ func TestMarshalMongoTime(t *testing.T) {
 	os.Setenv("TZ", "UTC")
 	buffer := &bytes.Buffer{}
 	MarshalMongoTime(primitive.Timestamp{T: uint32(1644350400)}).MarshalGQL(buffer)
-	assert.Equal(t, "2022-02-08T20:00:00Z", buffer.String())
+	assert.Equal(t, strconv.Quote("2022-02-08T20:00:00Z"), buffer.String())
 }

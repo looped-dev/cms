@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"strconv"
 	"testing"
 )
 
@@ -108,7 +109,7 @@ func TestMarshalEmail(t *testing.T) {
 			args: args{
 				email: "johndoe@example.com",
 			},
-			want: "johndoe@example.com",
+			want: strconv.Quote("johndoe@example.com"),
 		},
 		{
 			name: "Valid email address: Empty string",

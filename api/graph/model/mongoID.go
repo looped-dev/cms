@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,9 +20,9 @@ func UnmarshalMongoID(value interface{}) (primitive.ObjectID, error) {
 }
 
 // MarshalMongoID takes primitive.ObjectID and passes it to gqlgen MongoID scalar
-func MarshalMongoID(timestamp primitive.ObjectID) graphql.Marshaler {
+func MarshalMongoID(id primitive.ObjectID) graphql.Marshaler {
 	return graphql.WriterFunc(func(writer io.Writer) {
-		_, err := writer.Write([]byte(timestamp.Hex()))
+		_, err := writer.Write([]byte(strconv.Quote(id.Hex())))
 		if err != nil {
 			log.Printf("%v", err)
 		}
