@@ -3,6 +3,8 @@ package models
 type StaffRole string
 
 const (
+	// The owner of the site, usually the person who created the site
+	StaffRoleOwner StaffRole = "OWNER"
 	// Trusted staff user who should be able to manage all content and users, as well
 	// as site settings and options.
 	StaffRoleAdministrator StaffRole = "ADMINISTRATOR"
@@ -20,7 +22,7 @@ func (s StaffRole) String() string {
 
 func (e StaffRole) IsValid() bool {
 	switch e {
-	case StaffRoleAdministrator, StaffRoleEditor, StaffRoleAuthor:
+	case StaffRoleAdministrator, StaffRoleEditor, StaffRoleAuthor, StaffRoleOwner:
 		return true
 	}
 	return false
