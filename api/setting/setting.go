@@ -54,5 +54,20 @@ func (setting *SettingRepository) Exists(ctx context.Context) (bool, error) {
 // updates existing settings, otherwise it creates a new settings. Also, it
 // ensures only a single record will exist in the database.
 func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
-	panic("not implemented!")
+	_, err := setting.DBClient.Database("cms").
+		Collection(SettingsCollectionName).
+		InsertOne(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	siteSettings := &model.SiteSettings{}
+	err = setting.DBClient.Database("cms").
+		Collection(SettingsCollectionName).
+		// using find one to get the first record as this collection is capped and
+		// can only contain one record
+		FindOne(ctx, bson.M{}).Decode(siteSettings)
+	if err != nil {
+		return nil, err
+	}
+	return siteSettings, nil
 }
