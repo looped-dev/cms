@@ -1,0 +1,26 @@
+{
+  "projectType": "library",
+  "root": "libs/dashboard",
+  "sourceRoot": "libs/dashboard/src",
+  "prefix": "looped-cms",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/dashboard"],
+      "options": {
+        "jestConfig": "libs/dashboard/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/dashboard/src/**/*.ts",
+          "libs/dashboard/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

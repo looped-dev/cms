@@ -4,6 +4,7 @@
     "auth": "libs/auth",
     "cms": "apps/cms",
     "cms-e2e": "apps/cms-e2e",
+    "dashboard": "libs/dashboard",
     "setup": "libs/setup"
   }
 }

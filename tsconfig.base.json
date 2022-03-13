@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@looped-cms/auth": ["libs/auth/src/index.ts"],
+      "@looped-cms/dashboard": ["libs/dashboard/src/index.ts"],
       "@looped-cms/graphql": ["libs/graphql/types/graphql.ts"],
       "@looped-cms/setup": ["libs/setup/src/index.ts"]
     }
