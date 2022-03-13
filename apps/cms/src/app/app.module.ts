@@ -6,18 +6,23 @@ import { RouterModule, Routes } from '@angular/router';
 import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
 import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
-import { AuthModule } from '@looped-cms/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MainComponent } from './main/main.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: AppComponent,
+    component: MainComponent,
     children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('@looped-cms/dashboard').then((m) => m.DashboardModule),
+      },
       {
         path: 'auth',
         loadChildren: () =>
@@ -32,12 +37,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, MainComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
-    AuthModule,
     ApolloModule,
     environment.production ? [] : AkitaNgDevtools.forRoot(),
     AkitaNgRouterStoreModule,
