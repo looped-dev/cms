@@ -13,6 +13,10 @@ export const setupRoutes: Route[] = [
     component: LayoutComponent,
     children: [
       {
+        path: '',
+        redirectTo: 'steps/one',
+      },
+      {
         path: 'steps/one',
         component: StepOneComponent,
       },
