@@ -1,33 +1,11 @@
-.form-container {
-  form {
-    @apply flex flex-col w-[32rem] space-y-8 p-10 rounded-xl text-xl bg-white shadow-md font-bold;
-  }
-}
-
 .title {
   @apply text-center block text-4xl mb-9;
 }
 
-.form-control {
-  @apply flex flex-col w-full space-y-2;
+.create-account-button {
+  @apply bg-secondary text-white tracking-wider font-bold capitalize w-full px-8 py-4 space-x-4 text-3xl rounded-lg;
 
-  label {
-    @apply block  text-2xl font-normal;
-  }
-
-  input {
-    @apply w-full px-4 py-2 text-2xl rounded-md border-2 border-black;
-
-    &:invalid {
-      @apply border-red-500;
-    }
-  }
-
-  button {
-    @apply bg-blue-600 text-white font-semibold w-full px-4 py-4 space-x-4 text-2xl rounded-md;
-
-    &:disabled {
-      @apply bg-gray-500;
-    }
+  &:disabled {
+    @apply bg-gray-500;
   }
 }
