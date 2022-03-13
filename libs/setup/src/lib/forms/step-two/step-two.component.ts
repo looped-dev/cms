@@ -1,6 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { InitialSetupInput } from '@looped-cms/graphql';
+import { SetupRegisterService } from '../../state/setup-register.service';
 
 // todo: replace this with schema input for the same input
 type SetupSiteModel = {
@@ -22,18 +25,28 @@ export class StepTwoComponent {
 
   @ViewChild(NgForm) setupSiteForm!: NgForm;
 
-  setupSiteModel: SetupSiteModel = {
-    siteTitle: '',
+  setupSiteModel: InitialSetupInput = {
+    siteName: '',
     name: '',
     email: '',
     password: '',
   };
 
-  constructor() {
-    console.log({ setupSiteModel: this.setupSiteModel });
-  }
+  constructor(
+    private setupRegisterService: SetupRegisterService,
+    private router: Router
+  ) {}
 
   onSubmit() {
-    console.log();
+    this.setupRegisterService.initialSetup(this.setupSiteModel).subscribe({
+      next: (result) => {
+        if (result) {
+          this.router.navigate(['/']);
+        }
+      },
+      error: (error) => {
+        this.errorMessage = error?.message ?? 'An error occurred';
+      },
+    });
   }
 }

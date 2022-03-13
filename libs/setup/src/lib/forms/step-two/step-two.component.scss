@@ -18,13 +18,13 @@
   input {
     @apply w-full px-4 py-2 text-2xl rounded-md border-2 border-black;
 
-    &:invalid {
+    &:focus:invalid {
       @apply border-red-500;
     }
   }
 
   button {
-    @apply bg-blue-600 text-white font-semibold w-full px-4 py-4 space-x-4 text-2xl rounded-md;
+    @apply bg-primary text-white font-semibold w-full px-4 py-4 space-x-4 text-2xl rounded-md;
 
     &:disabled {
       @apply bg-gray-500;
