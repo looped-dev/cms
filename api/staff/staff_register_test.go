@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
 	test_setup "github.com/looped-dev/cms/api/test_setup"
@@ -40,6 +41,12 @@ func TestMain(m *testing.M) {
 	smtpClient, resourceSMTP, err = testContainer.NewMailTestServer(context.TODO())
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
+	}
+
+	// run setup
+	setup := db.NewSetupRepository(dbClient)
+	if err := setup.Initialize(os.Stdout, context.TODO()); err != nil {
+		log.Fatalf("Error setting up database: %v", err)
 	}
 
 	// run tests
