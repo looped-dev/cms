@@ -47,6 +47,9 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 	}
 	result, err := s.DBClient.Database(db.DefaultDatabaseName).Collection("staff").InsertOne(ctx, staff)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, fmt.Errorf("Email already exists")
+		}
 		return nil, err
 	}
 	staff.ID = result.InsertedID.(primitive.ObjectID)

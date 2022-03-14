@@ -10,6 +10,7 @@ import (
 	"github.com/looped-dev/cms/api/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *models.StaffMember) (*models.StaffMember, error) {
@@ -22,8 +23,14 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 		ctx,
 		staffMember,
 	)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, fmt.Errorf("Email already exists")
+		}
+		return nil, err
+	}
 	staffMember.ID = result.InsertedID.(primitive.ObjectID)
-	return staffMember, err
+	return staffMember, nil
 }
 
 func (s StaffRepository) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
