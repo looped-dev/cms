@@ -5,14 +5,6 @@ import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { InitialSetupInput } from '@looped-cms/graphql';
 import { SetupRegisterService } from '../../state/setup-register.service';
 
-// todo: replace this with schema input for the same input
-type SetupSiteModel = {
-  siteTitle: string;
-  name: string;
-  email: string;
-  password: string;
-};
-
 @Component({
   selector: 'looped-cms-step-two',
   templateUrl: './step-two.component.html',

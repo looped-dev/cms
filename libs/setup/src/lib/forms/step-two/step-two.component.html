@@ -11,31 +11,51 @@
 
     <div class="form-control">
       <label>Site Title *</label>
-      <input type="text" name="siteTitle" placeholder="Site Title" [(ngModel)]="setupSiteModel.siteName" required
-        #siteTitle="ngModel" />
+      <input
+        type="text"
+        name="siteTitle"
+        placeholder="Site Title"
+        [(ngModel)]="setupSiteModel.siteName"
+        required
+        #siteTitle="ngModel"
+      />
       <ng-container *ngIf="siteTitle.dirty && siteTitle.invalid">
         <div class="form-error-message">
-          <span *ngIf="siteTitle.errors?.['required']">Site title is required</span>
+          <span *ngIf="siteTitle.errors?.['required']"
+            >Site title is required</span
+          >
         </div>
       </ng-container>
     </div>
 
     <div class="form-control">
       <label>Your Name *</label>
-      <input type="text" name="name" placeholder="Your name" [(ngModel)]="setupSiteModel.name" required
-        #name="ngModel" />
+      <input
+        type="text"
+        name="name"
+        placeholder="Your name"
+        [(ngModel)]="setupSiteModel.name"
+        required
+        #name="ngModel"
+      />
       <ng-container *ngIf="name.dirty && name.invalid">
         <div class="form-error-message">
           <span *ngIf="name.errors?.['required']">Name is required</span>
         </div>
       </ng-container>
-
     </div>
 
     <div class="form-control">
       <label>Email Address *</label>
-      <input type="email" email name="email" placeholder="Email" [(ngModel)]="setupSiteModel.email" required
-        #email="ngModel" />
+      <input
+        type="email"
+        email
+        name="email"
+        placeholder="Email"
+        [(ngModel)]="setupSiteModel.email"
+        required
+        #email="ngModel"
+      />
       <ng-container *ngIf="email.dirty && email.invalid">
         <div class="form-error-message">
           <span *ngIf="email.errors?.['required']">Email is required!</span>
@@ -46,11 +66,19 @@
 
     <div class="form-control">
       <label>Password *</label>
-      <input type="password" name="password" placeholder="Password" [(ngModel)]="setupSiteModel.password" required
-        #password="ngModel" />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        [(ngModel)]="setupSiteModel.password"
+        required
+        #password="ngModel"
+      />
       <ng-container *ngIf="password.dirty && password.invalid">
         <div class="form-error-message">
-          <span *ngIf="password.errors?.['required']">Password is required</span>
+          <span *ngIf="password.errors?.['required']"
+            >Password is required</span
+          >
         </div>
       </ng-container>
     </div>
@@ -61,6 +89,5 @@
         <span>Save</span>
       </button>
     </div>
-
   </form>
 </div>
