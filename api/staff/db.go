@@ -19,7 +19,7 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 	}
 	staffMember.CreatedAt = createdAt
 	staffMember.UpdatedAt = createdAt
-	result, err := s.DBClient.Database("cms").Collection("staff").InsertOne(
+	result, err := s.DBClient.Database(s.dbName).Collection("staff").InsertOne(
 		ctx,
 		staffMember,
 	)
@@ -35,7 +35,7 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 
 func (s StaffRepository) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
 	staffMember := &models.StaffMember{}
-	err := s.DBClient.Database("cms").Collection("staff").FindOne(
+	err := s.DBClient.Database(s.dbName).Collection("staff").FindOne(
 		ctx,
 		bson.M{"email": email},
 	).Decode(staffMember)
@@ -59,7 +59,7 @@ func (s StaffRepository) updateStaffInDB(ctx context.Context, staffMember *model
 	staffMember.UpdatedAt = primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	_, err = s.DBClient.Database("cms").Collection("staff").UpdateOne(
+	_, err = s.DBClient.Database(s.dbName).Collection("staff").UpdateOne(
 		ctx,
 		bson.M{"_id": staffMember.ID},
 		bson.M{

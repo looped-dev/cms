@@ -14,12 +14,14 @@ import (
 func NewSetupRepository(dbClient *mongo.Client) *SetupRepository {
 	return &SetupRepository{
 		DBClient: dbClient,
+		dbName:   GetDatabaseName(),
 	}
 }
 
 // SetupRepository the database with the default values and indexes
 type SetupRepository struct {
 	DBClient *mongo.Client
+	dbName   string
 }
 
 // Initialize the database with the default values and indexes
@@ -45,7 +47,7 @@ func (s *SetupRepository) Initialize(w io.ReadWriter, ctx context.Context) error
 	if err := s.CreateSettingCollection(w, ctx); err != nil {
 		return err
 	}
-	fmt.Fprintf(w, "🔨 Creating database: %s \n", DefaultDatabaseName)
+	fmt.Fprintf(w, "🔨 Creating database: %s \n", s.dbName)
 	return nil
 }
 
@@ -74,7 +76,7 @@ func (s *SetupRepository) ShouldSetupDB(ctx context.Context) (bool, error) {
 	// check if the database being used by the CMS exists, if exists, do not setup
 	isDBFound := false
 	for _, name := range listOfDatabases {
-		if name == DefaultDatabaseName {
+		if name == s.dbName {
 			isDBFound = true
 			break
 		}
@@ -95,7 +97,8 @@ func (s *SetupRepository) CreateSettingCollection(w io.ReadWriter, ctx context.C
 		MaxDocuments: &maxDocuments,
 		SizeInBytes:  &cappedSize,
 	}
-	err := s.DBClient.Database("cms").CreateCollection(ctx, constants.SettingsCollectionName, &settingsCollectionOptions)
+	err := s.DBClient.Database(s.dbName).
+		CreateCollection(ctx, constants.SettingsCollectionName, &settingsCollectionOptions)
 	if err != nil {
 		fmt.Fprintf(w, "❌ Error creating capped collection: %v", err)
 		return fmt.Errorf("Error creating settings capped collection: %v", err)

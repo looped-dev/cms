@@ -12,15 +12,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const DefaultDatabaseName = "cms"
-
 type IndexesRepository struct {
 	dbClient *mongo.Client
+	dbName   string
 }
 
 func NewIndexesRepository(dbClient *mongo.Client) *IndexesRepository {
+
+	dbName := GetDatabaseName()
+
 	return &IndexesRepository{
 		dbClient: dbClient,
+		dbName:   dbName,
 	}
 }
 
@@ -34,7 +37,7 @@ func (i IndexesRepository) StaffCollectionIndexes(w io.ReadWriter, ctx context.C
 		// add necessary indexes for staff here here
 	}
 	// create indexes for staff collection
-	_, err := i.dbClient.Database(DefaultDatabaseName).
+	_, err := i.dbClient.Database(i.dbName).
 		Collection("staff").
 		Indexes().
 		CreateMany(ctx, staffCollectionIndexes)

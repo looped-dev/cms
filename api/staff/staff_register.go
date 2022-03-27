@@ -19,12 +19,14 @@ import (
 type StaffRepository struct {
 	SMTPClient *mail.SMTPClient
 	DBClient   *mongo.Client
+	dbName     string
 }
 
 func NewStaffRepository(smtpClient *mail.SMTPClient, dbClient *mongo.Client) *StaffRepository {
 	return &StaffRepository{
 		SMTPClient: smtpClient,
 		DBClient:   dbClient,
+		dbName:     db.GetDatabaseName(),
 	}
 }
 
@@ -45,7 +47,7 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
 	}
-	result, err := s.DBClient.Database(db.DefaultDatabaseName).Collection("staff").InsertOne(ctx, staff)
+	result, err := s.DBClient.Database(s.dbName).Collection("staff").InsertOne(ctx, staff)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("Email already exists")
@@ -125,7 +127,7 @@ func (s StaffRepository) StaffChangePassword(ctx context.Context, input *model.S
 }
 
 func (s StaffRepository) StaffExists(ctx context.Context) (bool, error) {
-	count, err := s.DBClient.Database("cms").Collection("staff").CountDocuments(ctx, bson.M{})
+	count, err := s.DBClient.Database(s.dbName).Collection("staff").CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return false, err
 	}

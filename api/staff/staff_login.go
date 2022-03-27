@@ -14,7 +14,7 @@ import (
 func (s StaffRepository) StaffLogin(ctx context.Context, input *model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staffMember := &models.StaffMember{}
 	filter := models.StaffMember{Email: input.Email}
-	err := s.DBClient.Database("cms").Collection("staff").FindOne(ctx, filter).Decode(staffMember)
+	err := s.DBClient.Database(s.dbName).Collection("staff").FindOne(ctx, filter).Decode(staffMember)
 	if err != nil {
 		// if there are no documents, it means email address is not available
 		if err == mongo.ErrNoDocuments {
