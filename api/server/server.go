@@ -15,20 +15,36 @@ import (
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
-	"github.com/looped-dev/cms/api/utils/configs"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const defaultPort = "8080"
 
+func init() {
+	// configure viper to use environment variables or looped.config.yaml file,
+	// may be expanded to JSON and other config formats with time
+	viper.SetConfigName("looped.config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %w \n", err))
+	}
+}
+
 func run(ctx context.Context) error {
-	port := os.Getenv("PORT")
+	port := viper.GetString("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	mongoDbConnString := configs.GetConfig("MONGODB_CONNSTRING")
+	mongoDbConnString := viper.GetString("MONGODB_CONNSTRING")
+	if mongoDbConnString == "" {
+		return fmt.Errorf("Please set the MONGODB_CONNSTRING in the config file. This is the connection string to your MongoDB instance.")
+	}
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoDbConnString))
 	if err != nil {
