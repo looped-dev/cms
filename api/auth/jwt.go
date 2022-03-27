@@ -67,7 +67,7 @@ func (webTokens JWT) VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims
 // and also tracking usage of refresh tokens. The refresh tokens will be single
 // use and once used, they will be invalidated.
 func (webTokens JWT) CreateStaffRefreshTokenSession(client *mongo.Client, ctx context.Context, staff *models.StaffMember) (string, error) {
-	src := &StaffRefreshToken{
+	src := &StaffRefreshTokenRepository{
 		DBClient: client,
 	}
 	refreshTokenData, err := src.CreateStaffRefreshTokenSession(ctx, staff)

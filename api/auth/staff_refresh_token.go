@@ -5,20 +5,28 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/looped-dev/cms/api/constants"
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const StaffRefreshTokenCollection = "staff_refresh_tokens"
+func NewStaffRefreshToken(client *mongo.Client) *StaffRefreshTokenRepository {
+	return &StaffRefreshTokenRepository{
+		dbName:   db.GetDatabaseName(),
+		DBClient: client,
+	}
+}
 
-type StaffRefreshToken struct {
+type StaffRefreshTokenRepository struct {
 	DBClient *mongo.Client
+	dbName   string
 }
 
 // StaffRefreshTokenCreate creates a new staff refresh token and returns the StaffRefreshToken object.
-func (srt *StaffRefreshToken) CreateStaffRefreshTokenSession(ctx context.Context, staff *models.StaffMember) (*models.RefreshToken, error) {
+func (srt *StaffRefreshTokenRepository) CreateStaffRefreshTokenSession(ctx context.Context, staff *models.StaffMember) (*models.RefreshToken, error) {
 	refreshToken := models.RefreshToken{
 		UserID: staff.ID.Hex(),
 		ID:     primitive.NewObjectID(),
@@ -31,7 +39,9 @@ func (srt *StaffRefreshToken) CreateStaffRefreshTokenSession(ctx context.Context
 		},
 		InvalidatedAt: primitive.Timestamp{},
 	}
-	_, err := srt.DBClient.Database("cms").Collection(StaffRefreshTokenCollection).InsertOne(ctx, refreshToken)
+	_, err := srt.DBClient.Database(srt.dbName).
+		Collection(constants.StaffRefreshTokenCollection).
+		InsertOne(ctx, refreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +49,15 @@ func (srt *StaffRefreshToken) CreateStaffRefreshTokenSession(ctx context.Context
 }
 
 // StaffRefreshTokenGetByID returns a staff refresh token by ID.
-func (srt *StaffRefreshToken) VerifyStaffRefreshToken(ctx context.Context, userID, refreshTokenID string) (*models.RefreshToken, error) {
+func (srt *StaffRefreshTokenRepository) VerifyStaffRefreshToken(ctx context.Context, userID, refreshTokenID string) (*models.RefreshToken, error) {
 	id, err := primitive.ObjectIDFromHex(refreshTokenID)
 	if err != nil {
 		return nil, err
 	}
 	refreshToken := &models.RefreshToken{}
-	err = srt.DBClient.Database("cms").
-		Collection(StaffRefreshTokenCollection).FindOne(ctx, bson.M{"_id": id}).
+	err = srt.DBClient.Database(srt.dbName).
+		Collection(constants.StaffRefreshTokenCollection).
+		FindOne(ctx, bson.M{"_id": id}).
 		Decode(refreshToken)
 	if err != nil {
 		return nil, err
@@ -70,12 +81,12 @@ func (srt *StaffRefreshToken) VerifyStaffRefreshToken(ctx context.Context, userI
 
 // StaffRefreshTokenGetByID invalidates refresh token by adding InvalidatedAt
 // timestamp on it and returning it.
-func (srt *StaffRefreshToken) InvalidateRefreshToken(ctx context.Context, refreshToken *models.RefreshToken) (*models.RefreshToken, error) {
+func (srt *StaffRefreshTokenRepository) InvalidateRefreshToken(ctx context.Context, refreshToken *models.RefreshToken) (*models.RefreshToken, error) {
 	refreshToken.InvalidatedAt = primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	_, err := srt.DBClient.Database("cms").
-		Collection(StaffRefreshTokenCollection).
+	_, err := srt.DBClient.Database(srt.dbName).
+		Collection(constants.StaffRefreshTokenCollection).
 		UpdateOne(ctx, bson.M{"_id": refreshToken.ID}, bson.M{"$set": refreshToken})
 	return refreshToken, err
 }

@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestStaffRefreshToken_CreateStaffRefreshTokenSession(t *testing.T) {
-	refreshToken := &StaffRefreshToken{
+	refreshToken := &StaffRefreshTokenRepository{
 		DBClient: dbClient,
 	}
 	staff := &models.StaffMember{
@@ -59,7 +59,7 @@ func TestStaffRefreshToken_CreateStaffRefreshTokenSession(t *testing.T) {
 }
 
 func TestStaffRefreshToken_VerifyStaffRefreshToken(t *testing.T) {
-	refreshToken := &StaffRefreshToken{
+	refreshToken := &StaffRefreshTokenRepository{
 		DBClient: dbClient,
 	}
 	staff := &models.StaffMember{
@@ -80,7 +80,7 @@ func TestStaffRefreshToken_VerifyStaffRefreshToken(t *testing.T) {
 }
 
 func TestStaffRefreshToken_InvalidateRefreshToken(t *testing.T) {
-	refreshToken := &StaffRefreshToken{
+	refreshToken := &StaffRefreshTokenRepository{
 		DBClient: dbClient,
 	}
 	staff := &models.StaffMember{
