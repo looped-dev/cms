@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/looped-dev/cms/api/constants"
 	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph/model"
@@ -47,7 +48,7 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
 	}
-	result, err := s.DBClient.Database(s.dbName).Collection("staff").InsertOne(ctx, staff)
+	result, err := s.DBClient.Database(s.dbName).Collection(constants.StaffCollectionName).InsertOne(ctx, staff)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("Email already exists")
@@ -127,7 +128,7 @@ func (s StaffRepository) StaffChangePassword(ctx context.Context, input *model.S
 }
 
 func (s StaffRepository) StaffExists(ctx context.Context) (bool, error) {
-	count, err := s.DBClient.Database(s.dbName).Collection("staff").CountDocuments(ctx, bson.M{})
+	count, err := s.DBClient.Database(s.dbName).Collection(constants.StaffCollectionName).CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return false, err
 	}

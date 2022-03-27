@@ -8,3 +8,6 @@ const SettingsCollectionName = "settings"
 
 // the name of the mongodb collection for refresh tokens
 const StaffRefreshTokenCollection = "staff_refresh_tokens"
+
+// the name for staff mongodb collections
+const StaffCollectionName = "staff"

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/looped-dev/cms/api/constants"
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/models"
 	"github.com/looped-dev/cms/api/utils"
@@ -19,10 +20,12 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 	}
 	staffMember.CreatedAt = createdAt
 	staffMember.UpdatedAt = createdAt
-	result, err := s.DBClient.Database(s.dbName).Collection("staff").InsertOne(
-		ctx,
-		staffMember,
-	)
+	result, err := s.DBClient.Database(s.dbName).
+		Collection(constants.StaffCollectionName).
+		InsertOne(
+			ctx,
+			staffMember,
+		)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("Email already exists")
@@ -35,10 +38,13 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 
 func (s StaffRepository) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
 	staffMember := &models.StaffMember{}
-	err := s.DBClient.Database(s.dbName).Collection("staff").FindOne(
-		ctx,
-		bson.M{"email": email},
-	).Decode(staffMember)
+	err := s.DBClient.Database(s.dbName).
+		Collection(constants.StaffCollectionName).
+		FindOne(
+			ctx,
+			bson.M{"email": email},
+		).
+		Decode(staffMember)
 	if err != nil {
 		return nil, err
 	}
@@ -59,12 +65,14 @@ func (s StaffRepository) updateStaffInDB(ctx context.Context, staffMember *model
 	staffMember.UpdatedAt = primitive.Timestamp{
 		T: uint32(time.Now().Unix()),
 	}
-	_, err = s.DBClient.Database(s.dbName).Collection("staff").UpdateOne(
-		ctx,
-		bson.M{"_id": staffMember.ID},
-		bson.M{
-			"$set": staffMember,
-		},
-	)
+	_, err = s.DBClient.Database(s.dbName).
+		Collection(constants.StaffCollectionName).
+		UpdateOne(
+			ctx,
+			bson.M{"_id": staffMember.ID},
+			bson.M{
+				"$set": staffMember,
+			},
+		)
 	return err
 }
