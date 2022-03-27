@@ -10,13 +10,40 @@
 
     <div class="form-control">
       <label>Email Address *</label>
-      <input type="email" name="email" placeholder="Email" [(ngModel)]="signInFormModel.email" required />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        [(ngModel)]="signInFormModel.email"
+        required
+        email
+        #email="ngModel"
+      />
+
+      <ng-container *ngIf="email.dirty && email.invalid">
+        <div class="form-error-message">
+          <span *ngIf="email.errors?.['required']">Email is required!</span>
+        </div>
+        <div class="form-error-message">
+          <span *ngIf="email.errors?.['email']">Email must be valid!</span>
+        </div>
+      </ng-container>
     </div>
     <div class="form-control">
       <label>Password *</label>
-      <input type="password" name="password" placeholder="Password" [(ngModel)]="signInFormModel.password" required />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        [(ngModel)]="signInFormModel.password"
+        required
+        password="ngModel"
+      />
+      <div class="form-error-message">
+        <span *ngIf="email.errors?.['required']">Password is required</span>
+      </div>
     </div>
-    <div class=" form-control">
+    <div class="form-control">
       <button [disabled]="!signInForm.valid" type="submit">
         <fa-icon [icon]="unlockIcon"></fa-icon>
         <span>Sign in</span>
