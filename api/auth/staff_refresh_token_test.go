@@ -43,9 +43,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestStaffRefreshToken_CreateStaffRefreshTokenSession(t *testing.T) {
-	refreshToken := &StaffRefreshTokenRepository{
-		DBClient: dbClient,
-	}
+	refreshToken := NewStaffRefreshToken(dbClient)
 	staff := &models.StaffMember{
 		ID:            primitive.NewObjectID(),
 		Name:          "John Doe",
@@ -59,9 +57,7 @@ func TestStaffRefreshToken_CreateStaffRefreshTokenSession(t *testing.T) {
 }
 
 func TestStaffRefreshToken_VerifyStaffRefreshToken(t *testing.T) {
-	refreshToken := &StaffRefreshTokenRepository{
-		DBClient: dbClient,
-	}
+	refreshToken := NewStaffRefreshToken(dbClient)
 	staff := &models.StaffMember{
 		ID:            primitive.NewObjectID(),
 		Name:          "John Doe",
@@ -80,9 +76,7 @@ func TestStaffRefreshToken_VerifyStaffRefreshToken(t *testing.T) {
 }
 
 func TestStaffRefreshToken_InvalidateRefreshToken(t *testing.T) {
-	refreshToken := &StaffRefreshTokenRepository{
-		DBClient: dbClient,
-	}
+	refreshToken := NewStaffRefreshToken(dbClient)
 	staff := &models.StaffMember{
 		ID:            primitive.NewObjectID(),
 		Name:          "John Doe",
