@@ -1,0 +1,9 @@
+# Mail
+
+MAIL_PORT: 587
+MAIL_HOST: smtp.gmail.com
+MAIL_PASSWORD: password
+MAIL_USERNAME: example@gmail.com
+
+# DB
+MONGODB_CONNSTRING: mongodb://localhost:27017
