@@ -15,6 +15,10 @@
     @apply block  text-2xl font-normal;
   }
 
+  .form-error-message {
+    @apply text-red-500 font-normal;
+  }
+
   input {
     @apply w-full px-4 py-2 text-2xl rounded-md border-2 border-black;
 
