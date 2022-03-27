@@ -48,7 +48,9 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
 	}
-	result, err := s.DBClient.Database(s.dbName).Collection(constants.StaffCollectionName).InsertOne(ctx, staff)
+	result, err := s.DBClient.Database(s.dbName).
+		Collection(constants.StaffCollectionName).
+		InsertOne(ctx, staff)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("Email already exists")

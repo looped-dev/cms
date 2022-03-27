@@ -32,9 +32,8 @@ func (s StaffRepository) StaffLogin(ctx context.Context, input *model.StaffLogin
 		return nil, fmt.Errorf("Invalid email or password")
 	}
 	// create session i.e. JWT Access Token, JWT Refresh Token and JWT ID Token
-	jwt := auth.JWT{
-		DBClient: s.DBClient,
-	}
+	jwt := auth.NewJWTRepository(s.DBClient)
+
 	accessToken, err := jwt.GenerateStaffAccessToken(staffMember)
 	if err != nil {
 		return nil, fmt.Errorf("Error generating access token: %v", err)

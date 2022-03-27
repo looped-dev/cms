@@ -70,10 +70,8 @@ func TestStaff_StaffRegister(t *testing.T) {
 		Email:    "johndoe@example.com",
 		Password: "password",
 	}
-	s := StaffRepository{
-		DBClient: dbClient,
-	}
-	got, err := s.StaffRegister(context.TODO(), staffInput)
+	staff := NewStaffRepository(smtpClient, dbClient)
+	got, err := staff.StaffRegister(context.TODO(), staffInput)
 	assert.NoError(t, err)
 	assert.Equal(t, got.Email, staffInput.Email)
 	assert.Equal(t, got.Name, staffInput.Name)
@@ -85,13 +83,10 @@ func TestStaffSendInvite(t *testing.T) {
 		Email: "johninvite@example.com",
 		Role:  models.StaffRoleEditor,
 	}
-	staffClass := StaffRepository{
-		DBClient:   dbClient,
-		SMTPClient: smtpClient,
-	}
-	staffMember, err := staffClass.StaffSendInvite(context.TODO(), staffInvite)
+	staff := NewStaffRepository(smtpClient, dbClient)
+	staffMember, err := staff.StaffSendInvite(context.TODO(), staffInvite)
 	assert.NoError(t, err)
-	fetchStaffMember, err := staffClass.fetchStaffFromDB(context.TODO(), staffInvite.Email)
+	fetchStaffMember, err := staff.fetchStaffFromDB(context.TODO(), staffInvite.Email)
 	assert.NoError(t, err)
 	assert.Equal(t, staffMember.Email, fetchStaffMember.Email)
 	assert.NotEmpty(t, fetchStaffMember.InviteCode)
@@ -110,11 +105,8 @@ func TestStaffAcceptInvite(t *testing.T) {
 			},
 		},
 	}
-	staffClass := StaffRepository{
-		DBClient:   dbClient,
-		SMTPClient: smtpClient,
-	}
-	staffMember, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
+	staff := NewStaffRepository(smtpClient, dbClient)
+	staffMember, err := staff.addNewStaffToDB(context.TODO(), staffInsert)
 	assert.NoError(t, err)
 	invite := &model.StaffAcceptInviteInput{
 		Name:            "John Doe",
@@ -123,7 +115,7 @@ func TestStaffAcceptInvite(t *testing.T) {
 		Password:        "password",
 		ConfirmPassword: "password",
 	}
-	staffMemberInvite, err := staffClass.StaffAcceptInvite(context.TODO(), invite)
+	staffMemberInvite, err := staff.StaffAcceptInvite(context.TODO(), invite)
 	assert.NoError(t, err)
 	assert.Equal(t, staffMember.ID, staffMemberInvite.ID)
 	assert.Equal(t, staffMember.Email, staffMemberInvite.Email)
@@ -141,13 +133,10 @@ func TestStaff_StaffExistsExists(t *testing.T) {
 			},
 		},
 	}
-	staffClass := StaffRepository{
-		DBClient:   dbClient,
-		SMTPClient: smtpClient,
-	}
-	_, err := staffClass.addNewStaffToDB(context.TODO(), staffInsert)
+	staff := NewStaffRepository(smtpClient, dbClient)
+	_, err := staff.addNewStaffToDB(context.TODO(), staffInsert)
 	assert.NoError(t, err)
-	count, err := staffClass.StaffExists(context.TODO())
+	count, err := staff.StaffExists(context.TODO())
 	assert.NoError(t, err)
 	assert.True(t, count)
 }

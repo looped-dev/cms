@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/models"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,11 +28,19 @@ type StaffJWTRefreshTokenClaims struct {
 	jwt.StandardClaims
 }
 
-type JWT struct {
-	DBClient *mongo.Client
+func NewJWTRepository(dbClient *mongo.Client) JWTRepository {
+	return JWTRepository{
+		DBClient: dbClient,
+		dbName:   db.GetDatabaseName(),
+	}
 }
 
-func (webTokens JWT) GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
+type JWTRepository struct {
+	DBClient *mongo.Client
+	dbName   string
+}
+
+func (webTokens JWTRepository) GenerateStaffAccessToken(staff *models.StaffMember) (string, error) {
 	claims := StaffJWTClaims{
 		ID:            staff.ID.Hex(),
 		Name:          staff.Name,
@@ -49,7 +58,7 @@ func (webTokens JWT) GenerateStaffAccessToken(staff *models.StaffMember) (string
 	return token.SignedString([]byte(signInString))
 }
 
-func (webTokens JWT) VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
+func (webTokens JWTRepository) VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &StaffJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(signInString), nil
 	})
@@ -66,10 +75,8 @@ func (webTokens JWT) VerifyStaffAccessToken(tokenString string) (*StaffJWTClaims
 // staff and saves in the database. This allows the option to revoke the token
 // and also tracking usage of refresh tokens. The refresh tokens will be single
 // use and once used, they will be invalidated.
-func (webTokens JWT) CreateStaffRefreshTokenSession(client *mongo.Client, ctx context.Context, staff *models.StaffMember) (string, error) {
-	src := &StaffRefreshTokenRepository{
-		DBClient: client,
-	}
+func (webTokens JWTRepository) CreateStaffRefreshTokenSession(client *mongo.Client, ctx context.Context, staff *models.StaffMember) (string, error) {
+	src := NewStaffRefreshToken(webTokens.DBClient)
 	refreshTokenData, err := src.CreateStaffRefreshTokenSession(ctx, staff)
 	if err != nil {
 		return "", fmt.Errorf("Error creating new refresh token: %v", err)
@@ -87,14 +94,14 @@ func (webTokens JWT) CreateStaffRefreshTokenSession(client *mongo.Client, ctx co
 	return token.SignedString([]byte(signInString))
 }
 
-func (webTokens JWT) GenerateStaffRefreshToken(ctx context.Context, staff *models.StaffMember) (string, error) {
+func (webTokens JWTRepository) GenerateStaffRefreshToken(ctx context.Context, staff *models.StaffMember) (string, error) {
 	panic("Not Implemented")
 }
 
-func (webTokens JWT) VerifyStaffRefreshToken(ctx context.Context, tokenString string) error {
+func (webTokens JWTRepository) VerifyStaffRefreshToken(ctx context.Context, tokenString string) error {
 	panic("Not Implemented")
 }
 
-func (webTokens JWT) RevokeStaffRefreshToken(ctx context.Context, tokenString string) error {
+func (webTokens JWTRepository) RevokeStaffRefreshToken(ctx context.Context, tokenString string) error {
 	panic("Not Implemented")
 }

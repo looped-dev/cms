@@ -8,7 +8,7 @@ import (
 )
 
 func TestJWT_GenerateStaffAccessToken(t *testing.T) {
-	jwtToken := JWT{}
+	jwtToken := JWTRepository{}
 	token, err := jwtToken.GenerateStaffAccessToken(&models.StaffMember{})
 	assert.Nil(t, err)
 	assert.NotEmpty(t, token)
