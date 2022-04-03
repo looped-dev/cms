@@ -67,7 +67,10 @@ func (r *mutationResolver) StaffRefreshToken(ctx context.Context, input model.St
 }
 
 func (r *staffResolver) Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error) {
-	panic(fmt.Errorf("not implemented"))
+	if obj.Role.IsValid() {
+		return "", fmt.Errorf("Your role is invalid")
+	}
+	return models.StaffRole(obj.Role.String()), nil
 }
 
 // Staff returns generated.StaffResolver implementation.
