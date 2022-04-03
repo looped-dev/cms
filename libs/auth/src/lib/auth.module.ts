@@ -5,11 +5,13 @@ import { SignInFormComponent } from './forms/sign-in-form/sign-in-form.component
 import { LayoutComponent } from './containers/layout/layout.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
+import { StaffMustNotBeLoggedInGuard } from './staff-must-not-be-logged-in.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [StaffMustNotBeLoggedInGuard],
     children: [
       {
         path: 'signin',

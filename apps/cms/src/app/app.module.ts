@@ -12,6 +12,10 @@ import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MainComponent } from './main/main.component';
+import {
+  StaffMustBeLoggedInGuard,
+  StaffMustNotBeLoggedInGuard,
+} from '@looped-cms/auth';
 
 const routes: Routes = [
   {
@@ -22,11 +26,13 @@ const routes: Routes = [
         path: '',
         loadChildren: () =>
           import('@looped-cms/dashboard').then((m) => m.DashboardModule),
+        canActivate: [StaffMustBeLoggedInGuard],
       },
       {
         path: 'auth',
         loadChildren: () =>
           import('@looped-cms/auth').then((m) => m.AuthModule),
+        canActivate: [StaffMustNotBeLoggedInGuard],
       },
     ],
   },
