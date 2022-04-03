@@ -4,6 +4,12 @@ import { NgForm } from '@angular/forms';
 import { StaffLoginDocument } from '@looped-cms/graphql';
 import { Apollo } from 'apollo-angular';
 import { SessionService } from '../../state/state/session.service';
+import {
+  ActivatedRoute,
+  Route,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 
 type SignInFormData = {
   email: string;
@@ -27,14 +33,20 @@ export class SignInFormComponent {
     password: '',
   };
 
-  constructor(private sessionService: SessionService) {}
+  constructor(
+    private sessionService: SessionService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   onSubmit() {
     this.sessionService
       .login(this.signInFormModel.email, this.signInFormModel.password)
       .subscribe({
-        next: (data) => {
-          console.log({ data });
+        next: (_) => {
+          const redirectTo =
+            this.activatedRoute.snapshot.queryParams['redirectTo'];
+          this.router.navigateByUrl(redirectTo ?? '/');
         },
         error: (error) => (this.errorMessage = error?.message),
       });
