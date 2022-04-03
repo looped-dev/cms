@@ -15,7 +15,7 @@ export class StaffMustBeLoggedInGuard implements CanActivate {
         if (isLoggedIn) {
           return true;
         }
-        this.router.navigateByUrl('auth/signin');
+        this.router.navigateByUrl(`auth/signin?redirectTo=${this.router.url}`);
         return false;
       })
     );
