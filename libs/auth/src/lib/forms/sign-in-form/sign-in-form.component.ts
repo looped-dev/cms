@@ -1,15 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { NgForm } from '@angular/forms';
-import { StaffLoginDocument } from '@looped-cms/graphql';
-import { Apollo } from 'apollo-angular';
 import { SessionService } from '../../state/state/session.service';
-import {
-  ActivatedRoute,
-  Route,
-  Router,
-  RouterStateSnapshot,
-} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 type SignInFormData = {
   email: string;
@@ -43,6 +36,7 @@ export class SignInFormComponent {
     this.sessionService
       .login(this.signInFormModel.email, this.signInFormModel.password)
       .subscribe({
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         next: (_) => {
           const redirectTo =
             this.activatedRoute.snapshot.queryParams['redirectTo'];
