@@ -44,6 +44,7 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 		Name:           input.Name,
 		Email:          input.Email,
 		HashedPassword: hashedPassword,
+		Role:           input.Role,
 		EmailVerified:  true,
 		CreatedAt:      createdAt,
 		UpdatedAt:      createdAt,
