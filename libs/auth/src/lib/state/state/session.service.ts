@@ -3,10 +3,15 @@ import { map, tap } from 'rxjs/operators';
 import { SessionStore } from './session.store';
 import { StaffLoginDocument, StaffLoginMutation } from '@looped-cms/graphql';
 import { Apollo } from 'apollo-angular';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
-  constructor(private sessionStore: SessionStore, private apollo: Apollo) {}
+  constructor(
+    private sessionStore: SessionStore,
+    private localStorage: LocalStorageService,
+    private apollo: Apollo
+  ) {}
 
   login(email: string, password: string) {
     return this.apollo
@@ -21,7 +26,10 @@ export class SessionService {
       })
       .pipe(
         tap(({ data }) => {
-          console.log(data);
+          this.localStorage.setTokens(
+            data?.staffLogin.accessToken ?? '',
+            data?.staffLogin.refreshToken ?? ''
+          );
           this.sessionStore.update({
             accessToken: data?.staffLogin.accessToken,
             refreshToken: data?.staffLogin.refreshToken,
