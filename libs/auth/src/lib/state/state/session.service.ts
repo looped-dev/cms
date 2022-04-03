@@ -22,7 +22,7 @@ export class SessionService {
       .pipe(
         tap(({ data }) => {
           console.log(data);
-          this.sessionStore.add({
+          this.sessionStore.update({
             accessToken: data?.staffLogin.accessToken,
             refreshToken: data?.staffLogin.refreshToken,
             staff: data?.staffLogin.staff,

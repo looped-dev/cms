@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { QueryEntity } from '@datorama/akita';
-import { SessionStore, SessionState } from './session.store';
+import { Query } from '@datorama/akita';
+import { Session } from './session.model';
+import { SessionStore } from './session.store';
 
 @Injectable({ providedIn: 'root' })
-export class SessionQuery extends QueryEntity<SessionState> {
-  selectIsLogin$ = this.select('token');
+export class SessionQuery extends Query<Session> {
+  isLoggedIn$ = this.select((state) => !!state.accessToken);
   selectStaff = this.select('staff');
 
   constructor(protected override store: SessionStore) {
