@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -15,7 +17,9 @@ import (
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
+	"github.com/looped-dev/cms/api/utils"
 	"github.com/spf13/viper"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -78,6 +82,20 @@ func run(ctx context.Context) error {
 			},
 		),
 	)
+
+	// customize error messages going to the fronted, adding error codes in the
+	// process. For more info: https://gqlgen.com/reference/errors/
+	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
+		err := graphql.DefaultErrorPresenter(ctx, e)
+		var customError *utils.GraphQLError
+		if errors.As(e, &customError) {
+			// message is for UI pressentation purpose
+			err.Message = customError.Message
+			// the code can be easier to use compare to the message
+			err.Extensions["code"] = customError.Code
+		}
+		return err
+	})
 
 	httpRouter := chi.NewRouter()
 
