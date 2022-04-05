@@ -11,6 +11,13 @@ func NewGraphQLError(code int, message string) *GraphQLError {
 	}
 }
 
+func NewGraphQLErrorWithError(code int, err error) *GraphQLError {
+	return &GraphQLError{
+		Code:    code,
+		Message: err.Error(),
+	}
+}
+
 type GraphQLError struct {
 	Code    int
 	Message string

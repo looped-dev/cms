@@ -54,9 +54,9 @@ func (s StaffRepository) StaffRegister(ctx context.Context, input *model.StaffRe
 		InsertOne(ctx, staff)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, fmt.Errorf("Email already exists")
+			return nil, utils.NewGraphQLErrorWithError(400, fmt.Errorf("Email already exists"))
 		}
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	staff.ID = result.InsertedID.(primitive.ObjectID)
 	return staff, nil
@@ -78,7 +78,7 @@ func (s StaffRepository) StaffSendInvite(ctx context.Context, input *model.Staff
 	}
 	staffMember, err := s.addNewStaffToDB(ctx, staffMember)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Error saving users: %v", err))
 	}
 	// send email
 	err = emails.SendEmail(s.SMTPClient, emails.SendMailConfig{
@@ -89,7 +89,7 @@ func (s StaffRepository) StaffSendInvite(ctx context.Context, input *model.Staff
 		PlainBody: "Hi,\n\nYou have been invited to Looped CMS. Please click the link below to register.\n\nhttps://looped.dev/staff/register?code=" + code,
 	})
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Error sending emails: %v", err))
 	}
 	return staffMember, nil
 }
@@ -98,19 +98,21 @@ func (s StaffRepository) StaffSendInvite(ctx context.Context, input *model.Staff
 // as verified.
 func (s StaffRepository) StaffAcceptInvite(ctx context.Context, input *model.StaffAcceptInviteInput) (*models.StaffMember, error) {
 	if input.ConfirmPassword != input.Password {
-		return nil, fmt.Errorf("Password and confirm password do not match")
+		return nil, utils.NewGraphQLErrorWithError(400,
+			fmt.Errorf("Password and confirm password do not match"),
+		)
 	}
 	staffMember, err := s.fetchStaffFromDB(ctx, input.Email)
 	if err != nil {
-		return nil, fmt.Errorf("Error fetching staff: %v", err)
+		return nil, utils.NewGraphQLErrorWithError(400, fmt.Errorf("Error fetching staff: %v", err))
 	}
 	// check if invite code is valid
 	if err := validateInviteCode(input.Code, staffMember.InviteCode); err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(400, err)
 	}
 	// update staff in database
 	if err := s.updateStaffInDB(ctx, staffMember, input); err != nil {
-		return nil, fmt.Errorf("Error updating staff: %v", err)
+		return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Error updating staff: %v", err))
 	}
 	return staffMember, nil
 }
@@ -131,9 +133,11 @@ func (s StaffRepository) StaffChangePassword(ctx context.Context, input *model.S
 }
 
 func (s StaffRepository) StaffExists(ctx context.Context) (bool, error) {
-	count, err := s.DBClient.Database(s.dbName).Collection(constants.StaffCollectionName).CountDocuments(ctx, bson.M{})
+	count, err := s.DBClient.Database(s.dbName).
+		Collection(constants.StaffCollectionName).
+		CountDocuments(ctx, bson.M{})
 	if err != nil {
-		return false, err
+		return false, utils.NewGraphQLErrorWithError(500, err)
 	}
 	if count < 1 {
 		return false, nil
