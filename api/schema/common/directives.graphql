@@ -9,3 +9,13 @@ directive @goField(
   forceResolver: Boolean
   name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+"""
+Staff must have a specific role in order to access a mutation or role
+"""
+directive @hasStaffRole(role: StaffRole!) on FIELD_DEFINITION
+
+"""
+Staff must be signed in access query or mutation
+"""
+directive @isSignedIn on FIELD_DEFINITION

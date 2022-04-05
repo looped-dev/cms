@@ -17,6 +17,7 @@ import (
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
 	"github.com/looped-dev/cms/api/graph/generated"
+	"github.com/looped-dev/cms/api/models"
 	"github.com/looped-dev/cms/api/utils"
 	"github.com/spf13/viper"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -78,6 +79,17 @@ func run(ctx context.Context) error {
 				Resolvers: &graph.Resolver{
 					DB:         client,
 					SMTPClient: mailServer,
+				},
+				Directives: generated.DirectiveRoot{
+					HasStaffRole: func(ctx context.Context, obj interface{}, next graphql.Resolver, role models.StaffRole) (interface{}, error) {
+						// implement this here
+
+						// or let it pass through
+						return next(ctx)
+					},
+					IsSignedIn: func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+						return next(ctx)
+					},
 				},
 			},
 		),

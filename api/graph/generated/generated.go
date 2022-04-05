@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -44,6 +45,8 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	HasStaffRole func(ctx context.Context, obj interface{}, next graphql.Resolver, role models.StaffRole) (res interface{}, err error)
+	IsSignedIn   func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -1243,6 +1246,10 @@ directive @goField(
   forceResolver: Boolean
   name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+directive @hasStaffRole(role: StaffRole!) on FIELD_DEFINITION
+
+directive @isSignedIn on FIELD_DEFINITION
 `, BuiltIn: false},
 	{Name: "api/schema/common/scalars.graphql", Input: `scalar Time
 scalar Map
@@ -1610,14 +1617,17 @@ input StaffRefreshTokenInput {
 extend type Mutation {
   staffLogin(input: StaffLoginInput!): StaffLoginResponse!
   staffInvite(input: StaffInviteInput!): Staff!
+    @hasStaffRole(role: ADMINISTRATOR)
   staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
-  staffUpdate(input: StaffUpdateInput!): Staff!
+  staffUpdate(input: StaffUpdateInput!): Staff! @isSignedIn
   staffDelete(input: StaffDeleteInput!): Staff!
-  staffChangePassword(input: StaffChangePasswordInput!): Staff!
+    @hasStaffRole(role: ADMINISTRATOR)
+  staffChangePassword(input: StaffChangePasswordInput!): Staff! @isSignedIn
   staffResetPassword(input: StaffResetPasswordInput!): Staff!
   staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
-  staffLogout: Boolean!
+  staffLogout: Boolean! @isSignedIn
   staffRefreshToken(input: StaffRefreshTokenInput!): StaffLoginResponse!
+    @isSignedIn
 }
 `, BuiltIn: false},
 	{Name: "api/schema/tags.graphql", Input: `type Tag {
@@ -1636,6 +1646,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) dir_hasStaffRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.StaffRole
+	if tmp, ok := rawArgs["role"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		arg0, err = ec.unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["role"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_initialSetup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3302,8 +3327,32 @@ func (ec *executionContext) _Mutation_staffInvite(ctx context.Context, field gra
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffInvite(rctx, args["input"].(model.StaffInviteInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffInvite(rctx, args["input"].(model.StaffInviteInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, "ADMINISTRATOR")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasStaffRole == nil {
+				return nil, errors.New("directive hasStaffRole is not implemented")
+			}
+			return ec.directives.HasStaffRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.StaffMember); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/looped-dev/cms/api/models.StaffMember`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3386,8 +3435,28 @@ func (ec *executionContext) _Mutation_staffUpdate(ctx context.Context, field gra
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffUpdate(rctx, args["input"].(model.StaffUpdateInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffUpdate(rctx, args["input"].(model.StaffUpdateInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsSignedIn == nil {
+				return nil, errors.New("directive isSignedIn is not implemented")
+			}
+			return ec.directives.IsSignedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.StaffMember); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/looped-dev/cms/api/models.StaffMember`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3428,8 +3497,32 @@ func (ec *executionContext) _Mutation_staffDelete(ctx context.Context, field gra
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffDelete(rctx, args["input"].(model.StaffDeleteInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffDelete(rctx, args["input"].(model.StaffDeleteInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNStaffRole2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffRole(ctx, "ADMINISTRATOR")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasStaffRole == nil {
+				return nil, errors.New("directive hasStaffRole is not implemented")
+			}
+			return ec.directives.HasStaffRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.StaffMember); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/looped-dev/cms/api/models.StaffMember`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3470,8 +3563,28 @@ func (ec *executionContext) _Mutation_staffChangePassword(ctx context.Context, f
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffChangePassword(rctx, args["input"].(model.StaffChangePasswordInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffChangePassword(rctx, args["input"].(model.StaffChangePasswordInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsSignedIn == nil {
+				return nil, errors.New("directive isSignedIn is not implemented")
+			}
+			return ec.directives.IsSignedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.StaffMember); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/looped-dev/cms/api/models.StaffMember`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3589,8 +3702,28 @@ func (ec *executionContext) _Mutation_staffLogout(ctx context.Context, field gra
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffLogout(rctx)
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffLogout(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsSignedIn == nil {
+				return nil, errors.New("directive isSignedIn is not implemented")
+			}
+			return ec.directives.IsSignedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3631,8 +3764,28 @@ func (ec *executionContext) _Mutation_staffRefreshToken(ctx context.Context, fie
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().StaffRefreshToken(rctx, args["input"].(model.StaffRefreshTokenInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StaffRefreshToken(rctx, args["input"].(model.StaffRefreshTokenInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsSignedIn == nil {
+				return nil, errors.New("directive isSignedIn is not implemented")
+			}
+			return ec.directives.IsSignedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.StaffLoginResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/looped-dev/cms/api/graph/model.StaffLoginResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

@@ -101,12 +101,15 @@ input StaffRefreshTokenInput {
 extend type Mutation {
   staffLogin(input: StaffLoginInput!): StaffLoginResponse!
   staffInvite(input: StaffInviteInput!): Staff!
+    @hasStaffRole(role: ADMINISTRATOR)
   staffAcceptInvite(input: StaffAcceptInviteInput!): Staff!
-  staffUpdate(input: StaffUpdateInput!): Staff!
+  staffUpdate(input: StaffUpdateInput!): Staff! @isSignedIn
   staffDelete(input: StaffDeleteInput!): Staff!
-  staffChangePassword(input: StaffChangePasswordInput!): Staff!
+    @hasStaffRole(role: ADMINISTRATOR)
+  staffChangePassword(input: StaffChangePasswordInput!): Staff! @isSignedIn
   staffResetPassword(input: StaffResetPasswordInput!): Staff!
   staffForgotPassword(input: StaffForgotPasswordInput!): Staff!
-  staffLogout: Boolean!
+  staffLogout: Boolean! @isSignedIn
   staffRefreshToken(input: StaffRefreshTokenInput!): StaffLoginResponse!
+    @isSignedIn
 }
