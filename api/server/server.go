@@ -87,15 +87,15 @@ func run(ctx context.Context) error {
 						// implement this here
 						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
 						if user == nil {
-							return nil, fmt.Errorf("Access denied")
+							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
 						}
 						var userClaims auth.StaffJWTClaims
 						var ok bool
 						if userClaims, ok = user.(auth.StaffJWTClaims); ok != false {
-							return nil, fmt.Errorf("Internal Error")
+							return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Internal Error"))
 						}
 						if userClaims.Role != role.String() {
-							return nil, fmt.Errorf("Access Denied")
+							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
 						}
 						// or let it pass through
 						return next(ctx)
@@ -103,7 +103,7 @@ func run(ctx context.Context) error {
 					IsSignedIn: func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
 						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
 						if user == nil {
-							return nil, fmt.Errorf("Access denied")
+							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
 						}
 						return next(ctx)
 					},
