@@ -13,6 +13,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/looped-dev/cms/api/auth"
+	"github.com/looped-dev/cms/api/constants"
 	"github.com/looped-dev/cms/api/db"
 	"github.com/looped-dev/cms/api/emails"
 	"github.com/looped-dev/cms/api/graph"
@@ -83,11 +85,26 @@ func run(ctx context.Context) error {
 				Directives: generated.DirectiveRoot{
 					HasStaffRole: func(ctx context.Context, obj interface{}, next graphql.Resolver, role models.StaffRole) (interface{}, error) {
 						// implement this here
-
+						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
+						if user == nil {
+							return nil, fmt.Errorf("Access denied")
+						}
+						var userClaims auth.StaffJWTClaims
+						var ok bool
+						if userClaims, ok = user.(auth.StaffJWTClaims); ok != false {
+							return nil, fmt.Errorf("Internal Error")
+						}
+						if userClaims.Role != role.String() {
+							return nil, fmt.Errorf("Access Denied")
+						}
 						// or let it pass through
 						return next(ctx)
 					},
 					IsSignedIn: func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
+						if user == nil {
+							return nil, fmt.Errorf("Access denied")
+						}
 						return next(ctx)
 					},
 				},
