@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
 import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
-import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
@@ -13,9 +12,11 @@ import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MainComponent } from './main/main.component';
 import {
+  SessionQuery,
   StaffMustBeLoggedInGuard,
   StaffMustNotBeLoggedInGuard,
 } from '@looped-cms/auth';
+import { createApollo } from './utils/createApollo';
 
 const routes: Routes = [
   {
@@ -56,15 +57,8 @@ const routes: Routes = [
   providers: [
     {
       provide: APOLLO_OPTIONS,
-      useFactory: (httpLink: HttpLink) => {
-        return {
-          cache: new InMemoryCache(),
-          link: httpLink.create({
-            uri: environment.graphql.endpoint,
-          }),
-        };
-      },
-      deps: [HttpLink],
+      useFactory: createApollo,
+      deps: [HttpLink, SessionQuery],
     },
   ],
   bootstrap: [AppComponent],
