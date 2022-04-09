@@ -84,7 +84,8 @@ func (webTokens JWTRepository) CreateStaffRefreshTokenSession(client *mongo.Clie
 	claims := &StaffJWTRefreshTokenClaims{
 		RefreshToken: *refreshTokenData,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: int64(refreshTokenData.ExpiresAt.T),
+			// stay active for up to 30 Days
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 30).Unix(),
 			Issuer:    "looped-cms",
 			Audience:  "looped-cms-admin",
 			IssuedAt:  time.Now().Unix(),
