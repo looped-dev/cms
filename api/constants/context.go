@@ -1,3 +1,5 @@
 package constants
 
-const CurrentlyAuthenticatedUserContextKey = "CURRENT_USER_CONTEXT_KEY"
+type ContextKey string
+
+const CurrentlyAuthenticatedUserContextKey ContextKey = "CURRENT_USER_CONTEXT_KEY"
