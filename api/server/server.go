@@ -91,7 +91,7 @@ func run(ctx context.Context) error {
 						}
 						var userClaims auth.StaffJWTClaims
 						var ok bool
-						if userClaims, ok = user.(auth.StaffJWTClaims); ok != false {
+						if userClaims, ok = user.(auth.StaffJWTClaims); !ok {
 							return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Internal Error"))
 						}
 						if userClaims.Role != role.String() {
