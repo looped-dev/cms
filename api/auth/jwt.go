@@ -94,15 +94,3 @@ func (webTokens JWTRepository) CreateStaffRefreshTokenSession(client *mongo.Clie
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(signInString))
 }
-
-func (webTokens JWTRepository) GenerateStaffRefreshToken(ctx context.Context, staff *models.StaffMember) (string, error) {
-	panic("Not Implemented")
-}
-
-func (webTokens JWTRepository) VerifyStaffRefreshToken(ctx context.Context, tokenString string) error {
-	panic("Not Implemented")
-}
-
-func (webTokens JWTRepository) RevokeStaffRefreshToken(ctx context.Context, tokenString string) error {
-	panic("Not Implemented")
-}
