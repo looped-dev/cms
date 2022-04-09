@@ -12,4 +12,8 @@ func TestJWT_GenerateStaffAccessToken(t *testing.T) {
 	token, err := jwtToken.GenerateStaffAccessToken(&models.StaffMember{})
 	assert.Nil(t, err)
 	assert.NotEmpty(t, token)
+
+	claims, err := jwtToken.VerifyStaffAccessToken(token)
+	assert.Nil(t, err)
+	assert.NotNil(t, claims)
 }
