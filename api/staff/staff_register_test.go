@@ -86,7 +86,7 @@ func TestStaffSendInvite(t *testing.T) {
 	staff := NewStaffRepository(smtpClient, dbClient)
 	staffMember, err := staff.StaffSendInvite(context.TODO(), staffInvite)
 	assert.NoError(t, err)
-	fetchStaffMember, err := staff.fetchStaffFromDB(context.TODO(), staffInvite.Email)
+	fetchStaffMember, err := staff.FetchStaffFromDB(context.TODO(), staffInvite.Email)
 	assert.NoError(t, err)
 	assert.Equal(t, staffMember.Email, fetchStaffMember.Email)
 	assert.NotEmpty(t, fetchStaffMember.InviteCode)

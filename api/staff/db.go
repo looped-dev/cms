@@ -36,7 +36,7 @@ func (s StaffRepository) addNewStaffToDB(ctx context.Context, staffMember *model
 	return staffMember, nil
 }
 
-func (s StaffRepository) fetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
+func (s StaffRepository) FetchStaffFromDB(ctx context.Context, email string) (*models.StaffMember, error) {
 	staffMember := &models.StaffMember{}
 	err := s.DBClient.Database(s.dbName).
 		Collection(constants.StaffCollectionName).

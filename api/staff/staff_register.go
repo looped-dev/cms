@@ -102,7 +102,7 @@ func (s StaffRepository) StaffAcceptInvite(ctx context.Context, input *model.Sta
 			fmt.Errorf("Password and confirm password do not match"),
 		)
 	}
-	staffMember, err := s.fetchStaffFromDB(ctx, input.Email)
+	staffMember, err := s.FetchStaffFromDB(ctx, input.Email)
 	if err != nil {
 		return nil, utils.NewGraphQLErrorWithError(400, fmt.Errorf("Error fetching staff: %v", err))
 	}
