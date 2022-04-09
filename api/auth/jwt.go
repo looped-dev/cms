@@ -48,7 +48,7 @@ func (webTokens JWTRepository) GenerateStaffAccessToken(staff *models.StaffMembe
 		Role:          staff.Role.String(),
 		EmailVerified: staff.EmailVerified,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: int64(time.Hour.Seconds()),
+			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
 			Issuer:    "looped-cms",
 			Audience:  "looped-cms-admin",
 			IssuedAt:  time.Now().Unix(),
