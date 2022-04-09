@@ -49,7 +49,7 @@ func (s StaffRepository) StaffLogin(ctx context.Context, input *model.StaffLogin
 			fmt.Errorf("Error generating access token: %v", err),
 		)
 	}
-	refreshToken, err := jwt.CreateStaffRefreshTokenSession(s.DBClient, ctx, staffMember)
+	refreshToken, err := jwt.CreateStaffRefreshTokenSession(ctx, staffMember)
 	if err != nil {
 		return nil, utils.NewGraphQLErrorWithError(500,
 			fmt.Errorf("Error generating refresh token: %v", err),

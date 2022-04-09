@@ -75,7 +75,7 @@ func (webTokens JWTRepository) VerifyStaffAccessToken(tokenString string) (*Staf
 // staff and saves in the database. This allows the option to revoke the token
 // and also tracking usage of refresh tokens. The refresh tokens will be single
 // use and once used, they will be invalidated.
-func (webTokens JWTRepository) CreateStaffRefreshTokenSession(client *mongo.Client, ctx context.Context, staff *models.StaffMember) (string, error) {
+func (webTokens JWTRepository) CreateStaffRefreshTokenSession(ctx context.Context, staff *models.StaffMember) (string, error) {
 	src := NewStaffRefreshToken(webTokens.DBClient)
 	refreshTokenData, err := src.CreateStaffRefreshTokenSession(ctx, staff)
 	if err != nil {
