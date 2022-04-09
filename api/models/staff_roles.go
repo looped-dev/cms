@@ -27,3 +27,16 @@ func (e StaffRole) IsValid() bool {
 	}
 	return false
 }
+
+func StaffRoleFromString(role string) StaffRole {
+	if role == "OWNER" {
+		return StaffRoleOwner
+	}
+	if role == "ADMINISTRATOR" {
+		return StaffRoleAdministrator
+	}
+	if role == "EDITOR" {
+		return StaffRoleEditor
+	}
+	return StaffRoleAuthor
+}
