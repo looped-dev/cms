@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
-import { SessionQuery } from './state/state/session.query';
+import { SessionQuery } from './state/session.query';
 
 @Injectable({
   providedIn: 'root',

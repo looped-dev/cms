@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { NgForm } from '@angular/forms';
-import { SessionService } from '../../state/state/session.service';
+import { SessionService } from '../../state/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 type SignInFormData = {

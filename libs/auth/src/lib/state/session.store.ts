@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
-import { LocalStorageService } from '../../services/local-storage.service';
+import { LocalStorageService } from '../services/local-storage.service';
 import { createSession, Session } from './session.model';
 
 @Injectable({ providedIn: 'root' })
