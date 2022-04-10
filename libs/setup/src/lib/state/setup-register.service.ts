@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
   InitialSetupInput,
-  InitialSetupResponse,
   IsSiteSetupDocument,
   IsSiteSetupQuery,
   SetupSiteDocument,
-  SetupSiteGQL,
   SetupSiteMutation,
 } from '@looped-cms/graphql';
 import { Apollo } from 'apollo-angular';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { SetupRegisterStore } from './setup-register.store';
 
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,13 @@
+query isSiteSetup {
+  isSiteSetup
+}
+
+mutation SetupSite($input: InitialSetupInput!) {
+  initialSetup(input: $input) {
+    staff {
+      id
+    }
+    refreshToken
+    accessToken
+  }
+}
