@@ -453,16 +453,25 @@ export type StaffLoginMutation = {
   staffLogin: {
     accessToken: string;
     refreshToken: string;
-    staff: {
-      id: any;
-      name: string;
-      email: any;
-      role: StaffRole;
-      createdAt: any;
-      updatedAt: any;
-    };
+    staff: { id: any; name: string; email: any; role: StaffRole };
   };
 };
+
+export type RefreshStaffTokenMutationVariables = Exact<{
+  input: StaffRefreshTokenInput;
+}>;
+
+export type RefreshStaffTokenMutation = {
+  staffRefreshToken: {
+    accessToken: string;
+    refreshToken: string;
+    staff: { id: any; name: string; email: any; role: StaffRole };
+  };
+};
+
+export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never }>;
+
+export type IsSiteSetupQuery = { isSiteSetup: boolean };
 
 export type SetupSiteMutationVariables = Exact<{
   input: InitialSetupInput;
@@ -476,10 +485,6 @@ export type SetupSiteMutation = {
   };
 };
 
-export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never }>;
-
-export type IsSiteSetupQuery = { isSiteSetup: boolean };
-
 export const StaffLoginDocument = gql`
   mutation StaffLogin($input: StaffLoginInput!) {
     staffLogin(input: $input) {
@@ -490,8 +495,6 @@ export const StaffLoginDocument = gql`
         name
         email
         role
-        createdAt
-        updatedAt
       }
     }
   }
@@ -505,6 +508,53 @@ export class StaffLoginGQL extends Apollo.Mutation<
   StaffLoginMutationVariables
 > {
   document = StaffLoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const RefreshStaffTokenDocument = gql`
+  mutation RefreshStaffToken($input: StaffRefreshTokenInput!) {
+    staffRefreshToken(input: $input) {
+      accessToken
+      refreshToken
+      staff {
+        id
+        name
+        email
+        role
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RefreshStaffTokenGQL extends Apollo.Mutation<
+  RefreshStaffTokenMutation,
+  RefreshStaffTokenMutationVariables
+> {
+  document = RefreshStaffTokenDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const IsSiteSetupDocument = gql`
+  query isSiteSetup {
+    isSiteSetup
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class IsSiteSetupGQL extends Apollo.Query<
+  IsSiteSetupQuery,
+  IsSiteSetupQueryVariables
+> {
+  document = IsSiteSetupDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -530,25 +580,6 @@ export class SetupSiteGQL extends Apollo.Mutation<
   SetupSiteMutationVariables
 > {
   document = SetupSiteDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const IsSiteSetupDocument = gql`
-  query isSiteSetup {
-    isSiteSetup
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class IsSiteSetupGQL extends Apollo.Query<
-  IsSiteSetupQuery,
-  IsSiteSetupQueryVariables
-> {
-  document = IsSiteSetupDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

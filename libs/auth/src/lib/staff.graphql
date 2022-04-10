@@ -7,8 +7,19 @@ mutation StaffLogin($input: StaffLoginInput!) {
       name
       email
       role
-      createdAt
-      updatedAt
+    }
+  }
+}
+
+mutation RefreshStaffToken($input: StaffRefreshTokenInput!) {
+  staffRefreshToken(input: $input) {
+    accessToken
+    refreshToken
+    staff {
+      id
+      name
+      email
+      role
     }
   }
 }

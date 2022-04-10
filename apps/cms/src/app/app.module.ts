@@ -13,6 +13,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MainComponent } from './main/main.component';
 import {
   SessionQuery,
+  SessionService,
   StaffMustBeLoggedInGuard,
   StaffMustNotBeLoggedInGuard,
 } from '@looped-cms/auth';
@@ -58,7 +59,7 @@ const routes: Routes = [
     {
       provide: APOLLO_OPTIONS,
       useFactory: createApollo,
-      deps: [HttpLink, SessionQuery],
+      deps: [HttpLink, SessionQuery, SessionService],
     },
   ],
   bootstrap: [AppComponent],

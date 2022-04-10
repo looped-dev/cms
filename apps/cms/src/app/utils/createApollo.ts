@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
-import { SessionQuery } from '@looped-cms/auth';
+import { SessionQuery, SessionService } from '@looped-cms/auth';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../environments/environment';
+import { onError } from '@apollo/client/link/error';
 
-export function createApollo(httpLink: HttpLink, sessionQuery: SessionQuery) {
+export function createApollo(
+  httpLink: HttpLink,
+  sessionQuery: SessionQuery,
+  sessionService: SessionService
+) {
   const basicAuthentication = setContext((_operation, _context) => ({
     headers: {
       Accept: 'charset=utf-8',
@@ -24,7 +29,22 @@ export function createApollo(httpLink: HttpLink, sessionQuery: SessionQuery) {
       };
     }
   });
+  const errorLink = onError(
+    ({ forward, graphQLErrors, networkError, operation }) => {
+      console.log(graphQLErrors, networkError);
+      if (graphQLErrors) {
+        graphQLErrors.map(({ message, locations, path, extensions }) => {
+          if (extensions['code'] === '401') {
+            sessionService.refreshToken().subscribe(() => {
+              return forward(operation);
+            });
+          }
+        });
+      }
+    }
+  );
   const link = ApolloLink.from([
+    errorLink,
     basicAuthentication,
     bearerTokenAuthentication,
     httpLink.create({ uri: environment.graphql.endpoint }),
