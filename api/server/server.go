@@ -85,25 +85,29 @@ func run(ctx context.Context) error {
 				Directives: generated.DirectiveRoot{
 					HasStaffRole: func(ctx context.Context, obj interface{}, next graphql.Resolver, role models.StaffRole) (interface{}, error) {
 						// implement this here
-						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
-						if user == nil {
-							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
+						authorizationHeaderAny := ctx.Value(constants.BearerAuthorizationHeader)
+						if authorizationHeaderAny == nil {
+							return nil, utils.NewGraphQLError(401, "Access Denied!")
 						}
-						var userClaims auth.StaffJWTClaims
-						var ok bool
-						if userClaims, ok = user.(auth.StaffJWTClaims); !ok {
-							return nil, utils.NewGraphQLErrorWithError(500, fmt.Errorf("Internal Error"))
+						authorizationHeader, ok := authorizationHeaderAny.(string)
+						if !ok {
+							return nil, utils.NewGraphQLError(401, "Access Denied!")
+						}
+						authRepostory := auth.NewAuthRepository(client)
+						userClaims, err := authRepostory.IsAuthorizationHeaderValid(authorizationHeader)
+						if err == nil {
+							return nil, utils.NewGraphQLError(401, "Access Denied!")
 						}
 						if userClaims.Role != role.String() {
-							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
+							return nil, utils.NewGraphQLError(401, "Access Denied!")
 						}
 						// or let it pass through
 						return next(ctx)
 					},
 					IsSignedIn: func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
-						user := ctx.Value(constants.CurrentlyAuthenticatedUserContextKey)
-						if user == nil {
-							return nil, utils.NewGraphQLErrorWithError(401, fmt.Errorf("Access Denied!"))
+						authorizationHeaderAny := ctx.Value(constants.BearerAuthorizationHeader)
+						if authorizationHeaderAny == nil {
+							return nil, utils.NewGraphQLError(401, "Access Denied!")
 						}
 						return next(ctx)
 					},
