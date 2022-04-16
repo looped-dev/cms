@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
-import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
+import { Apollo, ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
@@ -12,6 +12,8 @@ import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MainComponent } from './main/main.component';
 import {
+  apolloClientInjectionToken,
+  RefreshTokenService,
   SessionQuery,
   SessionService,
   StaffMustBeLoggedInGuard,
@@ -59,7 +61,11 @@ const routes: Routes = [
     {
       provide: APOLLO_OPTIONS,
       useFactory: createApollo,
-      deps: [HttpLink, SessionQuery, SessionService],
+      deps: [HttpLink, SessionQuery, RefreshTokenService],
+    },
+    {
+      provide: apolloClientInjectionToken,
+      useExisting: Apollo,
     },
   ],
   bootstrap: [AppComponent],

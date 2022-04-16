@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
-import { SessionQuery, SessionService } from '@looped-cms/auth';
+import { RefreshTokenService, SessionQuery } from '@looped-cms/auth';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../environments/environment';
 import { onError } from '@apollo/client/link/error';
+import { switchMap, share } from 'rxjs';
 
 export function createApollo(
   httpLink: HttpLink,
   sessionQuery: SessionQuery,
-  sessionService: SessionService
+  refreshToken: RefreshTokenService
 ) {
   const basicAuthentication = setContext((_operation, _context) => ({
     headers: {
@@ -35,10 +36,12 @@ export function createApollo(
       if (graphQLErrors) {
         graphQLErrors.map(({ message, locations, path, extensions }) => {
           if (extensions['code'] === '401') {
-            sessionService.refreshToken().subscribe(() => {
-              return forward(operation);
-            });
+            refreshToken.refreshToken().pipe(
+              share(),
+              switchMap(() => forward(operation))
+            );
           }
+          return;
         });
       }
     }
