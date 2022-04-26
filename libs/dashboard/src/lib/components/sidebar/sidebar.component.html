@@ -1,0 +1,90 @@
+<div class="px-6 py-8">
+  <a class="flex w-full" href="#!">
+    <div class="flex flex-col w-full items-center">
+      <div class="shrink-0">
+        <img
+          src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
+          class="rounded-full w-16"
+          alt="Avatar"
+        />
+      </div>
+      <div class="grow ml-3">
+        <p class="font-semibold text-primary">Jason McCoel</p>
+      </div>
+    </div>
+  </a>
+</div>
+<ul class="sidebar-nav">
+  <li class="nav-item">
+    <a class="non-expandable" href="#">
+      <fa-icon class="mr-3" [icon]="homeIcon"></fa-icon>
+      <span>Home</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a (click)="togglePostsVisible()" class="expandable">
+      <fa-icon class="mr-3" [icon]="postsIcon"></fa-icon>
+      <span>Your Posts</span>
+      <fa-icon
+        class="ml-auto"
+        [icon]="isPostsVisible ? nonExpandIcon : expandIcon"
+      ></fa-icon>
+    </a>
+    <ng-container *ngIf="isPostsVisible">
+      <ul class="expandable-container">
+        <li class="nav-item">
+          <a href="#!" class="expandable-child">Drafts</a>
+        </li>
+        <li class="relative">
+          <a href="#!" class="expandable-child">Scheduled</a>
+        </li>
+        <li class="relative">
+          <a href="#!" class="expandable-child">Published</a>
+        </li>
+      </ul>
+    </ng-container>
+  </li>
+  <li class="nav-item">
+    <a (click)="togglePagesVisible()" class="expandable">
+      <fa-icon class="mr-3" [icon]="pagesIcon"></fa-icon>
+      <span>Pages</span>
+      <fa-icon
+        class="ml-auto"
+        [icon]="!isPagesVisible ? expandIcon : nonExpandIcon"
+      ></fa-icon>
+    </a>
+    <ng-container *ngIf="isPagesVisible">
+      <ul class="expandable-container">
+        <ul class="expandable-container">
+          <li class="nav-item">
+            <a href="#!" class="expandable-child">Drafts</a>
+          </li>
+          <li class="relative">
+            <a href="#!" class="expandable-child">Published</a>
+          </li>
+        </ul>
+      </ul>
+    </ng-container>
+  </li>
+  <li class="nav-item">
+    <a class="non-expandable" href="#!">
+      <fa-icon class="mr-3" [icon]="tagsIcon"></fa-icon>
+      <span>Tags</span>
+    </a>
+  </li>
+</ul>
+<hr class="my-2" />
+<ul class="sidebar-nav px-1">
+  <li class="nav-item">
+    <a class="non-expandable" href="#!">
+      <fa-icon class="mr-3" [icon]="settingsIcon"></fa-icon>
+      <span>Settings</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="non-expandable" href="#!">
+      <fa-icon class="mr-3" [icon]="usersIcon"></fa-icon>
+      <span>Manage Staff</span>
+    </a>
+  </li>
+</ul>

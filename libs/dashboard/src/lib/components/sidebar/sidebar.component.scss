@@ -1,0 +1,27 @@
+:host {
+  @apply flex flex-col h-screen w-[20rem] text-xl font-semibold rounded-sm shadow-md bg-white;
+
+  .sidebar-nav {
+    @apply relative px-1;
+
+    .nav-item {
+      @apply relative;
+
+      .non-expandable {
+        @apply flex items-center font-semibold py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out;
+      }
+
+      .expandable {
+        @apply flex items-center font-semibold py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out cursor-pointer;
+      }
+
+      .expandable-container {
+        @apply relative;
+      }
+
+      .expandable-child {
+        @apply flex items-center py-4 pl-14 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out;
+      }
+    }
+  }
+}
