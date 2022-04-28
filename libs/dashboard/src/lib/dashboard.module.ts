@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { MainComponent } from './components/main/main.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 
 export const dashboardRoutes: Route[] = [
   {
@@ -19,6 +20,11 @@ export const dashboardRoutes: Route[] = [
     RouterModule.forChild(dashboardRoutes),
     FontAwesomeModule,
   ],
-  declarations: [DashboardComponent, SidebarComponent, MainComponent],
+  declarations: [
+    DashboardComponent,
+    SidebarComponent,
+    MainComponent,
+    BreadcrumbComponent,
+  ],
 })
 export class DashboardModule {}
