@@ -15,7 +15,6 @@ import {
   apolloClientInjectionToken,
   RefreshTokenService,
   SessionQuery,
-  SessionService,
   StaffMustBeLoggedInGuard,
   StaffMustNotBeLoggedInGuard,
 } from '@looped-cms/auth';
