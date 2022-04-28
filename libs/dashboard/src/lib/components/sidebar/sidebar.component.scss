@@ -1,5 +1,5 @@
 :host {
-  @apply flex flex-col h-screen w-[20rem] text-xl font-semibold rounded-sm shadow-md bg-white;
+  @apply flex flex-col h-screen w-[20rem] text-xl font-semibold rounded-sm shadow-md;
 
   .sidebar-nav {
     @apply relative px-1;

@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import {
   faChevronDown,
   faChevronUp,
-  faCogs,
   faFile,
+  faGear,
   faHome,
   faPaste,
   faTags,
-  faUsers,
+  faUserLarge,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -21,8 +21,8 @@ export class SidebarComponent {
   expandIcon = faChevronDown;
   nonExpandIcon = faChevronUp;
   tagsIcon = faTags;
-  usersIcon = faUsers;
-  settingsIcon = faCogs;
+  usersIcon = faUserLarge;
+  settingsIcon = faGear;
   pagesIcon = faFile;
 
   isPostsVisible = false;
