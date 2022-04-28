@@ -1,0 +1,26 @@
+{
+  "projectType": "library",
+  "root": "libs/pages/home",
+  "sourceRoot": "libs/pages/home/src",
+  "prefix": "looped-cms",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/pages/home"],
+      "options": {
+        "jestConfig": "libs/pages/home/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/pages/home/src/**/*.ts",
+          "libs/pages/home/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

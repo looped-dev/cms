@@ -18,6 +18,8 @@
       "@looped-cms/auth": ["libs/auth/src/index.ts"],
       "@looped-cms/dashboard": ["libs/dashboard/src/index.ts"],
       "@looped-cms/graphql": ["libs/graphql/types/graphql.ts"],
+      "@looped-cms/pages/home": ["libs/pages/home/src/index.ts"],
+      "@looped-cms/pages/settings": ["libs/pages/settings/src/index.ts"],
       "@looped-cms/setup": ["libs/setup/src/index.ts"]
     }
   },

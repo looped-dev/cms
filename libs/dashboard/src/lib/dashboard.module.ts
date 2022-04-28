@@ -11,6 +11,20 @@ export const dashboardRoutes: Route[] = [
   {
     path: '',
     component: DashboardComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('@looped-cms/pages/home').then((m) => m.PagesHomeModule),
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('@looped-cms/pages/settings').then(
+            (m) => m.PagesSettingsModule
+          ),
+      },
+    ],
   },
 ];
 

@@ -5,6 +5,8 @@
     "cms": "apps/cms",
     "cms-e2e": "apps/cms-e2e",
     "dashboard": "libs/dashboard",
+    "pages-home": "libs/pages/home",
+    "pages-settings": "libs/pages/settings",
     "setup": "libs/setup"
   }
 }
