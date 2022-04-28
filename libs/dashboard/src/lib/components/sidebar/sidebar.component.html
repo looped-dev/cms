@@ -1,5 +1,5 @@
 <div class="px-6 py-8">
-  <a class="flex w-full" href="#!">
+  <a class="flex w-full" routerLink="/account">
     <div class="flex flex-col w-full items-center">
       <div class="shrink-0">
         <img
@@ -16,7 +16,7 @@
 </div>
 <ul class="sidebar-nav">
   <li class="nav-item">
-    <a class="non-expandable" href="#">
+    <a class="non-expandable" routerLink="/">
       <fa-icon class="mr-3" [icon]="homeIcon"></fa-icon>
       <span>Home</span>
     </a>
@@ -33,13 +33,17 @@
     <ng-container *ngIf="isPostsVisible">
       <ul class="expandable-container">
         <li class="nav-item">
-          <a href="#!" class="expandable-child">Drafts</a>
+          <a routerLink="/posts/drafts" class="expandable-child">Drafts</a>
         </li>
         <li class="relative">
-          <a href="#!" class="expandable-child">Scheduled</a>
+          <a routerLink="/posts/scheduled" class="expandable-child"
+            >Scheduled</a
+          >
         </li>
         <li class="relative">
-          <a href="#!" class="expandable-child">Published</a>
+          <a routerLink="/pages/published" class="expandable-child"
+            >Published</a
+          >
         </li>
       </ul>
     </ng-container>
@@ -57,17 +61,19 @@
       <ul class="expandable-container">
         <ul class="expandable-container">
           <li class="nav-item">
-            <a href="#!" class="expandable-child">Drafts</a>
+            <a routerLink="/pages/drafts" class="expandable-child">Drafts</a>
           </li>
           <li class="relative">
-            <a href="#!" class="expandable-child">Published</a>
+            <a routerLink="/pages/published" class="expandable-child"
+              >Published</a
+            >
           </li>
         </ul>
       </ul>
     </ng-container>
   </li>
   <li class="nav-item">
-    <a class="non-expandable" href="#!">
+    <a class="non-expandable" routerLink="/tags">
       <fa-icon class="mr-3" [icon]="tagsIcon"></fa-icon>
       <span>Tags</span>
     </a>
@@ -76,7 +82,7 @@
 <hr class="my-2" />
 <ul class="sidebar-nav px-1">
   <li class="nav-item">
-    <a class="non-expandable" href="#!">
+    <a class="non-expandable" routerLink="/settings">
       <fa-icon class="mr-3" [icon]="settingsIcon"></fa-icon>
       <span>Settings</span>
     </a>
