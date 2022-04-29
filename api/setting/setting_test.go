@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 
 func TestSettingRepository_Details(t *testing.T) {
 	repository := NewSettingRepository(dbClient)
-	settings, err := repository.SaveSettings(context.TODO(), model.SiteSettingsInput{
+	settings, err := repository.SaveSettings(context.TODO(), model.UpdateSiteSettingsInput{
 		SiteName: "Site Name",
 		BaseURL:  "http://localhost:3000",
 	})
@@ -66,7 +66,7 @@ func TestSettingRepository_Details(t *testing.T) {
 
 func TestSettingRepository_Exists(t *testing.T) {
 	repository := NewSettingRepository(dbClient)
-	settings, err := repository.SaveSettings(context.TODO(), model.SiteSettingsInput{
+	settings, err := repository.SaveSettings(context.TODO(), model.UpdateSiteSettingsInput{
 		SiteName: "Site Name",
 		BaseURL:  "http://localhost:3000",
 	})
@@ -80,7 +80,7 @@ func TestSettingRepository_Exists(t *testing.T) {
 
 func TestSettingRepository_SaveSettings(t *testing.T) {
 	repository := NewSettingRepository(dbClient)
-	settings, err := repository.SaveSettings(context.TODO(), model.SiteSettingsInput{
+	settings, err := repository.SaveSettings(context.TODO(), model.UpdateSiteSettingsInput{
 		SiteName: "Site Name",
 		BaseURL:  "http://localhost:3000",
 	})
