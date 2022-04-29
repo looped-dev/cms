@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/looped-dev/cms/api/graph/model"
 	"github.com/looped-dev/cms/api/setting"
@@ -17,5 +16,6 @@ func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.U
 }
 
 func (r *queryResolver) Settings(ctx context.Context) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
+	setting := setting.NewSettingRepository(r.DB)
+	return setting.Details(ctx)
 }
