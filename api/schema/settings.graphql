@@ -4,14 +4,14 @@ type SiteSettings {
   seo: SEO!
 }
 
-input SiteSettingsInput {
+input UpdateSiteSettingsInput {
   siteName: String!
   baseURL: String!
   seo: SEOInput!
 }
 
 extend type Mutation {
-  updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
+  updateSiteSettings(input: UpdateSiteSettingsInput!): SiteSettings!
 }
 
 extend type Query {

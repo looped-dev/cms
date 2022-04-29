@@ -127,12 +127,6 @@ type SiteSettings struct {
 	Seo      *Seo   `json:"seo" bson:"seo,omitempty"`
 }
 
-type SiteSettingsInput struct {
-	SiteName string    `json:"siteName" bson:"siteName,omitempty"`
-	BaseURL  string    `json:"baseURL" bson:"baseURL,omitempty"`
-	Seo      *SEOInput `json:"seo" bson:"seo,omitempty"`
-}
-
 type Size struct {
 	Width  int    `json:"width" bson:"width,omitempty"`
 	Height int    `json:"height" bson:"height,omitempty"`
@@ -274,6 +268,12 @@ type UpdatePostInput struct {
 type UpdatePostStatusInput struct {
 	ID     string           `json:"id" bson:"_id,omitempty"`
 	Status PostOrPageStatus `json:"status" bson:"status,omitempty"`
+}
+
+type UpdateSiteSettingsInput struct {
+	SiteName string    `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL  string    `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo      *SEOInput `json:"seo" bson:"seo,omitempty"`
 }
 
 type PostOrPageStatus string

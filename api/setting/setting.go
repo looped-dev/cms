@@ -60,7 +60,7 @@ func (setting *SettingRepository) Exists(ctx context.Context) (bool, error) {
 // SaveSettings saves the settings to the database. If the settings already, it
 // updates existing settings, otherwise it creates a new settings. Also, it
 // ensures only a single record will exist in the database.
-func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
+func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.UpdateSiteSettingsInput) (*model.SiteSettings, error) {
 	_, err := setting.DBClient.Database(setting.dbName).
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, input)

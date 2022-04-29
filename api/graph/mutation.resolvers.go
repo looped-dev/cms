@@ -16,7 +16,7 @@ import (
 func (r *mutationResolver) InitialSetup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error) {
 	// first step, configure settings
 	setting := setting.NewSettingRepository(r.DB)
-	_, err := setting.SaveSettings(ctx, model.SiteSettingsInput{
+	_, err := setting.SaveSettings(ctx, model.UpdateSiteSettingsInput{
 		SiteName: input.SiteName,
 		// todo: probably set this one as well
 		BaseURL: "",

@@ -11,7 +11,7 @@ import (
 	"github.com/looped-dev/cms/api/setting"
 )
 
-func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error) {
+func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.UpdateSiteSettingsInput) (*model.SiteSettings, error) {
 	setting := setting.NewSettingRepository(r.DB)
 	return setting.SaveSettings(ctx, input)
 }

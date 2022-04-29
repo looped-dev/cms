@@ -110,7 +110,7 @@ type ComplexityRoot struct {
 		UpdatePageStatus    func(childComplexity int, input model.UpdatePageStatusInput) int
 		UpdatePost          func(childComplexity int, input model.UpdatePostInput) int
 		UpdatePostStatus    func(childComplexity int, input model.UpdatePostStatusInput) int
-		UpdateSiteSettings  func(childComplexity int, input model.SiteSettingsInput) int
+		UpdateSiteSettings  func(childComplexity int, input model.UpdateSiteSettingsInput) int
 	}
 
 	Page struct {
@@ -226,7 +226,7 @@ type MutationResolver interface {
 	UpdatePage(ctx context.Context, input model.UpdatePageInput) (*model.Page, error)
 	UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error)
 	UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.Post, error)
-	UpdateSiteSettings(ctx context.Context, input model.SiteSettingsInput) (*model.SiteSettings, error)
+	UpdateSiteSettings(ctx context.Context, input model.UpdateSiteSettingsInput) (*model.SiteSettings, error)
 	StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error)
 	StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error)
 	StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.StaffMember, error)
@@ -654,7 +654,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSiteSettings(childComplexity, args["input"].(model.SiteSettingsInput)), true
+		return e.complexity.Mutation.UpdateSiteSettings(childComplexity, args["input"].(model.UpdateSiteSettingsInput)), true
 
 	case "Page.content":
 		if e.complexity.Page.Content == nil {
@@ -1247,8 +1247,14 @@ directive @goField(
   name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 
+"""
+Staff must have a specific role in order to access a mutation or role
+"""
 directive @hasStaffRole(role: StaffRole!) on FIELD_DEFINITION
 
+"""
+Staff must be signed in access query or mutation
+"""
 directive @isSignedIn on FIELD_DEFINITION
 `, BuiltIn: false},
 	{Name: "api/schema/common/scalars.graphql", Input: `scalar Time
@@ -1453,14 +1459,14 @@ input SEOInput {
   seo: SEO!
 }
 
-input SiteSettingsInput {
+input UpdateSiteSettingsInput {
   siteName: String!
   baseURL: String!
   seo: SEOInput!
 }
 
 extend type Mutation {
-  updateSiteSettings(input: SiteSettingsInput!): SiteSettings!
+  updateSiteSettings(input: UpdateSiteSettingsInput!): SiteSettings!
 }
 
 extend type Query {
@@ -1875,10 +1881,10 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateSiteSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.SiteSettingsInput
+	var arg0 model.UpdateSiteSettingsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettingsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSiteSettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3244,7 +3250,7 @@ func (ec *executionContext) _Mutation_updateSiteSettings(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSiteSettings(rctx, args["input"].(model.SiteSettingsInput))
+		return ec.resolvers.Mutation().UpdateSiteSettings(rctx, args["input"].(model.UpdateSiteSettingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7554,45 +7560,6 @@ func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj inte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputSiteSettingsInput(ctx context.Context, obj interface{}) (model.SiteSettingsInput, error) {
-	var it model.SiteSettingsInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "siteName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteName"))
-			it.SiteName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "baseURL":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseURL"))
-			it.BaseURL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "seo":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
-			it.Seo, err = ec.unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputStaffAcceptInviteInput(ctx context.Context, obj interface{}) (model.StaffAcceptInviteInput, error) {
 	var it model.StaffAcceptInviteInput
 	asMap := map[string]interface{}{}
@@ -8209,6 +8176,45 @@ func (ec *executionContext) unmarshalInputUpdatePostStatusInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			it.Status, err = ec.unmarshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateSiteSettingsInput(ctx context.Context, obj interface{}) (model.UpdateSiteSettingsInput, error) {
+	var it model.UpdateSiteSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "siteName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteName"))
+			it.SiteName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "baseURL":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseURL"))
+			it.BaseURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "seo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
+			it.Seo, err = ec.unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10373,11 +10379,6 @@ func (ec *executionContext) marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdev�
 	return ec._SiteSettings(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettingsInput(ctx context.Context, v interface{}) (model.SiteSettingsInput, error) {
-	res, err := ec.unmarshalInputSiteSettingsInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNStaff2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋmodelsᚐStaffMember(ctx context.Context, sel ast.SelectionSet, v models.StaffMember) graphql.Marshaler {
 	return ec._Staff(ctx, sel, &v)
 }
@@ -10514,6 +10515,11 @@ func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋloopedᚑde
 
 func (ec *executionContext) unmarshalNUpdatePostStatusInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdatePostStatusInput(ctx context.Context, v interface{}) (model.UpdatePostStatusInput, error) {
 	res, err := ec.unmarshalInputUpdatePostStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSiteSettingsInput(ctx context.Context, v interface{}) (model.UpdateSiteSettingsInput, error) {
+	res, err := ec.unmarshalInputUpdateSiteSettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
