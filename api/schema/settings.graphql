@@ -1,7 +1,7 @@
 type SiteSettings {
   siteName: String!
   baseURL: String!
-  seo: SEO!
+  seo: SEO
 }
 
 input UpdateSiteSettingsInput {

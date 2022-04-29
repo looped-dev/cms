@@ -1456,7 +1456,7 @@ input SEOInput {
 	{Name: "api/schema/settings.graphql", Input: `type SiteSettings {
   siteName: String!
   baseURL: String!
-  seo: SEO!
+  seo: SEO
 }
 
 input UpdateSiteSettingsInput {
@@ -5148,14 +5148,11 @@ func (ec *executionContext) _SiteSettings_seo(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Seo)
 	fc.Result = res
-	return ec.marshalNSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx, field.Selections, res)
+	return ec.marshalOSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Size_width(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
@@ -9296,9 +9293,6 @@ func (ec *executionContext) _SiteSettings(ctx context.Context, sel ast.Selection
 
 			out.Values[i] = innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10348,16 +10342,6 @@ func (ec *executionContext) unmarshalNPostOrPageStatus2githubᚗcomᚋloopedᚑd
 
 func (ec *executionContext) marshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx context.Context, sel ast.SelectionSet, v model.PostOrPageStatus) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx context.Context, sel ast.SelectionSet, v *model.Seo) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._SEO(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx context.Context, v interface{}) (*model.SEOInput, error) {
