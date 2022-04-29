@@ -1,0 +1,53 @@
+query fetchSettings {
+  settings {
+    siteName
+    baseURL
+    seo {
+      title
+      description
+      image
+      twitter {
+        card
+        site
+        title
+        description
+        image
+        creator
+      }
+      facebook {
+        type
+        title
+        description
+        image
+        url
+      }
+    }
+  }
+}
+
+mutation updateSiteSettings($input: UpdateSiteSettingsInput!) {
+  updateSiteSettings(input: $input) {
+    siteName
+    baseURL
+    seo {
+      title
+      description
+      image
+      twitter {
+        card
+        site
+        title
+        description
+        image
+        creator
+      }
+      facebook {
+        type
+        title
+        description
+        image
+        url
+      }
+    }
+  }
+}
