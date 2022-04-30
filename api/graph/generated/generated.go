@@ -1462,7 +1462,7 @@ input SEOInput {
 input UpdateSiteSettingsInput {
   siteName: String!
   baseURL: String!
-  seo: SEOInput!
+  seo: SEOInput
 }
 
 extend type Mutation {
@@ -8211,7 +8211,7 @@ func (ec *executionContext) unmarshalInputUpdateSiteSettingsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
-			it.Seo, err = ec.unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
+			it.Seo, err = ec.unmarshalOSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10342,11 +10342,6 @@ func (ec *executionContext) unmarshalNPostOrPageStatus2githubᚗcomᚋloopedᚑd
 
 func (ec *executionContext) marshalNPostOrPageStatus2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPostOrPageStatus(ctx context.Context, sel ast.SelectionSet, v model.PostOrPageStatus) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) unmarshalNSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx context.Context, v interface{}) (*model.SEOInput, error) {
-	res, err := ec.unmarshalInputSEOInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNSiteSettings2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx context.Context, sel ast.SelectionSet, v model.SiteSettings) graphql.Marshaler {

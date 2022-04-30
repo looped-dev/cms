@@ -7,7 +7,7 @@ type SiteSettings {
 input UpdateSiteSettingsInput {
   siteName: String!
   baseURL: String!
-  seo: SEOInput!
+  seo: SEOInput
 }
 
 extend type Mutation {

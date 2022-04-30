@@ -276,7 +276,7 @@ export type SeoInput = {
 
 export type SiteSettings = {
   baseURL: Scalars['String'];
-  seo: Seo;
+  seo?: Maybe<Seo>;
   siteName: Scalars['String'];
 };
 
@@ -455,7 +455,7 @@ export type UpdatePostStatusInput = {
 
 export type UpdateSiteSettingsInput = {
   baseURL: Scalars['String'];
-  seo: SeoInput;
+  seo?: InputMaybe<SeoInput>;
   siteName: Scalars['String'];
 };
 
@@ -476,14 +476,14 @@ export type RefreshStaffTokenMutation = { staffRefreshToken: { accessToken: stri
 export type FetchSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchSettingsQuery = { settings: { siteName: string, baseURL: string, seo: { title?: string | null, description?: string | null, image?: string | null, twitter?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebook?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } } };
+export type FetchSettingsQuery = { settings: { siteName: string, baseURL: string, seo?: { title?: string | null, description?: string | null, image?: string | null, twitter?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebook?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } | null } };
 
 export type UpdateSiteSettingsMutationVariables = Exact<{
   input: UpdateSiteSettingsInput;
 }>;
 
 
-export type UpdateSiteSettingsMutation = { updateSiteSettings: { siteName: string, baseURL: string, seo: { title?: string | null, description?: string | null, image?: string | null, twitter?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebook?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } } };
+export type UpdateSiteSettingsMutation = { updateSiteSettings: { siteName: string, baseURL: string, seo?: { title?: string | null, description?: string | null, image?: string | null, twitter?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebook?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } | null } };
 
 export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never; }>;
 
