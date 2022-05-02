@@ -79,7 +79,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/cms"],
       "options": {
-        "jestConfig": "apps/cms/jest.config.js",
+        "jestConfig": "apps/cms/jest.config.ts",
         "passWithNoTests": true
       }
     }
