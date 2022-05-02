@@ -19,14 +19,6 @@ type FacebookCard struct {
 	URL         *string `json:"url" bson:"url,omitempty"`
 }
 
-type FacebookCardInput struct {
-	Type        *string `json:"type" bson:"type,omitempty"`
-	Title       *string `json:"title" bson:"title,omitempty"`
-	Description *string `json:"description" bson:"description,omitempty"`
-	Image       *string `json:"image" bson:"image,omitempty"`
-	URL         *string `json:"url" bson:"url,omitempty"`
-}
-
 type Image struct {
 	ID          string  `json:"id" bson:"_id,omitempty"`
 	Slug        string  `json:"slug" bson:"slug,omitempty"`
@@ -114,11 +106,9 @@ type Seo struct {
 }
 
 type SEOInput struct {
-	Title       *string            `json:"title" bson:"title,omitempty"`
-	Description *string            `json:"description" bson:"description,omitempty"`
-	Image       *string            `json:"image" bson:"image,omitempty"`
-	Twitter     *TwitterCardInput  `json:"twitter" bson:"twitter,omitempty"`
-	Facebook    *FacebookCardInput `json:"facebook" bson:"facebook,omitempty"`
+	Title       *string `json:"title" bson:"title,omitempty"`
+	Description *string `json:"description" bson:"description,omitempty"`
+	Image       *string `json:"image" bson:"image,omitempty"`
 }
 
 type SiteSettings struct {
@@ -227,15 +217,6 @@ type TwitterCard struct {
 	Creator     *string `json:"creator" bson:"creator,omitempty"`
 }
 
-type TwitterCardInput struct {
-	Card        *string `json:"card" bson:"card,omitempty"`
-	Site        *string `json:"site" bson:"site,omitempty"`
-	Title       *string `json:"title" bson:"title,omitempty"`
-	Description *string `json:"description" bson:"description,omitempty"`
-	Image       *string `json:"image" bson:"image,omitempty"`
-	Creator     *string `json:"creator" bson:"creator,omitempty"`
-}
-
 type UpdatePageInput struct {
 	Title         *string `json:"title" bson:"title,omitempty"`
 	Content       *string `json:"content" bson:"content,omitempty"`
@@ -270,10 +251,33 @@ type UpdatePostStatusInput struct {
 	Status PostOrPageStatus `json:"status" bson:"status,omitempty"`
 }
 
+type UpdateSEOSettingsInput struct {
+	Title       string  `json:"title" bson:"title,omitempty"`
+	Description string  `json:"description" bson:"description,omitempty"`
+	Image       *string `json:"image" bson:"image,omitempty"`
+}
+
 type UpdateSiteSettingsInput struct {
 	SiteName string    `json:"siteName" bson:"siteName,omitempty"`
 	BaseURL  string    `json:"baseURL" bson:"baseURL,omitempty"`
 	Seo      *SEOInput `json:"seo" bson:"seo,omitempty"`
+}
+
+type UpdateFacebookCardSettingsInput struct {
+	Type        string  `json:"type" bson:"type,omitempty"`
+	Title       string  `json:"title" bson:"title,omitempty"`
+	Description string  `json:"description" bson:"description,omitempty"`
+	Image       *string `json:"image" bson:"image,omitempty"`
+	URL         string  `json:"url" bson:"url,omitempty"`
+}
+
+type UpdateTwitterCardSettingsInput struct {
+	Card        string  `json:"card" bson:"card,omitempty"`
+	Site        *string `json:"site" bson:"site,omitempty"`
+	Title       string  `json:"title" bson:"title,omitempty"`
+	Description string  `json:"description" bson:"description,omitempty"`
+	Image       *string `json:"image" bson:"image,omitempty"`
+	Creator     *string `json:"creator" bson:"creator,omitempty"`
 }
 
 type PostOrPageStatus string

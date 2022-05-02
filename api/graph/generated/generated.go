@@ -95,22 +95,25 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		InitialSetup        func(childComplexity int, input model.InitialSetupInput) int
-		StaffAcceptInvite   func(childComplexity int, input model.StaffAcceptInviteInput) int
-		StaffChangePassword func(childComplexity int, input model.StaffChangePasswordInput) int
-		StaffDelete         func(childComplexity int, input model.StaffDeleteInput) int
-		StaffForgotPassword func(childComplexity int, input model.StaffForgotPasswordInput) int
-		StaffInvite         func(childComplexity int, input model.StaffInviteInput) int
-		StaffLogin          func(childComplexity int, input model.StaffLoginInput) int
-		StaffLogout         func(childComplexity int) int
-		StaffRefreshToken   func(childComplexity int, input model.StaffRefreshTokenInput) int
-		StaffResetPassword  func(childComplexity int, input model.StaffResetPasswordInput) int
-		StaffUpdate         func(childComplexity int, input model.StaffUpdateInput) int
-		UpdatePage          func(childComplexity int, input model.UpdatePageInput) int
-		UpdatePageStatus    func(childComplexity int, input model.UpdatePageStatusInput) int
-		UpdatePost          func(childComplexity int, input model.UpdatePostInput) int
-		UpdatePostStatus    func(childComplexity int, input model.UpdatePostStatusInput) int
-		UpdateSiteSettings  func(childComplexity int, input model.UpdateSiteSettingsInput) int
+		InitialSetup               func(childComplexity int, input model.InitialSetupInput) int
+		StaffAcceptInvite          func(childComplexity int, input model.StaffAcceptInviteInput) int
+		StaffChangePassword        func(childComplexity int, input model.StaffChangePasswordInput) int
+		StaffDelete                func(childComplexity int, input model.StaffDeleteInput) int
+		StaffForgotPassword        func(childComplexity int, input model.StaffForgotPasswordInput) int
+		StaffInvite                func(childComplexity int, input model.StaffInviteInput) int
+		StaffLogin                 func(childComplexity int, input model.StaffLoginInput) int
+		StaffLogout                func(childComplexity int) int
+		StaffRefreshToken          func(childComplexity int, input model.StaffRefreshTokenInput) int
+		StaffResetPassword         func(childComplexity int, input model.StaffResetPasswordInput) int
+		StaffUpdate                func(childComplexity int, input model.StaffUpdateInput) int
+		UpdateFacebookCardSettings func(childComplexity int, input model.UpdateFacebookCardSettingsInput) int
+		UpdatePage                 func(childComplexity int, input model.UpdatePageInput) int
+		UpdatePageStatus           func(childComplexity int, input model.UpdatePageStatusInput) int
+		UpdatePost                 func(childComplexity int, input model.UpdatePostInput) int
+		UpdatePostStatus           func(childComplexity int, input model.UpdatePostStatusInput) int
+		UpdateSEOSettings          func(childComplexity int, input model.UpdateSEOSettingsInput) int
+		UpdateSiteSettings         func(childComplexity int, input model.UpdateSiteSettingsInput) int
+		UpdateTwitterCardSettings  func(childComplexity int, input model.UpdateTwitterCardSettingsInput) int
 	}
 
 	Page struct {
@@ -226,7 +229,10 @@ type MutationResolver interface {
 	UpdatePage(ctx context.Context, input model.UpdatePageInput) (*model.Page, error)
 	UpdatePostStatus(ctx context.Context, input model.UpdatePostStatusInput) (*model.Post, error)
 	UpdatePost(ctx context.Context, input model.UpdatePostInput) (*model.Post, error)
+	UpdateSEOSettings(ctx context.Context, input model.UpdateSEOSettingsInput) (*model.SiteSettings, error)
 	UpdateSiteSettings(ctx context.Context, input model.UpdateSiteSettingsInput) (*model.SiteSettings, error)
+	UpdateTwitterCardSettings(ctx context.Context, input model.UpdateTwitterCardSettingsInput) (*model.SiteSettings, error)
+	UpdateFacebookCardSettings(ctx context.Context, input model.UpdateFacebookCardSettingsInput) (*model.SiteSettings, error)
 	StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error)
 	StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error)
 	StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.StaffMember, error)
@@ -596,6 +602,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.StaffUpdate(childComplexity, args["input"].(model.StaffUpdateInput)), true
 
+	case "Mutation.updateFacebookCardSettings":
+		if e.complexity.Mutation.UpdateFacebookCardSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateFacebookCardSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateFacebookCardSettings(childComplexity, args["input"].(model.UpdateFacebookCardSettingsInput)), true
+
 	case "Mutation.updatePage":
 		if e.complexity.Mutation.UpdatePage == nil {
 			break
@@ -644,6 +662,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdatePostStatus(childComplexity, args["input"].(model.UpdatePostStatusInput)), true
 
+	case "Mutation.updateSEOSettings":
+		if e.complexity.Mutation.UpdateSEOSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSEOSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSEOSettings(childComplexity, args["input"].(model.UpdateSEOSettingsInput)), true
+
 	case "Mutation.updateSiteSettings":
 		if e.complexity.Mutation.UpdateSiteSettings == nil {
 			break
@@ -655,6 +685,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateSiteSettings(childComplexity, args["input"].(model.UpdateSiteSettingsInput)), true
+
+	case "Mutation.updateTwitterCardSettings":
+		if e.complexity.Mutation.UpdateTwitterCardSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTwitterCardSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTwitterCardSettings(childComplexity, args["input"].(model.UpdateTwitterCardSettingsInput)), true
 
 	case "Page.content":
 		if e.complexity.Page.Content == nil {
@@ -1449,8 +1491,16 @@ input SEOInput {
   title: String
   description: String
   image: String
-  twitter: TwitterCardInput
-  facebook: FacebookCardInput
+}
+
+input UpdateSEOSettingsInput {
+  title: String!
+  description: String!
+  image: String
+}
+
+extend type Mutation {
+  updateSEOSettings(input: UpdateSEOSettingsInput!): SiteSettings!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/settings.graphql", Input: `type SiteSettings {
@@ -1503,21 +1553,30 @@ type FacebookCard {
   url: String
 }
 
-input TwitterCardInput {
-  card: String
+input updateTwitterCardSettingsInput {
+  card: String!
   site: String
-  title: String
-  description: String
+  title: String!
+  description: String!
   image: String
   creator: String
 }
 
-input FacebookCardInput {
-  type: String
-  title: String
-  description: String
+input updateFacebookCardSettingsInput {
+  type: String!
+  title: String!
+  description: String!
   image: String
-  url: String
+  url: String!
+}
+
+extend type Mutation {
+  updateTwitterCardSettings(
+    input: updateTwitterCardSettingsInput!
+  ): SiteSettings!
+  updateFacebookCardSettings(
+    input: updateFacebookCardSettingsInput!
+  ): SiteSettings!
 }
 `, BuiltIn: false},
 	{Name: "api/schema/staff.graphql", Input: `enum StaffRole
@@ -1818,6 +1877,21 @@ func (ec *executionContext) field_Mutation_staffUpdate_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateFacebookCardSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateFacebookCardSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNupdateFacebookCardSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateFacebookCardSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updatePageStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1878,6 +1952,21 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateSEOSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateSEOSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateSEOSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSEOSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateSiteSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1885,6 +1974,21 @@ func (ec *executionContext) field_Mutation_updateSiteSettings_args(ctx context.C
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSiteSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateTwitterCardSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateTwitterCardSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNupdateTwitterCardSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateTwitterCardSettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3225,6 +3329,48 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 	return ec.marshalOPost2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateSEOSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateSEOSettings_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSEOSettings(rctx, args["input"].(model.UpdateSEOSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SiteSettings)
+	fc.Result = res
+	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_updateSiteSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3251,6 +3397,90 @@ func (ec *executionContext) _Mutation_updateSiteSettings(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().UpdateSiteSettings(rctx, args["input"].(model.UpdateSiteSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SiteSettings)
+	fc.Result = res
+	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateTwitterCardSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateTwitterCardSettings_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTwitterCardSettings(rctx, args["input"].(model.UpdateTwitterCardSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SiteSettings)
+	fc.Result = res
+	return ec.marshalNSiteSettings2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSiteSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateFacebookCardSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateFacebookCardSettings_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateFacebookCardSettings(rctx, args["input"].(model.UpdateFacebookCardSettingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7400,61 +7630,6 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputFacebookCardInput(ctx context.Context, obj interface{}) (model.FacebookCardInput, error) {
-	var it model.FacebookCardInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "type":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "title":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
-			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "url":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
-			it.URL, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputInitialSetupInput(ctx context.Context, obj interface{}) (model.InitialSetupInput, error) {
 	var it model.InitialSetupInput
 	asMap := map[string]interface{}{}
@@ -7532,22 +7707,6 @@ func (ec *executionContext) unmarshalInputSEOInput(ctx context.Context, obj inte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
 			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "twitter":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("twitter"))
-			it.Twitter, err = ec.unmarshalOTwitterCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCardInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "facebook":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("facebook"))
-			it.Facebook, err = ec.unmarshalOFacebookCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCardInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7915,69 +8074,6 @@ func (ec *executionContext) unmarshalInputStaffUpdateInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputTwitterCardInput(ctx context.Context, obj interface{}) (model.TwitterCardInput, error) {
-	var it model.TwitterCardInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "card":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("card"))
-			it.Card, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "site":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("site"))
-			it.Site, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "title":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
-			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "creator":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creator"))
-			it.Creator, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdatePageInput(ctx context.Context, obj interface{}) (model.UpdatePageInput, error) {
 	var it model.UpdatePageInput
 	asMap := map[string]interface{}{}
@@ -8182,6 +8278,45 @@ func (ec *executionContext) unmarshalInputUpdatePostStatusInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateSEOSettingsInput(ctx context.Context, obj interface{}) (model.UpdateSEOSettingsInput, error) {
+	var it model.UpdateSEOSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateSiteSettingsInput(ctx context.Context, obj interface{}) (model.UpdateSiteSettingsInput, error) {
 	var it model.UpdateSiteSettingsInput
 	asMap := map[string]interface{}{}
@@ -8212,6 +8347,124 @@ func (ec *executionContext) unmarshalInputUpdateSiteSettingsInput(ctx context.Co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seo"))
 			it.Seo, err = ec.unmarshalOSEOInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSEOInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputupdateFacebookCardSettingsInput(ctx context.Context, obj interface{}) (model.UpdateFacebookCardSettingsInput, error) {
+	var it model.UpdateFacebookCardSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputupdateTwitterCardSettingsInput(ctx context.Context, obj interface{}) (model.UpdateTwitterCardSettingsInput, error) {
+	var it model.UpdateTwitterCardSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "card":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("card"))
+			it.Card, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "site":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("site"))
+			it.Site, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
+			it.Image, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "creator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creator"))
+			it.Creator, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8648,9 +8901,39 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
 
+		case "updateSEOSettings":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateSEOSettings(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateSiteSettings":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateSiteSettings(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateTwitterCardSettings":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTwitterCardSettings(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateFacebookCardSettings":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateFacebookCardSettings(ctx, field)
 			}
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
@@ -10497,6 +10780,11 @@ func (ec *executionContext) unmarshalNUpdatePostStatusInput2githubᚗcomᚋloope
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateSEOSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSEOSettingsInput(ctx context.Context, v interface{}) (model.UpdateSEOSettingsInput, error) {
+	res, err := ec.unmarshalInputUpdateSEOSettingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateSiteSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateSiteSettingsInput(ctx context.Context, v interface{}) (model.UpdateSiteSettingsInput, error) {
 	res, err := ec.unmarshalInputUpdateSiteSettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10755,6 +11043,16 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalNupdateFacebookCardSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateFacebookCardSettingsInput(ctx context.Context, v interface{}) (model.UpdateFacebookCardSettingsInput, error) {
+	res, err := ec.unmarshalInputupdateFacebookCardSettingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNupdateTwitterCardSettingsInput2githubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐUpdateTwitterCardSettingsInput(ctx context.Context, v interface{}) (model.UpdateTwitterCardSettingsInput, error) {
+	res, err := ec.unmarshalInputupdateTwitterCardSettingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10786,14 +11084,6 @@ func (ec *executionContext) marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdev�
 		return graphql.Null
 	}
 	return ec._FacebookCard(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOFacebookCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCardInput(ctx context.Context, v interface{}) (*model.FacebookCardInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputFacebookCardInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOID2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
@@ -11063,14 +11353,6 @@ func (ec *executionContext) marshalOTwitterCard2ᚖgithubᚗcomᚋloopedᚑdev�
 		return graphql.Null
 	}
 	return ec._TwitterCard(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOTwitterCardInput2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCardInput(ctx context.Context, v interface{}) (*model.TwitterCardInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputTwitterCardInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

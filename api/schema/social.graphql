@@ -15,19 +15,28 @@ type FacebookCard {
   url: String
 }
 
-input TwitterCardInput {
-  card: String
+input updateTwitterCardSettingsInput {
+  card: String!
   site: String
-  title: String
-  description: String
+  title: String!
+  description: String!
   image: String
   creator: String
 }
 
-input FacebookCardInput {
-  type: String
-  title: String
-  description: String
+input updateFacebookCardSettingsInput {
+  type: String!
+  title: String!
+  description: String!
   image: String
-  url: String
+  url: String!
+}
+
+extend type Mutation {
+  updateTwitterCardSettings(
+    input: updateTwitterCardSettingsInput!
+  ): SiteSettings!
+  updateFacebookCardSettings(
+    input: updateFacebookCardSettingsInput!
+  ): SiteSettings!
 }

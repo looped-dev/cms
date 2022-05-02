@@ -10,6 +10,14 @@ input SEOInput {
   title: String
   description: String
   image: String
-  twitter: TwitterCardInput
-  facebook: FacebookCardInput
+}
+
+input UpdateSEOSettingsInput {
+  title: String!
+  description: String!
+  image: String
+}
+
+extend type Mutation {
+  updateSEOSettings(input: UpdateSEOSettingsInput!): SiteSettings!
 }
