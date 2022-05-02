@@ -17,11 +17,17 @@ export class SettingsService {
 
   get(): Observable<FetchSettingsQuery['settings']> {
     return this.apollo
-      .query<FetchSettingsQuery>({
+      .query<FetchSettingsQuery, null>({
         query: FetchSettingsDocument,
       })
       .pipe(
-        map((data) => data?.data.settings),
+        map(({ data, error }) => {
+          if (!data || error) {
+            this.settingsStore.setError(error || 'Error fetching settings');
+            throw error || 'Error updating settings';
+          }
+          return data.settings;
+        }),
         tap((settings) => {
           this.settingsStore.update(settings);
         })
@@ -39,9 +45,9 @@ export class SettingsService {
         },
       })
       .pipe(
-        map(({ data }) => {
-          if (!data) {
-            throw 'Error updating settings';
+        map(({ data, errors }) => {
+          if (!data || errors) {
+            throw errors || 'Error updating settings';
           }
           return data.updateSiteSettings;
         }),

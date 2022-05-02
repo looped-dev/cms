@@ -1,1 +1,76 @@
-<p>home works!</p>
+<ng-container *ngIf="settings$ | async as settings">
+  <ng-container *ngIf="settings">
+    <form (submit)="onSubmit()" #setupSiteForm="ngForm">
+      <h4 class="title">Settings</h4>
+
+      <!-- show error message -->
+      <ng-container *ngIf="errorMessage !== ''">
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+      </ng-container>
+
+      <div class="form-control">
+        <label>Site Title *</label>
+        <input
+          type="text"
+          name="siteTitle"
+          placeholder="Site Title"
+          [(ngModel)]="settingsFormModel.siteName"
+          required
+          #siteTitle="ngModel"
+        />
+        <ng-container *ngIf="siteTitle.dirty && siteTitle.invalid">
+          <div class="form-error-message">
+            <span *ngIf="siteTitle.errors?.['required']"
+              >Site title is required</span
+            >
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="form-control">
+        <label>Base URL *</label>
+        <input
+          type="text"
+          name="baseURL"
+          placeholder="Base URL"
+          [(ngModel)]="settingsFormModel.baseURL"
+          required
+          #baseURL="ngModel"
+        />
+        <ng-container *ngIf="baseURL.dirty && baseURL.invalid">
+          <div class="form-error-message">
+            <span *ngIf="baseURL.errors?.['required']"
+              >Base URL is required</span
+            >
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="form-control">
+        <label>Site Description</label>
+        <textarea
+          name="siteDescription"
+          placeholder="Site Description"
+          [(ngModel)]="settingsFormModel.seo!.description"
+          #siteDescription="ngModel"
+        ></textarea>
+        <ng-container *ngIf="siteDescription.dirty && siteDescription.invalid">
+          <div class="form-error-message">
+            <span *ngIf="siteDescription.errors?.['required']"
+              >Site title is required</span
+            >
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="form-control">
+        <button [disabled]="!setupSiteForm.valid" type="submit">
+          <fa-icon [icon]="saveIcon"></fa-icon>
+          <span>Save</span>
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</ng-container>

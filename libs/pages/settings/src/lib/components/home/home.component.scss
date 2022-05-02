@@ -1,0 +1,40 @@
+:host {
+  @apply flex flex-col w-full;
+
+  form {
+    @apply flex flex-col px-4 py-6 bg-white shadow-md font-bold;
+  }
+
+  .title {
+    @apply text-center block text-4xl mb-9;
+  }
+
+  .form-control {
+    @apply flex flex-col w-full space-y-2;
+
+    label {
+      @apply block  text-xl font-normal;
+    }
+
+    .form-error-message {
+      @apply text-red-500 font-normal;
+    }
+
+    input,
+    textarea {
+      @apply w-full px-2 py-1 text-xl rounded-md border-2 border-black;
+
+      &:focus:invalid {
+        @apply border-red-500;
+      }
+    }
+
+    button {
+      @apply bg-primary text-white font-semibold w-full px-4 py-4 space-x-4 text-2xl rounded-md;
+
+      &:disabled {
+        @apply bg-gray-500;
+      }
+    }
+  }
+}
