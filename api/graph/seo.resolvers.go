@@ -5,11 +5,12 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/setting"
 )
 
 func (r *mutationResolver) UpdateSEOSettings(ctx context.Context, input model.UpdateSEOSettingsInput) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
+	settingRepo := setting.NewSettingRepository(r.DB)
+	return settingRepo.UpdateSEOSettings(ctx, input)
 }

@@ -5,15 +5,17 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/looped-dev/cms/api/graph/model"
+	"github.com/looped-dev/cms/api/setting"
 )
 
 func (r *mutationResolver) UpdateTwitterCardSettings(ctx context.Context, input model.UpdateTwitterCardSettingsInput) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
+	settingRepo := setting.NewSettingRepository(r.DB)
+	return settingRepo.UpdateTwitterCardSettings(ctx, input)
 }
 
 func (r *mutationResolver) UpdateFacebookCardSettings(ctx context.Context, input model.UpdateFacebookCardSettingsInput) (*model.SiteSettings, error) {
-	panic(fmt.Errorf("not implemented"))
+	settingRepo := setting.NewSettingRepository(r.DB)
+	return settingRepo.UpdateFacebookCardSettings(ctx, input)
 }
