@@ -3,6 +3,8 @@ type SiteSettings {
   siteName: String!
   baseURL: String!
   seo: SEO
+  createdAt: MongoTime!
+  updatedAt: MongoTime!
 }
 
 input UpdateSiteSettingsInput {

@@ -111,12 +111,14 @@ type SEOInput struct {
 }
 
 type SiteSettings struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	SiteName     string             `json:"siteName" bson:"siteName,omitempty"`
-	BaseURL      string             `json:"baseURL" bson:"baseURL,omitempty"`
-	Seo          *Seo               `json:"seo" bson:"seo,omitempty"`
-	TwitterCard  *TwitterCard       `json:"twitterCard" bson:"twitterCard,omitempty"`
-	FacebookCard *FacebookCard      `json:"facebookCard" bson:"facebookCard,omitempty"`
+	ID           primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
+	SiteName     string              `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL      string              `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo          *Seo                `json:"seo" bson:"seo,omitempty"`
+	CreatedAt    primitive.Timestamp `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt    primitive.Timestamp `json:"updatedAt" bson:"updatedAt,omitempty"`
+	TwitterCard  *TwitterCard        `json:"twitterCard" bson:"twitterCard,omitempty"`
+	FacebookCard *FacebookCard       `json:"facebookCard" bson:"facebookCard,omitempty"`
 }
 
 type Size struct {

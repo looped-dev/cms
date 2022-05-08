@@ -3,6 +3,7 @@ package setting
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/looped-dev/cms/api/constants"
 	"github.com/looped-dev/cms/api/db"
@@ -105,6 +106,9 @@ func (setting *SettingRepository) UpdateSEOSettings(ctx context.Context, input m
 		Title:       &title,
 		Description: &description,
 	}
+	settings.UpdatedAt = primitive.Timestamp{
+		T: uint32(time.Now().Unix()),
+	}
 	_, err = setting.DBClient.Database(setting.dbName).
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, settings)
@@ -149,6 +153,9 @@ func (setting *SettingRepository) UpdateFacebookCardSettings(ctx context.Context
 		Description: &description,
 		Type:        &cardType,
 		URL:         &url,
+	}
+	settings.UpdatedAt = primitive.Timestamp{
+		T: uint32(time.Now().Unix()),
 	}
 	_, err = setting.DBClient.Database(setting.dbName).
 		Collection(constants.SettingsCollectionName).
@@ -196,6 +203,9 @@ func (setting *SettingRepository) UpdateTwitterCardSettings(ctx context.Context,
 		Creator:     &creator,
 		Site:        &site,
 		Card:        &card,
+	}
+	settings.UpdatedAt = primitive.Timestamp{
+		T: uint32(time.Now().Unix()),
 	}
 	_, err = setting.DBClient.Database(setting.dbName).
 		Collection(constants.SettingsCollectionName).
