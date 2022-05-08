@@ -1,53 +1,42 @@
+fragment Settings on SiteSettings {
+  siteName
+  baseURL
+  siteDescription
+  timezone
+  socialProfiles {
+    facebook
+    twitter
+  }
+  seo {
+    title
+    description
+    image
+  }
+  twitterCard {
+    card
+    site
+    title
+    description
+    image
+    creator
+  }
+  facebookCard {
+    type
+    title
+    description
+    image
+    url
+  }
+}
+
 query fetchSettings {
   settings {
-    siteName
-    baseURL
-    seo {
-      title
-      description
-      image
-      twitter {
-        card
-        site
-        title
-        description
-        image
-        creator
-      }
-      facebook {
-        type
-        title
-        description
-        image
-        url
-      }
-    }
+    ...Settings
   }
 }
 
 mutation updateSiteSettings($input: UpdateSiteSettingsInput!) {
   updateSiteSettings(input: $input) {
-    siteName
-    baseURL
-    seo {
-      title
-      description
-      image
-      twitter {
-        card
-        site
-        title
-        description
-        image
-        creator
-      }
-      facebook {
-        type
-        title
-        description
-        image
-        url
-      }
-    }
+    ...Settings
   }
 }
