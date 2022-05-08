@@ -2,7 +2,6 @@ package setting
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/looped-dev/cms/api/constants"
@@ -39,9 +38,9 @@ func (setting *SettingRepository) Details(ctx context.Context) (*model.SiteSetti
 		Decode(settings)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("No settings found")
+			return nil, utils.NewGraphQLError(404, "No settings found")
 		}
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	return settings, nil
 }
@@ -54,7 +53,8 @@ func (setting *SettingRepository) Exists(ctx context.Context) (bool, error) {
 		// capped to a single collection.
 		CountDocuments(ctx, bson.D{})
 	if err != nil {
-		return false, err
+		return false, utils.NewGraphQLErrorWithError(500, err)
+
 	}
 	// should only have a single document, as it is a capped collection
 	return count == 1, nil
@@ -68,7 +68,7 @@ func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, input)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	siteSettings := &model.SiteSettings{}
 	err = setting.DBClient.Database(setting.dbName).
@@ -77,7 +77,7 @@ func (setting *SettingRepository) SaveSettings(ctx context.Context, input model.
 		// can only contain one record
 		FindOne(ctx, bson.M{}).Decode(siteSettings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	return siteSettings, nil
 }
@@ -109,7 +109,7 @@ func (setting *SettingRepository) UpdateSEOSettings(ctx context.Context, input m
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, settings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	siteSettings := &model.SiteSettings{}
 	err = setting.DBClient.Database(setting.dbName).
@@ -118,7 +118,7 @@ func (setting *SettingRepository) UpdateSEOSettings(ctx context.Context, input m
 		// can only contain one record
 		FindOne(ctx, bson.M{}).Decode(siteSettings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	return siteSettings, nil
 }
@@ -154,7 +154,7 @@ func (setting *SettingRepository) UpdateFacebookCardSettings(ctx context.Context
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, settings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	siteSettings := &model.SiteSettings{}
 	err = setting.DBClient.Database(setting.dbName).
@@ -163,7 +163,7 @@ func (setting *SettingRepository) UpdateFacebookCardSettings(ctx context.Context
 		// can only contain one record
 		FindOne(ctx, bson.M{}).Decode(siteSettings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	return siteSettings, nil
 }
@@ -201,7 +201,7 @@ func (setting *SettingRepository) UpdateTwitterCardSettings(ctx context.Context,
 		Collection(constants.SettingsCollectionName).
 		InsertOne(ctx, settings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	siteSettings := &model.SiteSettings{}
 	err = setting.DBClient.Database(setting.dbName).
@@ -210,7 +210,7 @@ func (setting *SettingRepository) UpdateTwitterCardSettings(ctx context.Context,
 		// can only contain one record
 		FindOne(ctx, bson.M{}).Decode(siteSettings)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewGraphQLErrorWithError(500, err)
 	}
 	return siteSettings, nil
 }
