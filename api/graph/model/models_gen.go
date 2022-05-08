@@ -98,11 +98,9 @@ type Post struct {
 }
 
 type Seo struct {
-	Title       *string       `json:"title" bson:"title,omitempty"`
-	Description *string       `json:"description" bson:"description,omitempty"`
-	Image       *string       `json:"image" bson:"image,omitempty"`
-	Twitter     *TwitterCard  `json:"twitter" bson:"twitter,omitempty"`
-	Facebook    *FacebookCard `json:"facebook" bson:"facebook,omitempty"`
+	Title       *string `json:"title" bson:"title,omitempty"`
+	Description *string `json:"description" bson:"description,omitempty"`
+	Image       *string `json:"image" bson:"image,omitempty"`
 }
 
 type SEOInput struct {
@@ -112,9 +110,11 @@ type SEOInput struct {
 }
 
 type SiteSettings struct {
-	SiteName string `json:"siteName" bson:"siteName,omitempty"`
-	BaseURL  string `json:"baseURL" bson:"baseURL,omitempty"`
-	Seo      *Seo   `json:"seo" bson:"seo,omitempty"`
+	SiteName     string        `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL      string        `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo          *Seo          `json:"seo" bson:"seo,omitempty"`
+	TwitterCard  *TwitterCard  `json:"twitterCard" bson:"twitterCard,omitempty"`
+	FacebookCard *FacebookCard `json:"facebookCard" bson:"facebookCard,omitempty"`
 }
 
 type Size struct {

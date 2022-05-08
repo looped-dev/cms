@@ -156,16 +156,16 @@ type ComplexityRoot struct {
 
 	SEO struct {
 		Description func(childComplexity int) int
-		Facebook    func(childComplexity int) int
 		Image       func(childComplexity int) int
 		Title       func(childComplexity int) int
-		Twitter     func(childComplexity int) int
 	}
 
 	SiteSettings struct {
-		BaseURL  func(childComplexity int) int
-		Seo      func(childComplexity int) int
-		SiteName func(childComplexity int) int
+		BaseURL      func(childComplexity int) int
+		FacebookCard func(childComplexity int) int
+		Seo          func(childComplexity int) int
+		SiteName     func(childComplexity int) int
+		TwitterCard  func(childComplexity int) int
 	}
 
 	Size struct {
@@ -933,13 +933,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SEO.Description(childComplexity), true
 
-	case "SEO.facebook":
-		if e.complexity.SEO.Facebook == nil {
-			break
-		}
-
-		return e.complexity.SEO.Facebook(childComplexity), true
-
 	case "SEO.image":
 		if e.complexity.SEO.Image == nil {
 			break
@@ -954,19 +947,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SEO.Title(childComplexity), true
 
-	case "SEO.twitter":
-		if e.complexity.SEO.Twitter == nil {
-			break
-		}
-
-		return e.complexity.SEO.Twitter(childComplexity), true
-
 	case "SiteSettings.baseURL":
 		if e.complexity.SiteSettings.BaseURL == nil {
 			break
 		}
 
 		return e.complexity.SiteSettings.BaseURL(childComplexity), true
+
+	case "SiteSettings.facebookCard":
+		if e.complexity.SiteSettings.FacebookCard == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.FacebookCard(childComplexity), true
 
 	case "SiteSettings.seo":
 		if e.complexity.SiteSettings.Seo == nil {
@@ -981,6 +974,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SiteSettings.SiteName(childComplexity), true
+
+	case "SiteSettings.twitterCard":
+		if e.complexity.SiteSettings.TwitterCard == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.TwitterCard(childComplexity), true
 
 	case "Size.height":
 		if e.complexity.Size.Height == nil {
@@ -1483,8 +1483,6 @@ extend type Query {
   title: String
   description: String
   image: String
-  twitter: TwitterCard
-  facebook: FacebookCard
 }
 
 input SEOInput {
@@ -1551,6 +1549,11 @@ type FacebookCard {
   description: String
   image: String
   url: String
+}
+
+extend type SiteSettings {
+  twitterCard: TwitterCard
+  facebookCard: FacebookCard
 }
 
 input updateTwitterCardSettingsInput {
@@ -5219,70 +5222,6 @@ func (ec *executionContext) _SEO_image(ctx context.Context, field graphql.Collec
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SEO_twitter(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SEO",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Twitter, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.TwitterCard)
-	fc.Result = res
-	return ec.marshalOTwitterCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCard(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _SEO_facebook(ctx context.Context, field graphql.CollectedField, obj *model.Seo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "SEO",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Facebook, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.FacebookCard)
-	fc.Result = res
-	return ec.marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _SiteSettings_siteName(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5383,6 +5322,70 @@ func (ec *executionContext) _SiteSettings_seo(ctx context.Context, field graphql
 	res := resTmp.(*model.Seo)
 	fc.Result = res
 	return ec.marshalOSEO2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐSeo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_twitterCard(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TwitterCard, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.TwitterCard)
+	fc.Result = res
+	return ec.marshalOTwitterCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐTwitterCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_facebookCard(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FacebookCard, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.FacebookCard)
+	fc.Result = res
+	return ec.marshalOFacebookCard2ᚖgithubᚗcomᚋloopedᚑdevᚋcmsᚋapiᚋgraphᚋmodelᚐFacebookCard(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Size_width(ctx context.Context, field graphql.CollectedField, obj *model.Size) (ret graphql.Marshaler) {
@@ -9514,20 +9517,6 @@ func (ec *executionContext) _SEO(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = innerFunc(ctx)
 
-		case "twitter":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._SEO_twitter(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
-		case "facebook":
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._SEO_facebook(ctx, field, obj)
-			}
-
-			out.Values[i] = innerFunc(ctx)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9572,6 +9561,20 @@ func (ec *executionContext) _SiteSettings(ctx context.Context, sel ast.Selection
 		case "seo":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._SiteSettings_seo(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "twitterCard":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._SiteSettings_twitterCard(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "facebookCard":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._SiteSettings_facebookCard(ctx, field, obj)
 			}
 
 			out.Values[i] = innerFunc(ctx)

@@ -2,8 +2,6 @@ type SEO {
   title: String
   description: String
   image: String
-  twitter: TwitterCard
-  facebook: FacebookCard
 }
 
 input SEOInput {

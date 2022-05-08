@@ -15,6 +15,11 @@ type FacebookCard {
   url: String
 }
 
+extend type SiteSettings {
+  twitterCard: TwitterCard
+  facebookCard: FacebookCard
+}
+
 input updateTwitterCardSettingsInput {
   card: String!
   site: String
