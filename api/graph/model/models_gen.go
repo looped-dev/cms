@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/looped-dev/cms/api/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type FacebookCard struct {
@@ -110,11 +111,12 @@ type SEOInput struct {
 }
 
 type SiteSettings struct {
-	SiteName     string        `json:"siteName" bson:"siteName,omitempty"`
-	BaseURL      string        `json:"baseURL" bson:"baseURL,omitempty"`
-	Seo          *Seo          `json:"seo" bson:"seo,omitempty"`
-	TwitterCard  *TwitterCard  `json:"twitterCard" bson:"twitterCard,omitempty"`
-	FacebookCard *FacebookCard `json:"facebookCard" bson:"facebookCard,omitempty"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	SiteName     string             `json:"siteName" bson:"siteName,omitempty"`
+	BaseURL      string             `json:"baseURL" bson:"baseURL,omitempty"`
+	Seo          *Seo               `json:"seo" bson:"seo,omitempty"`
+	TwitterCard  *TwitterCard       `json:"twitterCard" bson:"twitterCard,omitempty"`
+	FacebookCard *FacebookCard      `json:"facebookCard" bson:"facebookCard,omitempty"`
 }
 
 type Size struct {

@@ -163,6 +163,7 @@ type ComplexityRoot struct {
 	SiteSettings struct {
 		BaseURL      func(childComplexity int) int
 		FacebookCard func(childComplexity int) int
+		ID           func(childComplexity int) int
 		Seo          func(childComplexity int) int
 		SiteName     func(childComplexity int) int
 		TwitterCard  func(childComplexity int) int
@@ -961,6 +962,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SiteSettings.FacebookCard(childComplexity), true
 
+	case "SiteSettings.id":
+		if e.complexity.SiteSettings.ID == nil {
+			break
+		}
+
+		return e.complexity.SiteSettings.ID(childComplexity), true
+
 	case "SiteSettings.seo":
 		if e.complexity.SiteSettings.Seo == nil {
 			break
@@ -1502,6 +1510,7 @@ extend type Mutation {
 }
 `, BuiltIn: false},
 	{Name: "api/schema/settings.graphql", Input: `type SiteSettings {
+  id: MongoID!
   siteName: String!
   baseURL: String!
   seo: SEO
@@ -5220,6 +5229,41 @@ func (ec *executionContext) _SEO_image(ctx context.Context, field graphql.Collec
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SiteSettings_id(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SiteSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(primitive.ObjectID)
+	fc.Result = res
+	return ec.marshalNMongoID2goᚗmongodbᚗorgᚋmongoᚑdriverᚋbsonᚋprimitiveᚐObjectID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SiteSettings_siteName(ctx context.Context, field graphql.CollectedField, obj *model.SiteSettings) (ret graphql.Marshaler) {
@@ -9538,6 +9582,16 @@ func (ec *executionContext) _SiteSettings(ctx context.Context, sel ast.Selection
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SiteSettings")
+		case "id":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._SiteSettings_id(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "siteName":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._SiteSettings_siteName(ctx, field, obj)
