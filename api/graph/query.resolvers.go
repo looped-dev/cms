@@ -11,6 +11,7 @@ import (
 	"github.com/looped-dev/cms/api/staff"
 )
 
+// IsSiteSetup is the resolver for the isSiteSetup field.
 func (r *queryResolver) IsSiteSetup(ctx context.Context) (bool, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 

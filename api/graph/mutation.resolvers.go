@@ -13,6 +13,7 @@ import (
 	"github.com/looped-dev/cms/api/staff"
 )
 
+// InitialSetup is the resolver for the initialSetup field.
 func (r *mutationResolver) InitialSetup(ctx context.Context, input model.InitialSetupInput) (*model.InitialSetupResponse, error) {
 	// first step, configure settings
 	setting := setting.NewSettingRepository(r.DB)

@@ -16,46 +16,55 @@ import (
 	"github.com/looped-dev/cms/api/utils"
 )
 
+// StaffLogin is the resolver for the staffLogin field.
 func (r *mutationResolver) StaffLogin(ctx context.Context, input model.StaffLoginInput) (*model.StaffLoginResponse, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffLogin(ctx, &input)
 }
 
+// StaffInvite is the resolver for the staffInvite field.
 func (r *mutationResolver) StaffInvite(ctx context.Context, input model.StaffInviteInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffSendInvite(ctx, &input)
 }
 
+// StaffAcceptInvite is the resolver for the staffAcceptInvite field.
 func (r *mutationResolver) StaffAcceptInvite(ctx context.Context, input model.StaffAcceptInviteInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffAcceptInvite(ctx, &input)
 }
 
+// StaffUpdate is the resolver for the staffUpdate field.
 func (r *mutationResolver) StaffUpdate(ctx context.Context, input model.StaffUpdateInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffUpdate(ctx, &input)
 }
 
+// StaffDelete is the resolver for the staffDelete field.
 func (r *mutationResolver) StaffDelete(ctx context.Context, input model.StaffDeleteInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffDelete(ctx, &input)
 }
 
+// StaffChangePassword is the resolver for the staffChangePassword field.
 func (r *mutationResolver) StaffChangePassword(ctx context.Context, input model.StaffChangePasswordInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffChangePassword(ctx, &input)
 }
 
+// StaffResetPassword is the resolver for the staffResetPassword field.
 func (r *mutationResolver) StaffResetPassword(ctx context.Context, input model.StaffResetPasswordInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffResetPassword(ctx, &input)
 }
 
+// StaffForgotPassword is the resolver for the staffForgotPassword field.
 func (r *mutationResolver) StaffForgotPassword(ctx context.Context, input model.StaffForgotPasswordInput) (*models.StaffMember, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	return staff.StaffForgotPassword(ctx, &input)
 }
 
+// StaffLogout is the resolver for the staffLogout field.
 func (r *mutationResolver) StaffLogout(ctx context.Context) (bool, error) {
 	staff := staff.NewStaffRepository(r.SMTPClient, r.DB)
 	_, err := staff.StaffLogout(ctx)
@@ -65,6 +74,7 @@ func (r *mutationResolver) StaffLogout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+// StaffRefreshToken is the resolver for the staffRefreshToken field.
 func (r *mutationResolver) StaffRefreshToken(ctx context.Context, input model.StaffRefreshTokenInput) (*model.StaffLoginResponse, error) {
 	refreshTokenRepository := auth.NewStaffRefreshToken(r.DB)
 	// get user from context
@@ -116,6 +126,7 @@ func (r *mutationResolver) StaffRefreshToken(ctx context.Context, input model.St
 	return &newTokens, nil
 }
 
+// Role is the resolver for the role field.
 func (r *staffResolver) Role(ctx context.Context, obj *models.StaffMember) (models.StaffRole, error) {
 	if obj.Role.IsValid() {
 		return "", fmt.Errorf("Your role is invalid")

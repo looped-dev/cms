@@ -10,11 +10,13 @@ import (
 	"github.com/looped-dev/cms/api/setting"
 )
 
+// UpdateSiteSettings is the resolver for the updateSiteSettings field.
 func (r *mutationResolver) UpdateSiteSettings(ctx context.Context, input model.UpdateSiteSettingsInput) (*model.SiteSettings, error) {
 	setting := setting.NewSettingRepository(r.DB)
 	return setting.SaveSettings(ctx, input)
 }
 
+// Settings is the resolver for the settings field.
 func (r *queryResolver) Settings(ctx context.Context) (*model.SiteSettings, error) {
 	setting := setting.NewSettingRepository(r.DB)
 	return setting.Details(ctx)

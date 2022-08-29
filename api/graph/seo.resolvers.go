@@ -10,6 +10,7 @@ import (
 	"github.com/looped-dev/cms/api/setting"
 )
 
+// UpdateSEOSettings is the resolver for the updateSEOSettings field.
 func (r *mutationResolver) UpdateSEOSettings(ctx context.Context, input model.UpdateSEOSettingsInput) (*model.SiteSettings, error) {
 	settingRepo := setting.NewSettingRepository(r.DB)
 	return settingRepo.UpdateSEOSettings(ctx, input)
