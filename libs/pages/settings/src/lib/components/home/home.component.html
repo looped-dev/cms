@@ -53,7 +53,7 @@
         <textarea
           name="siteDescription"
           placeholder="Site Description"
-          [(ngModel)]="settingsFormModel.seo!.description"
+          [(ngModel)]="settingsFormModel.siteDescription"
           #siteDescription="ngModel"
         ></textarea>
         <ng-container *ngIf="siteDescription.dirty && siteDescription.invalid">

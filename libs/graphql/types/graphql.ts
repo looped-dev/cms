@@ -3,9 +3,15 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -100,91 +106,73 @@ export type Mutation = {
   updateTwitterCardSettings: SiteSettings;
 };
 
-
 export type MutationInitialSetupArgs = {
   input: InitialSetupInput;
 };
-
 
 export type MutationStaffAcceptInviteArgs = {
   input: StaffAcceptInviteInput;
 };
 
-
 export type MutationStaffChangePasswordArgs = {
   input: StaffChangePasswordInput;
 };
-
 
 export type MutationStaffDeleteArgs = {
   input: StaffDeleteInput;
 };
 
-
 export type MutationStaffForgotPasswordArgs = {
   input: StaffForgotPasswordInput;
 };
-
 
 export type MutationStaffInviteArgs = {
   input: StaffInviteInput;
 };
 
-
 export type MutationStaffLoginArgs = {
   input: StaffLoginInput;
 };
-
 
 export type MutationStaffRefreshTokenArgs = {
   input: StaffRefreshTokenInput;
 };
 
-
 export type MutationStaffResetPasswordArgs = {
   input: StaffResetPasswordInput;
 };
-
 
 export type MutationStaffUpdateArgs = {
   input: StaffUpdateInput;
 };
 
-
 export type MutationUpdateFacebookCardSettingsArgs = {
   input: UpdateFacebookCardSettingsInput;
 };
-
 
 export type MutationUpdatePageArgs = {
   input: UpdatePageInput;
 };
 
-
 export type MutationUpdatePageStatusArgs = {
   input: UpdatePageStatusInput;
 };
-
 
 export type MutationUpdatePostArgs = {
   input: UpdatePostInput;
 };
 
-
 export type MutationUpdatePostStatusArgs = {
   input: UpdatePostStatusInput;
 };
-
 
 export type MutationUpdateSeoSettingsArgs = {
   input: UpdateSeoSettingsInput;
 };
 
-
 export type MutationUpdateSiteSettingsArgs = {
   input: UpdateSiteSettingsInput;
 };
-
 
 export type MutationUpdateTwitterCardSettingsArgs = {
   input: UpdateTwitterCardSettingsInput;
@@ -229,7 +217,7 @@ export enum PostOrPageStatus {
   Pending = 'PENDING',
   Published = 'PUBLISHED',
   Scheduled = 'SCHEDULED',
-  Trashed = 'TRASHED'
+  Trashed = 'TRASHED',
 }
 
 export type Query = {
@@ -242,26 +230,21 @@ export type Query = {
   settings: SiteSettings;
 };
 
-
 export type QueryGetPageArgs = {
   slug: Scalars['String'];
 };
-
 
 export type QueryGetPageByIdArgs = {
   id: Scalars['String'];
 };
 
-
 export type QueryGetPostArgs = {
   slug: Scalars['String'];
 };
 
-
 export type QueryGetPostByIdArgs = {
   id: Scalars['String'];
 };
-
 
 export type QueryGetPostsArgs = {
   page?: InputMaybe<Scalars['Int']>;
@@ -422,7 +405,7 @@ export enum StaffRole {
    */
   Editor = 'EDITOR',
   /** Has full site access and is the owner of the site and cannot be deleted. */
-  Owner = 'OWNER'
+  Owner = 'OWNER',
 }
 
 export type StaffUpdateInput = {
@@ -518,32 +501,127 @@ export type StaffLoginMutationVariables = Exact<{
   input: StaffLoginInput;
 }>;
 
-
-export type StaffLoginMutation = { staffLogin: { accessToken: string, refreshToken: string, staff: { id: any, name: string, email: any, role: StaffRole } } };
+export type StaffLoginMutation = {
+  staffLogin: {
+    accessToken: string;
+    refreshToken: string;
+    staff: { id: any; name: string; email: any; role: StaffRole };
+  };
+};
 
 export type RefreshStaffTokenMutationVariables = Exact<{
   input: StaffRefreshTokenInput;
 }>;
 
+export type RefreshStaffTokenMutation = {
+  staffRefreshToken: {
+    accessToken: string;
+    refreshToken: string;
+    staff: { id: any; name: string; email: any; role: StaffRole };
+  };
+};
 
-export type RefreshStaffTokenMutation = { staffRefreshToken: { accessToken: string, refreshToken: string, staff: { id: any, name: string, email: any, role: StaffRole } } };
+export type SettingsFragment = {
+  siteName: string;
+  baseURL: string;
+  siteDescription?: string | null;
+  timezone: string;
+  socialProfiles?: { facebook?: string | null; twitter?: string | null } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: string | null;
+  } | null;
+  twitterCard?: {
+    card?: string | null;
+    site?: string | null;
+    title?: string | null;
+    description?: string | null;
+    image?: string | null;
+    creator?: string | null;
+  } | null;
+  facebookCard?: {
+    type?: string | null;
+    title?: string | null;
+    description?: string | null;
+    image?: string | null;
+    url?: string | null;
+  } | null;
+};
 
-export type SettingsFragment = { siteName: string, baseURL: string, siteDescription?: string | null, timezone: string, socialProfiles?: { facebook?: string | null, twitter?: string | null } | null, seo?: { title?: string | null, description?: string | null, image?: string | null } | null, twitterCard?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebookCard?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null };
+export type FetchSettingsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type FetchSettingsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchSettingsQuery = { settings: { siteName: string, baseURL: string, siteDescription?: string | null, timezone: string, socialProfiles?: { facebook?: string | null, twitter?: string | null } | null, seo?: { title?: string | null, description?: string | null, image?: string | null } | null, twitterCard?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebookCard?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } };
+export type FetchSettingsQuery = {
+  settings: {
+    siteName: string;
+    baseURL: string;
+    siteDescription?: string | null;
+    timezone: string;
+    socialProfiles?: {
+      facebook?: string | null;
+      twitter?: string | null;
+    } | null;
+    seo?: {
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+    } | null;
+    twitterCard?: {
+      card?: string | null;
+      site?: string | null;
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+      creator?: string | null;
+    } | null;
+    facebookCard?: {
+      type?: string | null;
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+      url?: string | null;
+    } | null;
+  };
+};
 
 export type UpdateSiteSettingsMutationVariables = Exact<{
   input: UpdateSiteSettingsInput;
 }>;
 
+export type UpdateSiteSettingsMutation = {
+  updateSiteSettings: {
+    siteName: string;
+    baseURL: string;
+    siteDescription?: string | null;
+    timezone: string;
+    socialProfiles?: {
+      facebook?: string | null;
+      twitter?: string | null;
+    } | null;
+    seo?: {
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+    } | null;
+    twitterCard?: {
+      card?: string | null;
+      site?: string | null;
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+      creator?: string | null;
+    } | null;
+    facebookCard?: {
+      type?: string | null;
+      title?: string | null;
+      description?: string | null;
+      image?: string | null;
+      url?: string | null;
+    } | null;
+  };
+};
 
-export type UpdateSiteSettingsMutation = { updateSiteSettings: { siteName: string, baseURL: string, siteDescription?: string | null, timezone: string, socialProfiles?: { facebook?: string | null, twitter?: string | null } | null, seo?: { title?: string | null, description?: string | null, image?: string | null } | null, twitterCard?: { card?: string | null, site?: string | null, title?: string | null, description?: string | null, image?: string | null, creator?: string | null } | null, facebookCard?: { type?: string | null, title?: string | null, description?: string | null, image?: string | null, url?: string | null } | null } };
-
-export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never; }>;
-
+export type IsSiteSetupQueryVariables = Exact<{ [key: string]: never }>;
 
 export type IsSiteSetupQuery = { isSiteSetup: boolean };
 
@@ -551,162 +629,187 @@ export type SetupSiteMutationVariables = Exact<{
   input: InitialSetupInput;
 }>;
 
-
-export type SetupSiteMutation = { initialSetup: { refreshToken: string, accessToken: string, staff: { id: any } } };
+export type SetupSiteMutation = {
+  initialSetup: {
+    refreshToken: string;
+    accessToken: string;
+    staff: { id: any };
+  };
+};
 
 export const SettingsFragmentDoc = gql`
-    fragment Settings on SiteSettings {
-  siteName
-  baseURL
-  siteDescription
-  timezone
-  socialProfiles {
-    facebook
-    twitter
+  fragment Settings on SiteSettings {
+    siteName
+    baseURL
+    siteDescription
+    timezone
+    socialProfiles {
+      facebook
+      twitter
+    }
+    seo {
+      title
+      description
+      image
+    }
+    twitterCard {
+      card
+      site
+      title
+      description
+      image
+      creator
+    }
+    facebookCard {
+      type
+      title
+      description
+      image
+      url
+    }
   }
-  seo {
-    title
-    description
-    image
-  }
-  twitterCard {
-    card
-    site
-    title
-    description
-    image
-    creator
-  }
-  facebookCard {
-    type
-    title
-    description
-    image
-    url
-  }
-}
-    `;
+`;
 export const StaffLoginDocument = gql`
-    mutation StaffLogin($input: StaffLoginInput!) {
-  staffLogin(input: $input) {
-    accessToken
-    refreshToken
-    staff {
-      id
-      name
-      email
-      role
+  mutation StaffLogin($input: StaffLoginInput!) {
+    staffLogin(input: $input) {
+      accessToken
+      refreshToken
+      staff {
+        id
+        name
+        email
+        role
+      }
     }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class StaffLoginGQL extends Apollo.Mutation<
+  StaffLoginMutation,
+  StaffLoginMutationVariables
+> {
+  document = StaffLoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class StaffLoginGQL extends Apollo.Mutation<StaffLoginMutation, StaffLoginMutationVariables> {
-    document = StaffLoginDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const RefreshStaffTokenDocument = gql`
-    mutation RefreshStaffToken($input: StaffRefreshTokenInput!) {
-  staffRefreshToken(input: $input) {
-    accessToken
-    refreshToken
-    staff {
-      id
-      name
-      email
-      role
+  mutation RefreshStaffToken($input: StaffRefreshTokenInput!) {
+    staffRefreshToken(input: $input) {
+      accessToken
+      refreshToken
+      staff {
+        id
+        name
+        email
+        role
+      }
     }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RefreshStaffTokenGQL extends Apollo.Mutation<
+  RefreshStaffTokenMutation,
+  RefreshStaffTokenMutationVariables
+> {
+  document = RefreshStaffTokenDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class RefreshStaffTokenGQL extends Apollo.Mutation<RefreshStaffTokenMutation, RefreshStaffTokenMutationVariables> {
-    document = RefreshStaffTokenDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const FetchSettingsDocument = gql`
-    query fetchSettings {
-  settings {
-    ...Settings
-  }
-}
-    ${SettingsFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchSettingsGQL extends Apollo.Query<FetchSettingsQuery, FetchSettingsQueryVariables> {
-    document = FetchSettingsDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  query fetchSettings {
+    settings {
+      ...Settings
     }
   }
+  ${SettingsFragmentDoc}
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchSettingsGQL extends Apollo.Query<
+  FetchSettingsQuery,
+  FetchSettingsQueryVariables
+> {
+  document = FetchSettingsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdateSiteSettingsDocument = gql`
-    mutation updateSiteSettings($input: UpdateSiteSettingsInput!) {
-  updateSiteSettings(input: $input) {
-    ...Settings
-  }
-}
-    ${SettingsFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateSiteSettingsGQL extends Apollo.Mutation<UpdateSiteSettingsMutation, UpdateSiteSettingsMutationVariables> {
-    document = UpdateSiteSettingsDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  mutation updateSiteSettings($input: UpdateSiteSettingsInput!) {
+    updateSiteSettings(input: $input) {
+      ...Settings
     }
   }
+  ${SettingsFragmentDoc}
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateSiteSettingsGQL extends Apollo.Mutation<
+  UpdateSiteSettingsMutation,
+  UpdateSiteSettingsMutationVariables
+> {
+  document = UpdateSiteSettingsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const IsSiteSetupDocument = gql`
-    query isSiteSetup {
-  isSiteSetup
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class IsSiteSetupGQL extends Apollo.Query<IsSiteSetupQuery, IsSiteSetupQueryVariables> {
-    document = IsSiteSetupDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
+  query isSiteSetup {
+    isSiteSetup
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class IsSiteSetupGQL extends Apollo.Query<
+  IsSiteSetupQuery,
+  IsSiteSetupQueryVariables
+> {
+  document = IsSiteSetupDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const SetupSiteDocument = gql`
-    mutation SetupSite($input: InitialSetupInput!) {
-  initialSetup(input: $input) {
-    staff {
-      id
+  mutation SetupSite($input: InitialSetupInput!) {
+    initialSetup(input: $input) {
+      staff {
+        id
+      }
+      refreshToken
+      accessToken
     }
-    refreshToken
-    accessToken
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SetupSiteGQL extends Apollo.Mutation<
+  SetupSiteMutation,
+  SetupSiteMutationVariables
+> {
+  document = SetupSiteDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class SetupSiteGQL extends Apollo.Mutation<SetupSiteMutation, SetupSiteMutationVariables> {
-    document = SetupSiteDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
